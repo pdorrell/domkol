@@ -9,14 +9,12 @@
 <body>
 <h1>Domain Colouring using Canvas</h1>
 
-<svg:svg id="domkol-svg"
-     viewBox="0 0 600 600"
-     width="600px" height="600px">
-     <svg:foreignObject x="0" y="0" width="100%" height="100%">
-         <canvas id="domkol-canvas" width="600" height="600"/>
-     </svg:foreignObject>
-</svg:svg>
-
-
+<svg id="domkol-svg"
+     width="600" height="600" viewbox="0 0 600 600">
+     <foreignObject x="0" y="0" width="600" height="600">
+        <canvas id="domkol-canvas" width="600" height="600"></canvas>
+     </foreignObject>
+     <circle cx="256" cy="256" r="120" stroke="white" stroke-width="2" fill="none"/>
+</svg>
 </body>
 </html>
