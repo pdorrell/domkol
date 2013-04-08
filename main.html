@@ -2,19 +2,24 @@
 <html lang="en" >
 <head><meta charset="utf-8">
 <title>Domain Colouring using Canvas</title>
-<script language="javascript" type="text/javascript" src="lib/jquery-1.7.2.js"></script>
+<link rel="stylesheet" href="lib/jquery-ui-1.10.2.css" />
+<script language="javascript" type="text/javascript" src="lib/jquery-1.9.1.js"></script>
+<script language="javascript" type="text/javascript" src="lib/jquery-ui-1.10.2.js"></script>
 <script language="javascript" type="text/javascript" src="lib/domkol.js"></script>
 </head>
 
 <body>
 <h1>Domain Colouring using Canvas</h1>
 
-<svg id="domkol-svg"
+<p id="test-handle">Test Handle</p>
+
+<svg id="domkol-svg" style="position:relative"
      width="600" height="600" viewbox="0 0 600 600">
-     <foreignObject x="0" y="0" width="600" height="600">
+     <foreignObject x="0" y="0" width="100%" height="100%">
         <canvas id="domkol-canvas" width="600" height="600"></canvas>
      </foreignObject>
      <circle cx="256" cy="256" r="120" stroke="white" stroke-width="2" fill="none"/>
+     <circle id="centre-handle" cx="256" cy="256" r="30" stroke="white" stroke-width="2" fill="black"/>
 </svg>
 </body>
 </html>
