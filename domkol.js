@@ -104,7 +104,7 @@ function readyCircleAndHandles(f) {
     var scaleY = 256;
     var scaleValue = scaleSlider.slider("value");
     var scale = 20 * Math.pow(1.05, scaleValue);
-    var angleIncrement = 0.05;
+    var angleIncrement = 0.02;
     drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleX, scaleY, scale, angleIncrement, 
                          realPath, imaginaryPath);
   }

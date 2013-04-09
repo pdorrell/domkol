@@ -11,17 +11,19 @@
 <body>
 <h1>Domain Colouring using Canvas</h1>
 
-<svg id="domkol-svg" style="position:relative"
-     width="600" height="600" viewbox="0 0 600 600">
-     <foreignObject x="0" y="0" width="100%" height="100%">
-        <canvas id="domkol-canvas" width="600" height="600"></canvas>
-     </foreignObject>
+<div style="position:relative">
+<svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
+     width="800" height="800" viewbox="0 0 800 800">
      <circle id="big-circle" cx="256" cy="256" r="150" stroke="white" stroke-width="2" fill="none"/>
-     <circle id="centre-handle" cx="256" cy="256" r="8" stroke="white" stroke-width="2" fill="black"/>
-     <circle id="edge-handle" cx="406" cy="256" r="8" stroke="white" stroke-width="2" fill="black"/>
+     <circle id="centre-handle" cx="256" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
+     <circle id="edge-handle" cx="406" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
      <path id="real-path" d="M0,0" fill="none" stroke="black" stroke-width="2"/>
      <path id="imaginary-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
 </svg>
-<div id="scale-slider" style="height:300px;float:right;clear:right;"></div>
+<canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
+        width="600" height="600"></canvas>
+  <div id="scale-slider" style="position:absolute;top:0;left:600;z-index:2;"
+       style="height:200px; float:right;clear:right;"></div>
+</div>
 </body>
 </html>
