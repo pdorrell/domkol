@@ -92,6 +92,7 @@ function readyCircleAndHandles(f) {
   var bigCircle = $("#big-circle");
   var realPath = $("#real-path");
   var imaginaryPath = $("#imaginary-path");
+  var scaleSlider = $("#scale-slider");
   
   function drawFOnCircle() {
     var cx = parseInt(bigCircle.attr('cx'));
@@ -101,7 +102,8 @@ function readyCircleAndHandles(f) {
     var offsetY = 256;
     var scaleX = 256;
     var scaleY = 256;
-    var scale = 100;
+    var scaleValue = scaleSlider.slider("value");
+    var scale = 20 * Math.pow(1.05, scaleValue);
     var angleIncrement = 0.05;
     drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleX, scaleY, scale, angleIncrement, 
                          realPath, imaginaryPath);
@@ -113,8 +115,6 @@ function readyCircleAndHandles(f) {
   bigCircle.attr('edge-x', edgeHandle.attr('cx') - bigCircle.attr('cx'));
   bigCircle.attr('edge-y', edgeHandle.attr('cy') - bigCircle.attr('cy'));
   
-  drawFOnCircle();
-
   centreHandle.on('svgDrag', function(event, x, y) {
       bigCircle.attr('cx', x);
       bigCircle.attr('cy', y);
@@ -136,6 +136,12 @@ function readyCircleAndHandles(f) {
       bigCircle.attr('r', radius);
       drawFOnCircle();
     });
+  
+  scaleSlider.slider({"min": 0, "max": 100, "value": 30, 
+        "orientation": "vertical", 
+        "slide": drawFOnCircle, "change": drawFOnCircle});
+  
+    drawFOnCircle();
 }
 
 function drawOnCanvas(ctx, f) {
