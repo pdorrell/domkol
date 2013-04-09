@@ -1,0 +1,18 @@
+STDOUT.sync = true
+BASE_DIR = File.dirname(__FILE__)
+
+DOMKOL_WEB_DIR = File.expand_path(File.join(BASE_DIR, "../www/thinkinghard/src/domkol"))
+
+puts "DOMKOL_WEB_DIR = #{DOMKOL_WEB_DIR}"
+
+task :default => [:web]
+
+task :web do |t|
+  if File.directory? DOMKOL_WEB_DIR
+    FileUtils.rm_r DOMKOL_WEB_DIR, :verbose => true
+  end
+  FileUtils.mkdir DOMKOL_WEB_DIR, :verbose => true
+  FileUtils.cp Dir.glob("*.js"), DOMKOL_WEB_DIR, :verbose => true
+  FileUtils.cp Dir.glob("*.html"), DOMKOL_WEB_DIR, :verbose => true
+  FileUtils.cp_r "lib", DOMKOL_WEB_DIR, :verbose => true
+end
