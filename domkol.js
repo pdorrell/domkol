@@ -55,7 +55,8 @@ function svgDraggable(handle) {
 function drawPointsPath(svgPath, points) {
   var pointStrings = new Array();
   for (var i=0; i<points.length; i++) {
-    pointStrings[i] = Math.round(points[i][0]) + "," + Math.round(points[i][1]);
+    pointStrings[i] = (0.001*Math.round(points[i][0]*1000) + "," + 
+                       0.001*Math.round(points[i][1]*1000));
   }
   pointStrings[0] = "M" + pointStrings[0];
   pointStrings[1] = "L" + pointStrings[1];
@@ -63,8 +64,10 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
+function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, circumferenceIncrementInPixels, 
                               realPath, imaginaryPath) {
+  var unitsPerPixel = explorerModel.unitsPerPixel();
+  var angleIncrement = circumferenceIncrementInPixels / r;
   var numSteps = 2*Math.PI/angleIncrement;
   var pointsReal = new Array();
   var pointsImaginary = new Array();
@@ -74,16 +77,14 @@ function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement,
   var minY = explorerModel.minY();
   var xRange = explorerModel.xRange();
   var yRange = explorerModel.yRange();
-  var widthOfOnePixel = xRange/explorerModel.widthInPixels();
-  var heightOfOnePixel = yRange/explorerModel.heightInPixels();
-  var scaleFPixels = scaleF*(pixelSize/xRange);
+  var scaleFPixels = scaleF/unitsPerPixel;
   for (var i=0; i<numSteps+1; i++) {
     var sinTheta = Math.sin(theta);
     var cosTheta = Math.cos(theta);
     var px = cx + r * sinTheta;
     var py = cy + r * cosTheta;
-    var x = minX + px * widthOfOnePixel;
-    var y = minY + py * heightOfOnePixel;
+    var x = minX + px * unitsPerPixel;
+    var y = minY + py * unitsPerPixel;
     var fValue = f([x, y]);
     var rReal = r + fValue[0] * scaleFPixels;
     var rImaginary = r + fValue[1] * scaleFPixels;
@@ -114,9 +115,9 @@ function readyCircleAndHandles(explorerModel) {
     var scaleValue = scaleSlider.slider("value");
     var scaleF = 0.1 * Math.pow(1.05, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
-    var angleIncrement = 0.02;
-    //drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
-    //                     realPath, imaginaryPath);
+    var circumferenceIncrementInPixels = 5;
+    drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, circumferenceIncrementInPixels, 
+                         realPath, imaginaryPath);
   }
   
   svgDraggable(centreHandle);
