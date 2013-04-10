@@ -1,12 +1,13 @@
 $(document).ready(function(){
-    readyCanvas(cube);
+    var explorerModel = new ComplexFunctionExplorerModel(cube, [-1, -1], [1, 1], 512, 1.0);
+    readyCanvas(explorerModel);
     readyCircleAndHandles(cube);
   });
 
-function readyCanvas(f) {
+function readyCanvas(explorerModel) {
   var canvas =  $('#domkol-canvas')[0];
   var ctx = $('#domkol-canvas')[0].getContext("2d");
-  drawOnCanvas(ctx, f);
+  drawOnCanvas(ctx, explorerModel);
 } 
 
 function objectToString(object, maxValueLength) {
@@ -146,8 +147,8 @@ function readyCircleAndHandles(f) {
     drawFOnCircle();
 }
 
-function drawOnCanvas(ctx, f) {
-  drawColors(ctx, f);
+function drawOnCanvas(ctx, explorerModel) {
+  drawColors(ctx, explorerModel);
 }
 
 function times(z1, z2) {
@@ -163,21 +164,42 @@ function cube(z) {
   return times(z, times(z, z));
 }
 
-function drawColors(ctx, f) {
-  var imageData = ctx.createImageData(512, 512);
-  var data = imageData.data;
-  for (var i=0; i<512; i++) {
-    for (var j=0; j<512; j++) {
-      var x = (i-256)/256;
-      var y = (j-256)/256;
-      var z = f([x, y]);
-      var k = (i*512+j)*4;
-      data[k] = (z[0]+1.0)*128;
-      data[k+1] = (z[1]+1.0)*128;
-      data[k+2] = 0;
-      data[k+3] = 255;
-    }
-  }
+function drawColors(ctx, explorerModel) {
+  var imageData = ctx.createImageData(explorerModel.pixelSize, explorerModel.pixelSize);
+  explorerModel.writeToCanvasData(imageData.data);
   ctx.putImageData(imageData, 0, 0);
 }
 
+function ComplexFunctionExplorerModel(f, bottomLeft, topRight, pixelSize, maxColourValue) {
+  this.f = f;
+  this.bottomLeft = bottomLeft; // bottom left complex number,  e.g. [-1, -1] = -1-i
+  this.topRight = topRight; // top right complex number, e.g. [1, 1] = 1+i
+  this.pixelSize = pixelSize; // e.g. 600 pixels size canvas
+  this.maxColourValue = maxColourValue; // e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
+}
+
+ComplexFunctionExplorerModel.prototype = {
+  writeToCanvasData: function(data) {
+    var pixelSize = this.pixelSize;
+    var halfPixelSize = pixelSize/0.5;
+    var minX = this.bottomLeft[0];  // z = x + yi
+    var xRange = this.topRight[0]-minX;
+    var minY = this.bottomLeft[1];
+    var yRange = this.topRight[1]-minY;
+    var f = this.f;
+    var colorFactor = 1.0/this.maxColourValue;
+    
+    for (var i=0; i<pixelSize; i++) {
+      var x = minX + i/pixelSize * xRange;
+      for (var j=0; j<pixelSize; j++) {
+        var y = minY + j/pixelSize * yRange;
+        var z = f([x, y]);
+        var k = (i*pixelSize+j)*4;
+        data[k] = (z[0]*colorFactor+1.0)*128;
+        data[k+1] = (z[1]*colorFactor+1.0)*128;
+        data[k+2] = 0;
+        data[k+3] = 255;
+      }
+    }
+  }
+}
