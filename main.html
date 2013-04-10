@@ -11,9 +11,9 @@
 <body>
 <h1>Domain Colouring using Canvas</h1>
 
-<div style="position:relative">
+<div style="position:relative;height:550px;">
 <svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
-     width="800" height="800" viewbox="0 0 800 800">
+     width="550" height="550" viewbox="0 0 550 550">
      <circle id="big-circle" cx="256" cy="256" r="150" stroke="white" stroke-width="2" fill="none"/>
      <circle id="centre-handle" cx="256" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
      <circle id="edge-handle" cx="406" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
@@ -21,9 +21,49 @@
      <path id="imaginary-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
 </svg>
 <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
-        width="600" height="600"></canvas>
-  <div id="scale-slider" style="position:absolute;top:0;left:600;z-index:2;"
+        width="550" height="550"></canvas>
+  <div id="scale-slider" style="position:absolute;top:0;left:550;z-index:2;"
        style="height:200px; float:right;clear:right;"></div>
 </div>
+
+<p style="clear:left"/>
+
+<h2>Explanation</h2>
+
+<p><b>Domkol</b> is an HTML5/Javascript/SVG/Canvas/JQuery application I am developing which 
+displays a complex function as a colouring of the complex plain (a technique
+known as <b>domain colouring</b>), with additional interactivity to show values as a 
+graph on a 1-dimensional subset of the domain (considered as a 2-dimensional Real number space). 
+Currently it shows the function <b>f(x) = x<sup>3</sup></b>.</p>
+
+<p>Currently the only choice of 1-dimensional subset (i.e. curve) is a circle &ndash;  
+I will probably add an option for viewing the values of the function
+on a chosen straight line.</p>
+
+<p>The circle is controlled by two draggable handles: a centre handle that moves the circle
+as a whole, and an edge handle that controls the radius of the circle. The values are shown
+in terms of distance from the centre of the circle. Real is black; imaginary is blue.
+The scale of the mapping from the value of <b>f</b> to radius is controlled by the slider, which has
+a logarithmic scale.</p>
+
+<h2>Issues and Browser Compatibility</h2>
+
+<p>So far I have tested Domkol on the latest versions of various browser. The primary development browser
+is currently Chromium on Linux.</p>
+
+<p>Known issues are:</p>
+
+<ul>
+ <li>It works on Chromium and Chrome on Linux and Windows, also (mostly) Internet Explorer on Windows.</li>
+ <li>I haven't worked out how to increase the slider length.</li>
+ <li>On Internet Explorer, the slider appears to the left instead of the right.</li>
+ <li>On Firefox (Windows or Linux), and Opera (Windows), the handles jump when dragging starts, making
+the dragging not very useable.</li>
+ <li>The handles and slider do not (yet) work on a touch screen. I tried 
+<a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
+the draggable handles.</li>
+</ul>
+
+<p><b>TL;DR:</b> it works best on Chrome/Chromium with a mouse.</p>
 </body>
 </html>
