@@ -93,6 +93,7 @@ function readyCircleAndHandles(f) {
   var realPath = $("#real-path");
   var imaginaryPath = $("#imaginary-path");
   var scaleSlider = $("#scale-slider");
+  var scaleValueText = $("#scale-value");
   
   function drawFOnCircle() {
     var cx = parseInt(bigCircle.attr('cx'));
@@ -104,6 +105,7 @@ function readyCircleAndHandles(f) {
     var scaleY = 256;
     var scaleValue = scaleSlider.slider("value");
     var scale = 20 * Math.pow(1.05, scaleValue);
+    scaleValueText.text(Math.round(scale));
     var angleIncrement = 0.02;
     drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleX, scaleY, scale, angleIncrement, 
                          realPath, imaginaryPath);
@@ -138,7 +140,7 @@ function readyCircleAndHandles(f) {
     });
   
   scaleSlider.slider({"min": 0, "max": 100, "value": 30, 
-        "orientation": "vertical", 
+        "orientation": "horizontal", 
         "slide": drawFOnCircle, "change": drawFOnCircle});
   
     drawFOnCircle();
