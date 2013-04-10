@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var explorerModel = new ComplexFunctionExplorerModel(cube, [-1, -1], [1, 1], 512, 1.0);
     readyCanvas(explorerModel);
-    readyCircleAndHandles(cube);
+    readyCircleAndHandles(explorerModel);
   });
 
 function readyCanvas(explorerModel) {
@@ -88,7 +88,7 @@ function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, an
   drawPointsPath(imaginaryPath, pointsImaginary);
 }
 
-function readyCircleAndHandles(f) {
+function readyCircleAndHandles(explorerModel) {
   var centreHandle = $('#centre-handle');
   var edgeHandle = $('#edge-handle');
   var bigCircle = $("#big-circle");
@@ -108,7 +108,7 @@ function readyCircleAndHandles(f) {
     var scaleF = 0.1 * Math.pow(1.05, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
     var angleIncrement = 0.02;
-    drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
+    drawFunctionOnCircle(explorerModel.f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                          realPath, imaginaryPath);
   }
   
@@ -179,13 +179,29 @@ function ComplexFunctionExplorerModel(f, bottomLeft, topRight, pixelSize, maxCol
 }
 
 ComplexFunctionExplorerModel.prototype = {
+  minX: function() {
+    return this.bottomLeft[0];
+  }, 
+  
+  xRange: function() {
+    return this.topRight[0]-this.minX();
+  }, 
+  
+  minY: function() {
+    return this.bottomLeft[1];
+  }, 
+  
+  yRange: function() {
+    return this.topRight[1]-this.minY();
+  }, 
+  
   writeToCanvasData: function(data) {
     var pixelSize = this.pixelSize;
     var halfPixelSize = pixelSize/0.5;
-    var minX = this.bottomLeft[0];  // z = x + yi
-    var xRange = this.topRight[0]-minX;
-    var minY = this.bottomLeft[1];
-    var yRange = this.topRight[1]-minY;
+    var minX = this.minX();
+    var xRange = this.xRange();
+    var minY = this.minY();
+    var yRange = this.yRange();
     var f = this.f;
     var colorFactor = 1.0/this.maxColourValue;
     
