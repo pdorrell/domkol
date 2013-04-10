@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var explorerModel = new ComplexFunctionExplorerModel(cube, [-1, -1], [1, 1], 512, 1.0);
+    var explorerModel = new ComplexFunctionExplorerModel(cube, 256, [256, 256], [512, 512], 1.0);
     readyCanvas(explorerModel);
     readyCircleAndHandles(explorerModel);
   });
@@ -74,15 +74,16 @@ function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement,
   var minY = explorerModel.minY();
   var xRange = explorerModel.xRange();
   var yRange = explorerModel.yRange();
-  var pixelSize = explorerModel.pixelSize;
+  var widthOfOnePixel = xRange/explorerModel.widthInPixels();
+  var heightOfOnePixel = yRange/explorerModel.heightInPixels();
   var scaleFPixels = scaleF*(pixelSize/xRange);
   for (var i=0; i<numSteps+1; i++) {
     var sinTheta = Math.sin(theta);
     var cosTheta = Math.cos(theta);
     var px = cx + r * sinTheta;
     var py = cy + r * cosTheta;
-    var x = minX + (px/pixelSize)*xRange;
-    var y = minY + (py/pixelSize)*yRange;
+    var x = minX + px * widthOfOnePixel;
+    var y = minY + py * heightOfOnePixel;
     var fValue = f([x, y]);
     var rReal = r + fValue[0] * scaleFPixels;
     var rImaginary = r + fValue[1] * scaleFPixels;
@@ -114,8 +115,8 @@ function readyCircleAndHandles(explorerModel) {
     var scaleF = 0.1 * Math.pow(1.05, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
     var angleIncrement = 0.02;
-    drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
-                         realPath, imaginaryPath);
+    //drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
+    //                     realPath, imaginaryPath);
   }
   
   svgDraggable(centreHandle);
@@ -171,57 +172,57 @@ function cube(z) {
 }
 
 function drawColors(ctx, explorerModel) {
-  var imageData = ctx.createImageData(explorerModel.pixelSize, explorerModel.pixelSize);
+  var imageData = ctx.createImageData(explorerModel.widthInPixels(), explorerModel.heightInPixels());
   explorerModel.writeToCanvasData(imageData.data);
   ctx.putImageData(imageData, 0, 0);
 }
 
-function ComplexFunctionExplorerModel(f, bottomLeft, topRight, pixelSize, maxColourValue) {
+function ComplexFunctionExplorerModel(f, pixelsPerUnit, originPixelLocation, pixelsDimension, 
+                                      maxColourValue) {
   this.f = f;
-  this.bottomLeft = bottomLeft; // bottom left complex number,  e.g. [-1, -1] = -1-i
-  this.topRight = topRight; // top right complex number, e.g. [1, 1] = 1+i
-  this.pixelSize = pixelSize; // e.g. 600 pixels size canvas
+  this.pixelsPerUnit = pixelsPerUnit;
+  this.originPixelLocation = originPixelLocation;
+  this.pixelsDimension = pixelsDimension;
   this.maxColourValue = maxColourValue; // e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
 }
 
 ComplexFunctionExplorerModel.prototype = {
-  minX: function() {
-    return this.bottomLeft[0];
-  }, 
+  minX: function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
+  minY: function() { return -(this.originPixelLocation[1]/this.pixelsPerUnit); }, 
   
-  xRange: function() {
-    return this.topRight[0]-this.minX();
-  }, 
+  xRange: function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
+  yRange: function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
   
-  minY: function() {
-    return this.bottomLeft[1];
-  }, 
+  unitsPerPixel: function() {return 1.0/this.pixelsPerUnit;}, 
   
-  yRange: function() {
-    return this.topRight[1]-this.minY();
-  }, 
+  widthInPixels: function() { return this.pixelsDimension[0]; }, 
+
+  heightInPixels: function() { return this.pixelsDimension[1]; }, 
   
   writeToCanvasData: function(data) {
-    var pixelSize = this.pixelSize;
-    var halfPixelSize = pixelSize/0.5;
+    var widthInPixels = this.widthInPixels();
+    var heightInPixels = this.heightInPixels();
     var minX = this.minX();
     var xRange = this.xRange();
     var minY = this.minY();
     var yRange = this.yRange();
     var f = this.f;
     var colorFactor = 1.0/this.maxColourValue;
+    var unitsPerPixel = this.unitsPerPixel();
     
-    for (var i=0; i<pixelSize; i++) {
-      var x = minX + i/pixelSize * xRange;
-      for (var j=0; j<pixelSize; j++) {
-        var y = minY + j/pixelSize * yRange;
+    var x = minX;
+    for (var i=0; i<widthInPixels; i++) {
+      var y = minY;
+      for (var j=0; j<heightInPixels; j++) {
         var z = f([x, y]);
-        var k = (i*pixelSize+j)*4;
+        var k = (i*widthInPixels+j)*4;
         data[k] = (z[0]*colorFactor+1.0)*128;
         data[k+1] = (z[1]*colorFactor+1.0)*128;
         data[k+2] = 0;
         data[k+3] = 255;
+        y += unitsPerPixel;
       }
+      x += unitsPerPixel;
     }
   }
 }
