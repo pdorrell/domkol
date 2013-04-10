@@ -113,7 +113,7 @@ function readyCircleAndHandles(explorerModel) {
     var offsetY = 256;
     var scaleZ = 256;
     var scaleValue = scaleSlider.slider("value");
-    var scaleF = 0.1 * Math.pow(1.05, scaleValue);
+    var scaleF = 0.01 * Math.pow(1.08, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
     var circumferenceIncrementInPixels = 5;
     drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, circumferenceIncrementInPixels, 
@@ -148,7 +148,7 @@ function readyCircleAndHandles(explorerModel) {
       drawFOnCircle();
     });
   
-  scaleSlider.slider({"min": 0, "max": 100, "value": 30, 
+  scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal", 
         "slide": drawFOnCircle, "change": drawFOnCircle});
   

@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<h1>Domain Colouring using Canvas</h1>
+<h1>Domkol: Complex Function Visualisation with Domain Colouring</h1>
 
 <div style="position:relative;height:550px;">
 <svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
@@ -22,16 +22,17 @@
 </svg>
 <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
         width="550" height="550"></canvas>
-  <table style="position:absolute;top:0;left:550;z-index:2;">
+  <table style="position:absolute;top:40;left:550;z-index:2;">
+    <tr><td colspan="3">Drag the small black circles to move and resize the large circle.</td></tr>
+    <tr><td>&nbsp;</td></tr>
     <tr>
       <td>Graph scale:</td>
       <td>
-      <div id="scale-slider" style="width:250;"
-       style="height:200px; float:right;clear:right;"></div>
+        <div id="scale-slider" style="width:250;"
+             style="height:200px; float:right;clear:right;"></div>
       </td>
-      <td id="scale-value" style="width:4em;text-align:right">
-      </td>
-    <tr>
+      <td id="scale-value" style="width:4em;text-align:right"></td>
+    </tr>
   </table>
 </div>
 
@@ -43,7 +44,7 @@ known as <b>domain colouring</b>), with additional interactivity to show values 
 graph on a 1-dimensional subset of the domain (i.e. a 1-dimensional subset of the complex numbers
 considered as a 2-dimensional Real number space). 
 Right now, it is showing the function <b>f(z) = z<sup>3</sup></b>, with the origin in the centre, and 
-the corners are 1+i, 1-i, -1+i and -1-i</p>
+the corners are 1+i, 1-i, -1+i and -1-i (with the origin in the centre).</p>
 
 <p>The 1-dimensional curve showing is a circle. (Adding an option for viewing the values of the function
 on a chosen straight line is on the to-do list.)</p>
