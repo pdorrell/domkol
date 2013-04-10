@@ -31,35 +31,48 @@
 <p><b>Domkol</b> is an HTML5/Javascript/SVG/Canvas/JQuery application I am developing which 
 displays a complex function as a colouring of the complex plain (a technique
 known as <b>domain colouring</b>), with additional interactivity to show values as a 
-graph on a 1-dimensional subset of the domain (considered as a 2-dimensional Real number space). 
-Currently it shows the function <b>f(x) = x<sup>3</sup></b>.</p>
+graph on a 1-dimensional subset of the domain (i.e. a 1-dimensional subset of the complex numbers
+considered as a 2-dimensional Real number space). 
+Right now, it is showing the function <b>f(z) = z<sup>3</sup></b>, with the origin in the centre, and 
+the corners are 1+i, 1-i, -1+i and -1-i</p>
 
-<p>Currently the only choice of 1-dimensional subset (i.e. curve) is a circle &ndash;  
-I will probably add an option for viewing the values of the function
-on a chosen straight line.</p>
+<p>The 1-dimensional curve showing is a circle. (Adding an option for viewing the values of the function
+on a chosen straight line is on the to-do list.)</p>
 
 <p>The circle is controlled by two draggable handles: a centre handle that moves the circle
-as a whole, and an edge handle that controls the radius of the circle. The values are shown
-in terms of distance from the centre of the circle. Real is black; imaginary is blue.
+as a whole, and an edge handle that controls the radius of the circle. The values of <b>f</b>
+for values of <b>z</b> on the circle are shown
+in terms of distance from the centre of the circle, where <b>f = 0</b> is on the circumference itself,
+positive is outside the circle and negative is inside the circle. 
+Real is black; imaginary is blue.
 The scale of the mapping from the value of <b>f</b> to radius is controlled by the slider, which has
 a logarithmic scale.</p>
 
+<p>If the graph of <b>f</b> goes through
+the centre, then the graph ceases to be ambiguous, and you should use the slider to reduce the scale factor.</p>
+
 <h2>Issues and Browser Compatibility</h2>
 
-<p>So far I have tested Domkol on the latest versions of various browser. The primary development browser
-is currently Chromium on Linux.</p>
+<p>So far I have tested Domkol on the latest versions of various browsers, including:</p>
+
+<ul>
+ <li>In Linux (Ubuntu 12.10): Chromium, Chrome and Firefox. </li>
+ <li>In Windows (Vista): Chrome, Firefox, Opera, Safari and Internet Explorer.</li>
+</ul>
+
+<p>I am using Chromium on Linux to develop the application, so at any particular time it is likely
+to work most correctly on that browser.</p>
 
 <p>Known issues are:</p>
 
 <ul>
- <li>It works on Chromium, Chrome and Firefox on Linux and Windows, also (mostly) Internet Explorer on Windows.</li>
  <li>I haven't worked out how to increase the slider length.</li>
- <li>On Internet Explorer, the slider appears to the left instead of the right.</li>
+ <li>On Internet Explorer, the slider appears to the left instead of the right (but I haven't yet put it where I really want it, so this is not a big issue yet).</li>
  <li>The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
 </ul>
 
-<p><b>TL;DR:</b> it works best on Chrome/Chromium or Firefox with a mouse.</p>
+<p><b>TL;DR:</b> Domkol works with latest version of any major desktop web browser with a mouse.</p>
 </body>
 </html>
