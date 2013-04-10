@@ -63,7 +63,7 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(explorerModel, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
+function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
                               realPath, imaginaryPath) {
   var numSteps = 2*Math.PI/angleIncrement;
   var pointsReal = new Array();
@@ -114,7 +114,7 @@ function readyCircleAndHandles(explorerModel) {
     var scaleF = 0.1 * Math.pow(1.05, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
     var angleIncrement = 0.02;
-    drawFunctionOnCircle(explorerModel, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
+    drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, angleIncrement, 
                          realPath, imaginaryPath);
   }
   
