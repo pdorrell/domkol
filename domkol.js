@@ -68,6 +68,7 @@ function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, an
   var pointsReal = new Array();
   var pointsImaginary = new Array();
   var theta = 0;
+  var scaleFPixels = scaleF*scaleZ;
   for (var i=0; i<numSteps+1; i++) {
     var sinTheta = Math.sin(theta);
     var cosTheta = Math.cos(theta);
@@ -76,8 +77,8 @@ function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, an
     var x = (px-offsetX)/scaleZ;
     var y = (py-offsetY)/scaleZ;
     var fValue = f([x, y]);
-    var rReal = r + fValue[0] * scaleF;
-    var rImaginary = r + fValue[1] * scaleF;
+    var rReal = r + fValue[0] * scaleFPixels;
+    var rImaginary = r + fValue[1] * scaleFPixels;
     pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy];
     pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy];
     theta += angleIncrement;
@@ -103,8 +104,8 @@ function readyCircleAndHandles(f) {
     var offsetY = 256;
     var scaleZ = 256;
     var scaleValue = scaleSlider.slider("value");
-    var scaleF = 20 * Math.pow(1.05, scaleValue);
-    scaleValueText.text(Math.round(scaleF));
+    var scaleF = 0.1 * Math.pow(1.05, scaleValue);
+    scaleValueText.text(Math.round(scaleF*100)/100.0);
     var angleIncrement = 0.02;
     drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                          realPath, imaginaryPath);
