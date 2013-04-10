@@ -62,7 +62,7 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scale, angleIncrement, 
+function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                               realPath, imaginaryPath) {
   var numSteps = 2*Math.PI/angleIncrement;
   var pointsReal = new Array();
@@ -76,8 +76,8 @@ function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scale, ang
     var x = (px-offsetX)/scaleZ;
     var y = (py-offsetY)/scaleZ;
     var fValue = f([x, y]);
-    var rReal = r + fValue[0] * scale;
-    var rImaginary = r + fValue[1] * scale;
+    var rReal = r + fValue[0] * scaleF;
+    var rImaginary = r + fValue[1] * scaleF;
     pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy];
     pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy];
     theta += angleIncrement;
@@ -103,10 +103,10 @@ function readyCircleAndHandles(f) {
     var offsetY = 256;
     var scaleZ = 256;
     var scaleValue = scaleSlider.slider("value");
-    var scale = 20 * Math.pow(1.05, scaleValue);
-    scaleValueText.text(Math.round(scale));
+    var scaleF = 20 * Math.pow(1.05, scaleValue);
+    scaleValueText.text(Math.round(scaleF));
     var angleIncrement = 0.02;
-    drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scale, angleIncrement, 
+    drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                          realPath, imaginaryPath);
   }
   
