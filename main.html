@@ -75,12 +75,22 @@ to work most correctly on that browser.</p>
 <p>Known issues are:</p>
 
 <ul>
- <li>On Internet Explorer, the slider appears to the left instead of the right (but I haven't yet put it where I really want it, so this is not a big issue yet).</li>
+ <li>On Internet Explorer, the slider does not appear correctly on the right, and it is not sized correctly
+(which unfortunately makes it unuseable).</li>
+ <li>Performance: Now that I have set the 1-dimensional graph to calculate a new value of <b>f</b> 
+roughly once per pixel in the domain curve, there are some noticeable performance variations between 
+browers, especially when dragging the circle handles.
+For example, Firefox on Linux is much "jumpier" than Chrome/Chromium on Linux. On Windows,
+Chrome and Opera seem smooth, Safari, IE and Firefox seem a bit jumpy. This is just my experience &ndash; 
+which almost certainly depends on specific details of my hardware setup and which operating systems I have installed.
+You may have to experiment to determine which browser works best for you. (My immediate plans are that if it works
+well on at least one browser, I prefer to concentrate on developing new functionality, rather than spending time optimising
+for other browsers.)</li>
  <li>The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
 </ul>
 
-<p><b>TL;DR:</b> Domkol works with latest version of any major desktop web browser with a mouse.</p>
+<p><b>TL;DR:</b> Domkol works best with Chrome or Chromium on a desktop with a mouse.</p>
 </body>
 </html>
