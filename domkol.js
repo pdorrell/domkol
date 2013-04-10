@@ -63,20 +63,26 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
+function drawFunctionOnCircle(explorerModel, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                               realPath, imaginaryPath) {
   var numSteps = 2*Math.PI/angleIncrement;
   var pointsReal = new Array();
   var pointsImaginary = new Array();
   var theta = 0;
-  var scaleFPixels = scaleF*scaleZ;
+  var f = explorerModel.f;
+  var minX = explorerModel.minX();
+  var minY = explorerModel.minY();
+  var xRange = explorerModel.xRange();
+  var yRange = explorerModel.yRange();
+  var pixelSize = explorerModel.pixelSize;
+  var scaleFPixels = scaleF*(pixelSize/xRange);
   for (var i=0; i<numSteps+1; i++) {
     var sinTheta = Math.sin(theta);
     var cosTheta = Math.cos(theta);
     var px = cx + r * sinTheta;
     var py = cy + r * cosTheta;
-    var x = (px-offsetX)/scaleZ;
-    var y = (py-offsetY)/scaleZ;
+    var x = minX + (px/pixelSize)*xRange;
+    var y = minY + (py/pixelSize)*yRange;
     var fValue = f([x, y]);
     var rReal = r + fValue[0] * scaleFPixels;
     var rImaginary = r + fValue[1] * scaleFPixels;
@@ -108,7 +114,7 @@ function readyCircleAndHandles(explorerModel) {
     var scaleF = 0.1 * Math.pow(1.05, scaleValue);
     scaleValueText.text(Math.round(scaleF*100)/100.0);
     var angleIncrement = 0.02;
-    drawFunctionOnCircle(explorerModel.f, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
+    drawFunctionOnCircle(explorerModel, cx, cy, r, offsetX, offsetY, scaleZ, scaleF, angleIncrement, 
                          realPath, imaginaryPath);
   }
   
