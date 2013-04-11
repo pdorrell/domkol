@@ -18,24 +18,23 @@
 </div>
 
 <div style="position:relative;height:550px;">
-<svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
+  <svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
      width="550" height="550" viewbox="0 0 550 550">
      <circle id="big-circle" cx="256" cy="256" r="150" stroke="white" stroke-width="2" fill="none"/>
      <path id="real-path" d="M0,0" fill="none" stroke="black" stroke-width="2"/>
      <path id="imaginary-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
      <circle id="centre-handle" cx="256" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
      <circle id="edge-handle" cx="406" cy="256" r="12" stroke="white" stroke-width="2" fill="black"/>
-</svg>
-<canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
+  </svg>
+  <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
         width="550" height="550"></canvas>
-  <table style="position:absolute;top:40;left:550;z-index:2;">
+  <table style="position:absolute;top:40px;left:550px;z-index:2;">
     <tr><td colspan="3">Drag the small black circles to move and resize the large circle.</td></tr>
     <tr><td>&nbsp;</td></tr>
     <tr>
       <td>Graph scale:</td>
       <td>
-        <div id="scale-slider" style="width:250;"
-             style="height:200px; float:right;clear:right;"></div>
+        <div id="scale-slider" style="width:260px;"></div>
       </td>
       <td id="scale-value" style="width:4em;text-align:right"></td>
     </tr>
