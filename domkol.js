@@ -60,6 +60,7 @@ function svgDraggable(handle) {
     });
 }
 
+// Draw an array of 2D points (each point is an array) into an SVG path
 function drawPointsPath(svgPath, points) {
   var pointStrings = new Array();
   for (var i=0; i<points.length; i++) {
@@ -72,32 +73,20 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(explorerModel, 
-                              realPath, imaginaryPath) {
-  var pointArrays = explorerModel.domainCircle.functionGraphPointArrays();
-  drawPointsPath(realPath, pointArrays[0]);
-  drawPointsPath(imaginaryPath, pointArrays[1]);
-}
-
 function readyCircleAndHandles(explorerModel) {
-  var scaleSlider = $("#scale-slider");
-  var scaleValueText = $("#scale-value");
-  
-  var domainCircle = explorerModel.domainCircle;
   
   var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
                                                edgeHandle: $('#edge-handle'), 
                                                bigCircle: $("#big-circle"), 
                                                realPath: $("#real-path"), 
                                                imaginaryPath: $("#imaginary-path"), 
-                                               domainCircle: domainCircle});
+                                               domainCircle: explorerModel.domainCircle});
   
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                                       domainCircleView: domainCircleView, 
                                                       scaleSlider: $("#scale-slider"), 
                                                       scaleValueText: $("#scale-value")});
-  
-  domainCircleView.drawFunctionOnCircle();
+
 }
 
 function times(z1, z2) {
@@ -277,29 +266,35 @@ DomainCircleView.prototype = {
 };
   
 function ComplexFunctionExplorerView(attributes) {
-    setAttributes(this, attributes, 
-                  ["explorerModel", "domainCircleView", "scaleSlider", "scaleValueText"]);
-    
-    this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
-          "orientation": "horizontal"});
-    
-    var view = this;
-    
-    this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
-    this.scaleSlider.on("slidechange", function(event, ui) { view.fScaleUpdated(ui.value);} );
-    
-    this.setScaleFFromView(this.scaleSlider.slider("value"));
+  setAttributes(this, attributes, 
+                ["explorerModel", "domainCircleView", "scaleSlider", "scaleValueText"]);
+  
+  this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+        "orientation": "horizontal"});
+  
+  var view = this;
+  
+  this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
+  this.scaleSlider.on("change", function(event, ui) { view.fScaleUpdated(ui.value);} );
+  
+  this.setScaleFFromView(this.scaleSlider.slider("value"));
+  
+  this.drawFunctionGraphs();
 }
 
 ComplexFunctionExplorerView.prototype = {
   
   "fScaleUpdated": function(value) {
     this.setScaleFFromView(value);
-    this.domainCircleView.drawFunctionOnCircle();
+    this.drawFunctionGraphs();
   }, 
   
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
     this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
+  }, 
+
+  "drawFunctionGraphs": function() {
+    this.domainCircleView.drawFunctionOnCircle();
   }
 }
