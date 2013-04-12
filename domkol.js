@@ -8,15 +8,8 @@ $(document).ready(function(){
                                                            maxColourValue: 1.0,
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
-    readyCanvas(explorerModel);
-    readyCircleAndHandles(explorerModel);
+    createExplorerView(explorerModel);
   });
-
-function readyCanvas(explorerModel) {
-  var canvas =  $('#domkol-canvas')[0];
-  var ctx = canvas.getContext("2d");
-  drawOnCanvas(ctx, explorerModel);
-} 
 
 function objectToString(object, maxValueLength) {
   var result = "{";
@@ -73,8 +66,9 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function readyCircleAndHandles(explorerModel) {
+function createExplorerView(explorerModel) {
   
+
   var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
                                                edgeHandle: $('#edge-handle'), 
                                                bigCircle: $("#big-circle"), 
@@ -83,10 +77,10 @@ function readyCircleAndHandles(explorerModel) {
                                                domainCircle: explorerModel.domainCircle});
   
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
+                                                      canvas: $('#domkol-canvas')[0], 
                                                       domainCircleView: domainCircleView, 
                                                       scaleSlider: $("#scale-slider"), 
                                                       scaleValueText: $("#scale-value")});
-
 }
 
 function times(z1, z2) {
@@ -100,12 +94,6 @@ function square(z) {
 
 function cube(z) {
   return times(z, times(z, z));
-}
-
-function drawOnCanvas(ctx, explorerModel) {
-  var imageData = ctx.createImageData(explorerModel.widthInPixels(), explorerModel.heightInPixels());
-  explorerModel.writeToCanvasData(imageData.data);
-  ctx.putImageData(imageData, 0, 0);
 }
 
 function setAttributes(object, attributes, keys) {
@@ -267,8 +255,10 @@ DomainCircleView.prototype = {
   
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "domainCircleView", "scaleSlider", "scaleValueText"]);
+                ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText"]);
   
+  this.drawDomainColouring();
+
   this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal"});
   
@@ -296,5 +286,14 @@ ComplexFunctionExplorerView.prototype = {
 
   "drawFunctionGraphs": function() {
     this.domainCircleView.drawFunctionOnCircle();
+  }, 
+  
+  "drawDomainColouring" : function() {
+    var ctx = this.canvas.getContext("2d");
+    var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
+                                        this.explorerModel.heightInPixels());
+    this.explorerModel.writeToCanvasData(imageData.data);
+    ctx.putImageData(imageData, 0, 0);
   }
+    
 }
