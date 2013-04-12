@@ -8,7 +8,19 @@ $(document).ready(function(){
                                                            maxColourValue: 1.0,
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
-    createExplorerView(explorerModel);
+
+    var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
+                                                 edgeHandle: $('#edge-handle'), 
+                                                 bigCircle: $("#big-circle"), 
+                                                 realPath: $("#real-path"), 
+                                                 imaginaryPath: $("#imaginary-path"), 
+                                                 domainCircle: explorerModel.domainCircle});
+  
+    var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
+                                                        canvas: $('#domkol-canvas')[0], 
+                                                        domainCircleView: domainCircleView, 
+                                                        scaleSlider: $("#scale-slider"), 
+                                                        scaleValueText: $("#scale-value")});
   });
 
 function objectToString(object, maxValueLength) {
@@ -64,23 +76,6 @@ function drawPointsPath(svgPath, points) {
   pointStrings[1] = "L" + pointStrings[1];
   var pathString = pointStrings.join(" ");
   svgPath.attr("d", pathString);
-}
-
-function createExplorerView(explorerModel) {
-  
-
-  var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
-                                               edgeHandle: $('#edge-handle'), 
-                                               bigCircle: $("#big-circle"), 
-                                               realPath: $("#real-path"), 
-                                               imaginaryPath: $("#imaginary-path"), 
-                                               domainCircle: explorerModel.domainCircle});
-  
-  var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                                      canvas: $('#domkol-canvas')[0], 
-                                                      domainCircleView: domainCircleView, 
-                                                      scaleSlider: $("#scale-slider"), 
-                                                      scaleValueText: $("#scale-value")});
 }
 
 function times(z1, z2) {
