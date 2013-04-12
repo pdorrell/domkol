@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    var domainCircle = new DomainCircle({cx: 0, cy: 0, r: 0, scaleF: 0, // (currently initialised from view each time drawn)
+    var domainCircle = new DomainCircle({centreHandlePosition: [256, 256], 
+                                         edgeHandlePosition: [406, 256], 
                                          circumferenceIncrementInPixels: 1});
     
     var explorerModel = new ComplexFunctionExplorerModel({ f: cube, 
@@ -7,6 +8,7 @@ $(document).ready(function(){
                                                            originPixelLocation: [256, 256], 
                                                            pixelsDimension: [512, 512], 
                                                            maxColourValue: 1.0,
+                                                           scaleMax: 100, 
                                                            domainCircle: domainCircle });
     readyCanvas(explorerModel);
     readyCircleAndHandles(explorerModel);
@@ -74,7 +76,7 @@ function drawPointsPath(svgPath, points) {
 
 function drawFunctionOnCircle(explorerModel, 
                               realPath, imaginaryPath) {
-  var pointArrays = explorerModel.circleFunctionGraphPointArrays();
+  var pointArrays = explorerModel.domainCircle.functionGraphPointArrays();
   drawPointsPath(realPath, pointArrays[0]);
   drawPointsPath(imaginaryPath, pointArrays[1]);
 }
@@ -88,14 +90,22 @@ function readyCircleAndHandles(explorerModel) {
   var scaleSlider = $("#scale-slider");
   var scaleValueText = $("#scale-value");
   
+  var domainCircle = explorerModel.domainCircle;
+  
+  function setDomainCircleFromView() {
+    var centreX = parseInt(bigCircle.attr('cx'));
+    var centreY = parseInt(bigCircle.attr('cy'));
+    domainCircle.centreHandlePosition = [centreX, centreY];
+    var edgeX = edgeHandle.attr('cx');
+    var edgeY = edgeHandle.attr('cy');
+    domainCircle.edgeHandlePosition = [edgeX-centreX, edgeY-centreY]; // relative position
+    domainCircle.calculateRadius();
+  }    
+
   function drawFOnCircle() {
-    var domainCircle = explorerModel.domainCircle;
-    domainCircle.cx = parseInt(bigCircle.attr('cx'));
-    domainCircle.cy = parseInt(bigCircle.attr('cy'));
-    domainCircle.r = parseInt(bigCircle.attr('r'));
     var scaleValue = scaleSlider.slider("value");
-    domainCircle.scaleF = 0.01 * Math.pow(1.08, scaleValue);
-    scaleValueText.text(Math.round(domainCircle.scaleF*100)/100.0);
+    explorerModel.scaleF = 0.5 * Math.pow(1.08, scaleValue-50);
+    scaleValueText.text(Math.round(explorerModel.scaleF*100)/100.0);
     drawFunctionOnCircle(explorerModel, realPath, imaginaryPath);
   }
   
@@ -108,22 +118,16 @@ function readyCircleAndHandles(explorerModel) {
   centreHandle.on('svgDrag', function(event, x, y) {
       bigCircle.attr('cx', x);
       bigCircle.attr('cy', y);
-      var edgeX = parseInt(bigCircle.attr('edge-x'));
-      var edgeY = parseInt(bigCircle.attr('edge-y'));
-      edgeHandle.attr('cx', x + edgeX);
-      edgeHandle.attr('cy', y + edgeY);
+      var edgePos = domainCircle.edgeHandlePosition;
+      edgeHandle.attr('cx', x + edgePos[0]);
+      edgeHandle.attr('cy', y + edgePos[1]);
+      setDomainCircleFromView();
       drawFOnCircle();
     });
   
   edgeHandle.on('svgDrag', function(event, x, y) {
-      var cx = bigCircle.attr('cx');
-      var cy = bigCircle.attr('cy');
-      var edgeX = x-cx;
-      var edgeY = y-cy;
-      bigCircle.attr('edge-x', edgeX);
-      bigCircle.attr('edge-y', edgeY);
-      var radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
-      bigCircle.attr('r', radius);
+      setDomainCircleFromView();
+      bigCircle.attr('r', domainCircle.radius);
       drawFOnCircle();
     });
   
@@ -131,7 +135,8 @@ function readyCircleAndHandles(explorerModel) {
         "orientation": "horizontal", 
         "slide": drawFOnCircle, "change": drawFOnCircle});
   
-    drawFOnCircle();
+  setDomainCircleFromView();
+  drawFOnCircle();
 }
 
 function drawOnCanvas(ctx, explorerModel) {
@@ -171,16 +176,23 @@ function setAttributes(object, attributes, keys) {
 
 function DomainCircle(attributes) {
   setAttributes(this, attributes, 
-                ["cx", "cy", "r", "scaleF", "circumferenceIncrementInPixels"]);
+                ["centreHandlePosition", "edgeHandlePosition", "circumferenceIncrementInPixels"]);
 }
 
 DomainCircle.prototype = {
+  calculateRadius: function() {
+    var edgeX = this.edgeHandlePosition[0];
+    var edgeY = this.edgeHandlePosition[1];
+    this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
+  }, 
+  
   // return real & imaginary paths as arrays of points
-  functionGraphPointArrays: function (explorerModel) {
+  functionGraphPointArrays: function () {
+    var explorerModel = this.explorerModel;
     var unitsPerPixel = explorerModel.unitsPerPixel();
-    var cx = this.cx;
-    var cy = this.cy;
-    var r = this.r;
+    var cx = this.centreHandlePosition[0];
+    var cy = this.centreHandlePosition[1];
+    var r = this.radius;
     var angleIncrement = this.circumferenceIncrementInPixels / r;
     var numSteps = 2*Math.PI/angleIncrement;
     var pointsReal = new Array();
@@ -191,7 +203,7 @@ DomainCircle.prototype = {
     var minY = explorerModel.minY();
     var xRange = explorerModel.xRange();
     var yRange = explorerModel.yRange();
-    var scaleFPixels = this.scaleF/unitsPerPixel;
+    var scaleFPixels = explorerModel.scaleF/unitsPerPixel;
     for (var i=0; i<numSteps+1; i++) {
       var sinTheta = Math.sin(theta);
       var cosTheta = Math.cos(theta);
@@ -213,8 +225,9 @@ DomainCircle.prototype = {
 function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
                 ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
-                 "domainCircle", 
+                 "domainCircle", "scaleMax", 
                  "maxColourValue"])// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
+    this.domainCircle.explorerModel = this; // link to parent
 }
 
 ComplexFunctionExplorerModel.prototype = {
@@ -229,10 +242,6 @@ ComplexFunctionExplorerModel.prototype = {
   widthInPixels: function() { return this.pixelsDimension[0]; }, 
 
   heightInPixels: function() { return this.pixelsDimension[1]; }, 
-  
-  circleFunctionGraphPointArrays: function() {
-    return this.domainCircle.functionGraphPointArrays(this);
-  }, 
   
   writeToCanvasData: function(data) {
     var widthInPixels = this.widthInPixels();
