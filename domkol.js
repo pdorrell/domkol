@@ -111,17 +111,18 @@ function setAttributes(object, attributes, keys) {
 function DomainCircle(attributes) {
   setAttributes(this, attributes, 
                 ["circumferenceIncrementInPixels"]);
+  // attributes set by view: centreHandlePosition, edgeHandlePosition, radius
 }
 
 DomainCircle.prototype = {
-  calculateRadius: function() {
+  "calculateRadius": function() {
     var edgeX = this.edgeHandlePosition[0];
     var edgeY = this.edgeHandlePosition[1];
     this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
   }, 
   
   // return real & imaginary paths as arrays of points
-  functionGraphPointArrays: function () {
+  "functionGraphPointArrays": function () {
     var explorerModel = this.explorerModel;
     var unitsPerPixel = explorerModel.unitsPerPixel();
     var cx = this.centreHandlePosition[0];
@@ -160,24 +161,27 @@ function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
                 ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
                  "domainCircle", "scaleMax", 
-                 "maxColourValue"])// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
-    this.domainCircle.explorerModel = this; // link to parent
+                 "maxColourValue"]);// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
+  
+  // attributes set by view: scaleF
+    
+  this.domainCircle.explorerModel = this; // link to parent
 }
 
 ComplexFunctionExplorerModel.prototype = {
-  minX: function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
-  minY: function() { return -(this.originPixelLocation[1]/this.pixelsPerUnit); }, 
+  "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
+  "minY": function() { return -(this.originPixelLocation[1]/this.pixelsPerUnit); }, 
   
-  xRange: function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
-  yRange: function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
+  "xRange": function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
+  "yRange": function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
   
-  unitsPerPixel: function() {return 1.0/this.pixelsPerUnit;}, 
+  "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
   
-  widthInPixels: function() { return this.pixelsDimension[0]; }, 
+  "widthInPixels": function() { return this.pixelsDimension[0]; }, 
 
-  heightInPixels: function() { return this.pixelsDimension[1]; }, 
+  "heightInPixels": function() { return this.pixelsDimension[1]; }, 
   
-  writeToCanvasData: function(data) {
+  "writeToCanvasData": function(data) {
     var widthInPixels = this.widthInPixels();
     var heightInPixels = this.heightInPixels();
     var minX = this.minX();
