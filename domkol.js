@@ -143,10 +143,6 @@ function readyCircleAndHandles(explorerModel) {
   drawFOnCircle();
 }
 
-function drawOnCanvas(ctx, explorerModel) {
-  drawColors(ctx, explorerModel);
-}
-
 function times(z1, z2) {
   return [z1[0]*z2[0] - z1[1]*z2[1], 
           z1[0]*z2[1] + z1[1]*z2[0]];
@@ -160,7 +156,7 @@ function cube(z) {
   return times(z, times(z, z));
 }
 
-function drawColors(ctx, explorerModel) {
+function drawOnCanvas(ctx, explorerModel) {
   var imageData = ctx.createImageData(explorerModel.widthInPixels(), explorerModel.heightInPixels());
   explorerModel.writeToCanvasData(imageData.data);
   ctx.putImageData(imageData, 0, 0);
