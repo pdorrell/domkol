@@ -92,22 +92,11 @@ function readyCircleAndHandles(explorerModel) {
                                                imaginaryPath: $("#imaginary-path"), 
                                                domainCircle: domainCircle});
   
-  function setScaleFFromView() {
-    var scaleValue = scaleSlider.slider("value");
-    explorerModel.scaleF = 0.5 * Math.pow(1.08, scaleValue-50);
-    scaleValueText.text(Math.round(explorerModel.scaleF*100)/100.0);
-  }    
-
-  scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
-        "orientation": "horizontal", 
-        "slide": fScaleUpdated, "change": fScaleUpdated});
+  var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
+                                                      domainCircleView: domainCircleView, 
+                                                      scaleSlider: $("#scale-slider"), 
+                                                      scaleValueText: $("#scale-value")});
   
-  function fScaleUpdated() {
-    setScaleFFromView();
-    domainCircleView.drawFunctionOnCircle();
-  }
-  
-  setScaleFFromView();
   domainCircleView.drawFunctionOnCircle();
 }
 
@@ -188,7 +177,7 @@ DomainCircle.prototype = {
     }
     return [pointsReal, pointsImaginary];
   }
-}
+};
 
 function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
@@ -285,4 +274,32 @@ DomainCircleView.prototype = {
     drawPointsPath(this.imaginaryPath, pointArrays[1]);
   }
 
+};
+  
+function ComplexFunctionExplorerView(attributes) {
+    setAttributes(this, attributes, 
+                  ["explorerModel", "domainCircleView", "scaleSlider", "scaleValueText"]);
+    
+    this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+          "orientation": "horizontal"});
+    
+    var view = this;
+    
+    this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
+    this.scaleSlider.on("slidechange", function(event, ui) { view.fScaleUpdated(ui.value);} );
+    
+    this.setScaleFFromView(this.scaleSlider.slider("value"));
+}
+
+ComplexFunctionExplorerView.prototype = {
+  
+  "fScaleUpdated": function(value) {
+    this.setScaleFFromView(value);
+    this.domainCircleView.drawFunctionOnCircle();
+  }, 
+  
+  "setScaleFFromView": function(value) {
+    this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
+    this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
+  }
 }
