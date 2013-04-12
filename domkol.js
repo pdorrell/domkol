@@ -74,7 +74,7 @@ function drawPointsPath(svgPath, points) {
 
 function drawFunctionOnCircle(explorerModel, 
                               realPath, imaginaryPath) {
-  var pointArrays = explorerModel.domainCircle.functionGraphPointArrays(explorerModel);
+  var pointArrays = explorerModel.circleFunctionGraphPointArrays();
   drawPointsPath(realPath, pointArrays[0]);
   drawPointsPath(imaginaryPath, pointArrays[1]);
 }
@@ -229,6 +229,10 @@ ComplexFunctionExplorerModel.prototype = {
   widthInPixels: function() { return this.pixelsDimension[0]; }, 
 
   heightInPixels: function() { return this.pixelsDimension[1]; }, 
+  
+  circleFunctionGraphPointArrays: function() {
+    return this.domainCircle.functionGraphPointArrays(this);
+  }, 
   
   writeToCanvasData: function(data) {
     var widthInPixels = this.widthInPixels();
