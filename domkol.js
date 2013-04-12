@@ -1,5 +1,9 @@
 $(document).ready(function(){
-    var explorerModel = new ComplexFunctionExplorerModel(cube, 256, [256, 256], [512, 512], 1.0);
+    var explorerModel = new ComplexFunctionExplorerModel({ "f": cube, 
+                                                           pixelsPerUnit: 256, 
+                                                           originPixelLocation: [256, 256], 
+                                                           pixelsDimension: [512, 512], 
+                                                           maxColourValue: 1.0 });
     readyCanvas(explorerModel);
     readyCircleAndHandles(explorerModel);
   });
@@ -178,13 +182,22 @@ function drawColors(ctx, explorerModel) {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function ComplexFunctionExplorerModel(f, pixelsPerUnit, originPixelLocation, pixelsDimension, 
-                                      maxColourValue) {
-  this.f = f;
-  this.pixelsPerUnit = pixelsPerUnit;
-  this.originPixelLocation = originPixelLocation;
-  this.pixelsDimension = pixelsDimension;
-  this.maxColourValue = maxColourValue; // e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
+function setAttributes(object, attributes, keys) {
+  for (var i=0; i<keys.length; i++) {
+    var key = keys[i];
+    if (attributes.hasOwnProperty(key)) {
+      object[key] = attributes[key];
+    }
+    else {
+      throw "Attribute value " + key + " not supplied";
+    }
+  }
+}
+
+function ComplexFunctionExplorerModel(attributes) {
+  setAttributes(this, attributes, 
+                ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
+                 "maxColourValue"])// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
 }
 
 ComplexFunctionExplorerModel.prototype = {
