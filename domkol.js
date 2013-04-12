@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 function readyCanvas(explorerModel) {
   var canvas =  $('#domkol-canvas')[0];
-  var ctx = $('#domkol-canvas')[0].getContext("2d");
+  var ctx = canvas.getContext("2d");
   drawOnCanvas(ctx, explorerModel);
 } 
 
@@ -80,25 +80,17 @@ function drawFunctionOnCircle(explorerModel,
 }
 
 function readyCircleAndHandles(explorerModel) {
-  var centreHandle = $('#centre-handle');
-  var edgeHandle = $('#edge-handle');
-  var bigCircle = $("#big-circle");
-  var realPath = $("#real-path");
-  var imaginaryPath = $("#imaginary-path");
   var scaleSlider = $("#scale-slider");
   var scaleValueText = $("#scale-value");
   
   var domainCircle = explorerModel.domainCircle;
   
-  function setDomainCircleFromView() {
-    var centreX = parseInt(bigCircle.attr('cx'));
-    var centreY = parseInt(bigCircle.attr('cy'));
-    domainCircle.centreHandlePosition = [centreX, centreY];
-    var edgeX = edgeHandle.attr('cx');
-    var edgeY = edgeHandle.attr('cy');
-    domainCircle.edgeHandlePosition = [edgeX-centreX, edgeY-centreY]; // relative position
-    domainCircle.calculateRadius();
-  }    
+  var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
+                                               edgeHandle: $('#edge-handle'), 
+                                               bigCircle: $("#big-circle"), 
+                                               realPath: $("#real-path"), 
+                                               imaginaryPath: $("#imaginary-path"), 
+                                               domainCircle: domainCircle});
   
   function setScaleFFromView() {
     var scaleValue = scaleSlider.slider("value");
@@ -106,41 +98,17 @@ function readyCircleAndHandles(explorerModel) {
     scaleValueText.text(Math.round(explorerModel.scaleF*100)/100.0);
   }    
 
-  function drawFOnCircle() {
-    drawFunctionOnCircle(explorerModel, realPath, imaginaryPath);
-  }
-  
-  svgDraggable(centreHandle);
-  svgDraggable(edgeHandle);
-  
-  centreHandle.on('svgDrag', function(event, x, y) {
-      bigCircle.attr('cx', x);
-      bigCircle.attr('cy', y);
-      var edgePos = domainCircle.edgeHandlePosition;
-      edgeHandle.attr('cx', x + edgePos[0]);
-      edgeHandle.attr('cy', y + edgePos[1]);
-      setDomainCircleFromView();
-      drawFOnCircle();
-    });
-  
-  edgeHandle.on('svgDrag', function(event, x, y) {
-      setDomainCircleFromView();
-      bigCircle.attr('r', domainCircle.radius);
-      drawFOnCircle();
-    });
-  
   scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal", 
         "slide": fScaleUpdated, "change": fScaleUpdated});
   
   function fScaleUpdated() {
     setScaleFFromView();
-    drawFOnCircle();
+    domainCircleView.drawFunctionOnCircle();
   }
   
   setScaleFFromView();
-  setDomainCircleFromView();
-  drawFOnCircle();
+  domainCircleView.drawFunctionOnCircle();
 }
 
 function times(z1, z2) {
@@ -269,4 +237,52 @@ ComplexFunctionExplorerModel.prototype = {
       x += unitsPerPixel;
     }
   }
+};
+  
+function DomainCircleView (attributes) {
+  setAttributes(this, attributes, 
+                ["centreHandle", "edgeHandle", "bigCircle", "realPath", "imaginaryPath", 
+                 "domainCircle"]);
+  svgDraggable(this.centreHandle);
+  svgDraggable(this.edgeHandle);
+  
+  var view = this;
+  var domainCircle = this.domainCircle;
+  
+  this.centreHandle.on('svgDrag', function(event, x, y) {
+      view.bigCircle.attr('cx', x);
+      view.bigCircle.attr('cy', y);
+      var edgePos = domainCircle.edgeHandlePosition;
+      view.edgeHandle.attr('cx', x + edgePos[0]);
+      view.edgeHandle.attr('cy', y + edgePos[1]);
+      view.setModel();
+      view.drawFunctionOnCircle();
+    });
+  
+  this.edgeHandle.on('svgDrag', function(event, x, y) {
+      view.setModel();
+      view.bigCircle.attr('r', domainCircle.radius);
+      view.drawFunctionOnCircle();
+    });
+  
+  this.setModel();
+}
+
+DomainCircleView.prototype = {
+  "setModel": function() {
+    var centreX = parseInt(this.bigCircle.attr('cx'));
+    var centreY = parseInt(this.bigCircle.attr('cy'));
+    this.domainCircle.centreHandlePosition = [centreX, centreY];
+    var edgeX = this.edgeHandle.attr('cx');
+    var edgeY = this.edgeHandle.attr('cy');
+    this.domainCircle.edgeHandlePosition = [edgeX-centreX, edgeY-centreY]; // relative position
+    this.domainCircle.calculateRadius();
+  }, 
+  
+  "drawFunctionOnCircle": function() {
+    var pointArrays = this.domainCircle.functionGraphPointArrays();
+    drawPointsPath(this.realPath, pointArrays[0]);
+    drawPointsPath(this.imaginaryPath, pointArrays[1]);
+  }
+
 }
