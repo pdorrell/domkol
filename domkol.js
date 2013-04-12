@@ -1,7 +1,5 @@
 $(document).ready(function(){
-    var domainCircle = new DomainCircle({centreHandlePosition: [256, 256], 
-                                         edgeHandlePosition: [406, 256], 
-                                         circumferenceIncrementInPixels: 1});
+    var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
     
     var explorerModel = new ComplexFunctionExplorerModel({ f: cube, 
                                                            pixelsPerUnit: 256, 
@@ -101,19 +99,19 @@ function readyCircleAndHandles(explorerModel) {
     domainCircle.edgeHandlePosition = [edgeX-centreX, edgeY-centreY]; // relative position
     domainCircle.calculateRadius();
   }    
-
-  function drawFOnCircle() {
+  
+  function setScaleFFromView() {
     var scaleValue = scaleSlider.slider("value");
     explorerModel.scaleF = 0.5 * Math.pow(1.08, scaleValue-50);
     scaleValueText.text(Math.round(explorerModel.scaleF*100)/100.0);
+  }    
+
+  function drawFOnCircle() {
     drawFunctionOnCircle(explorerModel, realPath, imaginaryPath);
   }
   
   svgDraggable(centreHandle);
   svgDraggable(edgeHandle);
-  
-  bigCircle.attr('edge-x', edgeHandle.attr('cx') - bigCircle.attr('cx'));
-  bigCircle.attr('edge-y', edgeHandle.attr('cy') - bigCircle.attr('cy'));
   
   centreHandle.on('svgDrag', function(event, x, y) {
       bigCircle.attr('cx', x);
@@ -133,8 +131,14 @@ function readyCircleAndHandles(explorerModel) {
   
   scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal", 
-        "slide": drawFOnCircle, "change": drawFOnCircle});
+        "slide": fScaleUpdated, "change": fScaleUpdated});
   
+  function fScaleUpdated() {
+    setScaleFFromView();
+    drawFOnCircle();
+  }
+  
+  setScaleFFromView();
   setDomainCircleFromView();
   drawFOnCircle();
 }
@@ -176,7 +180,7 @@ function setAttributes(object, attributes, keys) {
 
 function DomainCircle(attributes) {
   setAttributes(this, attributes, 
-                ["centreHandlePosition", "edgeHandlePosition", "circumferenceIncrementInPixels"]);
+                ["circumferenceIncrementInPixels"]);
 }
 
 DomainCircle.prototype = {
