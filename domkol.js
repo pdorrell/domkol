@@ -1,9 +1,13 @@
 $(document).ready(function(){
-    var explorerModel = new ComplexFunctionExplorerModel({ "f": cube, 
+    var domainCircle = new DomainCircle({cx: 0, cy: 0, r: 0, scaleF: 0, // (currently initialised from view each time drawn)
+                                         circumferenceIncrementInPixels: 1});
+    
+    var explorerModel = new ComplexFunctionExplorerModel({ f: cube, 
                                                            pixelsPerUnit: 256, 
                                                            originPixelLocation: [256, 256], 
                                                            pixelsDimension: [512, 512], 
-                                                           maxColourValue: 1.0 });
+                                                           maxColourValue: 1.0,
+                                                           domainCircle: domainCircle });
     readyCanvas(explorerModel);
     readyCircleAndHandles(explorerModel);
   });
@@ -68,36 +72,11 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
-function drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, circumferenceIncrementInPixels, 
+function drawFunctionOnCircle(explorerModel, 
                               realPath, imaginaryPath) {
-  var unitsPerPixel = explorerModel.unitsPerPixel();
-  var angleIncrement = circumferenceIncrementInPixels / r;
-  var numSteps = 2*Math.PI/angleIncrement;
-  var pointsReal = new Array();
-  var pointsImaginary = new Array();
-  var theta = 0;
-  var f = explorerModel.f;
-  var minX = explorerModel.minX();
-  var minY = explorerModel.minY();
-  var xRange = explorerModel.xRange();
-  var yRange = explorerModel.yRange();
-  var scaleFPixels = scaleF/unitsPerPixel;
-  for (var i=0; i<numSteps+1; i++) {
-    var sinTheta = Math.sin(theta);
-    var cosTheta = Math.cos(theta);
-    var px = cx + r * sinTheta;
-    var py = cy + r * cosTheta;
-    var x = minX + px * unitsPerPixel;
-    var y = minY + py * unitsPerPixel;
-    var fValue = f([x, y]);
-    var rReal = r + fValue[0] * scaleFPixels;
-    var rImaginary = r + fValue[1] * scaleFPixels;
-    pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy];
-    pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy];
-    theta += angleIncrement;
-  }
-  drawPointsPath(realPath, pointsReal);
-  drawPointsPath(imaginaryPath, pointsImaginary);
+  var pointArrays = explorerModel.domainCircle.functionGraphPointArrays(explorerModel);
+  drawPointsPath(realPath, pointArrays[0]);
+  drawPointsPath(imaginaryPath, pointArrays[1]);
 }
 
 function readyCircleAndHandles(explorerModel) {
@@ -110,18 +89,14 @@ function readyCircleAndHandles(explorerModel) {
   var scaleValueText = $("#scale-value");
   
   function drawFOnCircle() {
-    var cx = parseInt(bigCircle.attr('cx'));
-    var cy = parseInt(bigCircle.attr('cy'));
-    var r = parseInt(bigCircle.attr('r'));
-    var offsetX = 256;
-    var offsetY = 256;
-    var scaleZ = 256;
+    var domainCircle = explorerModel.domainCircle;
+    domainCircle.cx = parseInt(bigCircle.attr('cx'));
+    domainCircle.cy = parseInt(bigCircle.attr('cy'));
+    domainCircle.r = parseInt(bigCircle.attr('r'));
     var scaleValue = scaleSlider.slider("value");
-    var scaleF = 0.01 * Math.pow(1.08, scaleValue);
-    scaleValueText.text(Math.round(scaleF*100)/100.0);
-    var circumferenceIncrementInPixels = 5;
-    drawFunctionOnCircle(explorerModel, cx, cy, r, scaleF, circumferenceIncrementInPixels, 
-                         realPath, imaginaryPath);
+    domainCircle.scaleF = 0.01 * Math.pow(1.08, scaleValue);
+    scaleValueText.text(Math.round(domainCircle.scaleF*100)/100.0);
+    drawFunctionOnCircle(explorerModel, realPath, imaginaryPath);
   }
   
   svgDraggable(centreHandle);
@@ -194,9 +169,51 @@ function setAttributes(object, attributes, keys) {
   }
 }
 
+function DomainCircle(attributes) {
+  setAttributes(this, attributes, 
+                ["cx", "cy", "r", "scaleF", "circumferenceIncrementInPixels"]);
+}
+
+DomainCircle.prototype = {
+  // return real & imaginary paths as arrays of points
+  functionGraphPointArrays: function (explorerModel) {
+    var unitsPerPixel = explorerModel.unitsPerPixel();
+    var cx = this.cx;
+    var cy = this.cy;
+    var r = this.r;
+    var angleIncrement = this.circumferenceIncrementInPixels / r;
+    var numSteps = 2*Math.PI/angleIncrement;
+    var pointsReal = new Array();
+    var pointsImaginary = new Array();
+    var theta = 0;
+    var f = explorerModel.f;
+    var minX = explorerModel.minX();
+    var minY = explorerModel.minY();
+    var xRange = explorerModel.xRange();
+    var yRange = explorerModel.yRange();
+    var scaleFPixels = this.scaleF/unitsPerPixel;
+    for (var i=0; i<numSteps+1; i++) {
+      var sinTheta = Math.sin(theta);
+      var cosTheta = Math.cos(theta);
+      var px = cx + r * sinTheta;
+      var py = cy + r * cosTheta;
+      var x = minX + px * unitsPerPixel;
+      var y = minY + py * unitsPerPixel;
+      var fValue = f([x, y]);
+      var rReal = r + fValue[0] * scaleFPixels;
+      var rImaginary = r + fValue[1] * scaleFPixels;
+      pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy];
+      pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy];
+      theta += angleIncrement;
+    }
+    return [pointsReal, pointsImaginary];
+  }
+}
+
 function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
                 ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
+                 "domainCircle", 
                  "maxColourValue"])// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
 }
 
