@@ -9,11 +9,13 @@ $(document).ready(function(){
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
 
-    var domainCircleView = new DomainCircleView({centreHandle: $('#centre-handle'), 
+    var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
+                                                 centreHandle: $('#centre-handle'), 
                                                  edgeHandle: $('#edge-handle'), 
                                                  bigCircle: $("#big-circle"), 
                                                  realPath: $("#real-path"), 
                                                  imaginaryPath: $("#imaginary-path"), 
+                                                 showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                  domainCircle: explorerModel.domainCircle});
   
     var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -209,8 +211,8 @@ ComplexFunctionExplorerModel.prototype = {
   
 function DomainCircleView (attributes) {
   setAttributes(this, attributes, 
-                ["centreHandle", "edgeHandle", "bigCircle", "realPath", "imaginaryPath", 
-                 "domainCircle"]);
+                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "realPath", "imaginaryPath", 
+                 "showCircleGraphCheckbox", "domainCircle"]);
   svgDraggable(this.centreHandle);
   svgDraggable(this.edgeHandle);
   
@@ -231,6 +233,10 @@ function DomainCircleView (attributes) {
       view.setModel();
       view.bigCircle.attr('r', domainCircle.radius);
       view.drawFunctionOnCircle();
+    });
+  
+  this.showCircleGraphCheckbox.on("change", function(event) {
+      view.circleGraph.toggle(this.checked);
     });
   
   this.setModel();
