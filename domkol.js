@@ -20,7 +20,10 @@ $(document).ready(function(){
                                                         canvas: $('#domkol-canvas')[0], 
                                                         domainCircleView: domainCircleView, 
                                                         scaleSlider: $("#scale-slider"), 
-                                                        scaleValueText: $("#scale-value")});
+                                                        scaleValueText: $("#scale-value"), 
+                                                        maxColourValueSlider: $("#max-colour-value-slider"), 
+                                                        maxColourValueText: $("#max-colour-value"), 
+      });
   });
 
 function objectToString(object, maxValueLength) {
@@ -254,20 +257,32 @@ DomainCircleView.prototype = {
   
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText"]);
-  
-  this.drawDomainColouring();
-
-  this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
-        "orientation": "horizontal"});
+                ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText", 
+                 "maxColourValueSlider", "maxColourValueText"]);
   
   var view = this;
+
+  function scaleChanged(event, ui) {
+    view.fScaleUpdated(ui.value);
+  }
+  
+  this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+        "orientation": "horizontal", "slide": scaleChanged, "change": scaleChanged});
+  
+  function maxColourValueChanged(event, ui) {
+    view.maxColourValueUpdated(ui.value);
+  }
+  
+  this.maxColourValueSlider.slider({"min": 0, "max": 100, "value": 50,
+        "orientation": "horizontal", "slide": maxColourValueChanged, "change": maxColourValueChanged});
   
   this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
   this.scaleSlider.on("change", function(event, ui) { view.fScaleUpdated(ui.value);} );
   
   this.setScaleFFromView(this.scaleSlider.slider("value"));
+  this.setMaxColourValueFromView(this.maxColourValueSlider.slider("value"));
   
+  this.drawDomainColouring();
   this.drawFunctionGraphs();
 }
 
@@ -278,9 +293,19 @@ ComplexFunctionExplorerView.prototype = {
     this.drawFunctionGraphs();
   }, 
   
+  "maxColourValueUpdated": function(value) {
+    this.setMaxColourValueFromView(value);
+    this.drawDomainColouring();
+  }, 
+  
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
     this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
+  }, 
+  
+  "setMaxColourValueFromView": function(value) {
+    this.explorerModel.maxColourValue = 1.0 * Math.pow(1.2, value-50);
+    this.maxColourValueText.text(Math.round(this.explorerModel.maxColourValue*100)/100.0);
   }, 
 
   "drawFunctionGraphs": function() {
