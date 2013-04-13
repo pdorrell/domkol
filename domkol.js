@@ -56,6 +56,7 @@ function svgDraggable(handle) {
         var cx = handle.getAttribute("cx");
         var cy = handle.getAttribute("cy");
         $(event.target).data("offset", [cx - event.pageX, cy - event.pageY]);
+        $(handle).trigger('startSvgDrag', [x, y]);
       })
     .bind('drag', function(event, ui){
         var handle = event.target;
