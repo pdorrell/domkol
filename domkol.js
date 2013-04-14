@@ -13,6 +13,7 @@ $(document).ready(function(){
                                                  centreHandle: $('#centre-handle'), 
                                                  edgeHandle: $('#edge-handle'), 
                                                  bigCircle: $("#big-circle"), 
+                                                 polarGrid: $("#polar-grid"), 
                                                  realPath: $("#real-path"), 
                                                  imaginaryPath: $("#imaginary-path"), 
                                                  showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
@@ -56,7 +57,7 @@ function svgDraggable(handle) {
         var cx = handle.getAttribute("cx");
         var cy = handle.getAttribute("cy");
         $(event.target).data("offset", [cx - event.pageX, cy - event.pageY]);
-        $(handle).trigger('startSvgDrag', [x, y]);
+        $(handle).trigger('startSvgDrag', [cx, cy]);
       })
     .bind('drag', function(event, ui){
         var handle = event.target;
@@ -80,6 +81,13 @@ function drawPointsPath(svgPath, points) {
   pointStrings[1] = "L" + pointStrings[1];
   var pathString = pointStrings.join(" ");
   svgPath.attr("d", pathString);
+}
+
+function pathCircleComponent(cx, cy, r) {
+  return "M" + cx + "," + cy + " " +
+    "m " + (-r) + ",0 " + 
+    "a " + r + "," + r + " 0 1,0 " + (2*r) + ",0 " +
+    "a " + r + "," + r + " 0 1,0 " + (-2*r) + ",0";
 }
 
 function times(z1, z2) {
@@ -210,7 +218,8 @@ ComplexFunctionExplorerModel.prototype = {
   
 function DomainCircleView (attributes) {
   setAttributes(this, attributes, 
-                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "realPath", "imaginaryPath", 
+                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "polarGrid", 
+                 "realPath", "imaginaryPath", 
                  "showCircleGraphCheckbox", "domainCircle"]);
   svgDraggable(this.centreHandle);
   svgDraggable(this.edgeHandle);
@@ -256,6 +265,32 @@ DomainCircleView.prototype = {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
     drawPointsPath(this.realPath, pointArrays[0]);
     drawPointsPath(this.imaginaryPath, pointArrays[1]);
+    this.drawPolarGrid();
+  }, 
+  
+  "drawPolarGrid": function() {
+    var theta = 0;
+    var numRadialLines = 24;
+    var thetaIncrement = Math.PI * 2 / numRadialLines;
+    var pathComponents = [];
+    var pathIndex = 0;
+    var centrePos = this.domainCircle.centreHandlePosition;
+    var centreX = centrePos[0];
+    var centreY = centrePos[1];
+    var moveToCentrePathComponent = "M" + centreX + "," + centreY;
+    var gridRadius = this.domainCircle.radius * 2;
+    for (var i = 0; i<numRadialLines; i++) {
+      var lineEndX = centreX + gridRadius * Math.sin(theta);
+      var lineEndY = centreY + gridRadius * Math.cos(theta);
+      pathComponents[pathIndex++] = moveToCentrePathComponent + " " + "L" + lineEndX + "," + lineEndY;
+      theta += thetaIncrement;
+    }
+    var radiusIncrement = 0.2 * this.domainCircle.radius;
+    for (var gridCircleRadius = radiusIncrement; gridCircleRadius <= gridRadius; gridCircleRadius += radiusIncrement) {
+      pathComponents[pathIndex++] = pathCircleComponent (centreX, centreY, gridCircleRadius);
+    }
+    
+    this.polarGrid.attr("d", pathComponents.join(" "));
   }
 
 };
