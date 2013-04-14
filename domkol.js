@@ -72,18 +72,29 @@ function svgDraggable(handle) {
     });
 }
 
+var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
+
+function getTranslation(handle) {
+  var transform = handle.attr("transform");
+  var translateRegexpMatch = translateRegexp.exec(transform);
+  if (translateRegexpMatch == null) {
+    throw "Invalid transform attribute (not a simple translate(x y)): " + transform;
+  }
+  return [parseInt(translateRegexpMatch[1]), parseInt(translateRegexpMatch[2])];
+}
+
+function setTranslation(handle, x, y) {
+  handle.attr("transform", "translate(" + x + " " + y + ")");
+}  
+
 function svgDraggableTranslatee(handle) {
-  var translateRegexp = /^translate[(]([-0-9.]*)[ ]*([-0-9.]*)[)]$/;
+  var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
   handle.draggable()
     .css('cursor', 'move')
     .bind('mousedown', function(event){
-        var transform = handle.attr("transform");
-        var translateRegexpMatch = translateRegexp.exec(transform);
-        if (translateRegexpMatch == null) {
-          throw "Invalid transform attribute value for dragging (not a simple translate(x y)): " + transform;
-        }
-        var x = parseInt(translateRegexpMatch[1]);
-        var y = parseInt(translateRegexpMatch[2]);
+        var position = getTranslation(handle);
+        var x = position[0];
+        var y = position[1];
         handle.data("offset", [x - event.pageX, y - event.pageY]);
         handle.trigger('startSvgDrag', [x, y]);
       })
@@ -91,7 +102,7 @@ function svgDraggableTranslatee(handle) {
         var offset = handle.data("offset");
         var x = event.pageX + offset[0];
         var y = event.pageY + offset[1];
-        handle.attr("transform", "translate(" + x + "," + y + ")");
+        setTranslation(handle, x, y);
         handle.trigger('svgDrag', [x, y]);
     });
 }
@@ -119,6 +130,10 @@ function pathCircleComponent(cx, cy, r) {
     "m " + (-r) + ",0 " + 
     "a " + r + "," + r + " 0 1,0 " + (2*r) + ",0 " +
     "a " + r + "," + r + " 0 1,0 " + (-2*r) + ",0";
+}
+
+function minus(z1, z2) {
+  return [z1[0]-z2[0], z1[1]-z2[1]];
 }
 
 function times(z1, z2) {
@@ -252,8 +267,8 @@ function DomainCircleView (attributes) {
                 ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "polarGrid", 
                  "realPath", "imaginaryPath", 
                  "showCircleGraphCheckbox", "domainCircle"]);
-  svgDraggable(this.centreHandle);
-  svgDraggable(this.edgeHandle);
+  svgDraggableTranslatee(this.centreHandle);
+  svgDraggableTranslatee(this.edgeHandle);
   
   var view = this;
   var domainCircle = this.domainCircle;
@@ -262,8 +277,7 @@ function DomainCircleView (attributes) {
       view.bigCircle.attr('cx', x);
       view.bigCircle.attr('cy', y);
       var edgePos = domainCircle.edgeHandlePosition;
-      view.edgeHandle.attr('cx', x + edgePos[0]);
-      view.edgeHandle.attr('cy', y + edgePos[1]);
+      setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]);
       view.setModel();
       view.drawFunctionOnCircle();
     });
@@ -283,12 +297,9 @@ function DomainCircleView (attributes) {
 
 DomainCircleView.prototype = {
   "setModel": function() {
-    var centreX = parseInt(this.bigCircle.attr('cx'));
-    var centreY = parseInt(this.bigCircle.attr('cy'));
-    this.domainCircle.centreHandlePosition = [centreX, centreY];
-    var edgeX = this.edgeHandle.attr('cx');
-    var edgeY = this.edgeHandle.attr('cy');
-    this.domainCircle.edgeHandlePosition = [edgeX-centreX, edgeY-centreY]; // relative position
+    this.domainCircle.centreHandlePosition = getTranslation(this.centreHandle);
+    this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
+                                                 this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
   }, 
   
