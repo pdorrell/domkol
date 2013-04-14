@@ -302,17 +302,18 @@ DomainCircleView.prototype = {
     var centreX = centrePos[0];
     var centreY = centrePos[1];
     var moveToCentrePathComponent = "M" + centreX + "," + centreY;
-    var radiusStepForScaledUnit = this.domainCircle.radius; // todo change this
-    var gridRadius = this.domainCircle.radius + radiusStepForScaledUnit;
+    var pixelsPerUnit = this.domainCircle.explorerModel.pixelsPerUnit;
+    var pixelsPerScaledUnit = pixelsPerUnit * this.domainCircle.explorerModel.scaleF;
+    var gridRadius = this.domainCircle.radius + pixelsPerScaledUnit;
     for (var i = 0; i<numRadialLines; i++) {
       var lineEndX = centreX + gridRadius * Math.sin(theta);
       var lineEndY = centreY + gridRadius * Math.cos(theta);
       pathComponents[pathIndex++] = moveToCentrePathComponent + " " + "L" + lineEndX + "," + lineEndY;
       theta += thetaIncrement;
     }
-    var stepsPerUnitScaledF = 5;
-    var radiusStep = radiusStepForScaledUnit / stepsPerUnitScaledF;
-    var initialRadius = this.domainCircle.radius - radiusStepForScaledUnit;
+    var stepsPerScaledUnit = 10;
+    var radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
+    var initialRadius = this.domainCircle.radius - pixelsPerScaledUnit;
     for (var gridCircleRadius = initialRadius; gridCircleRadius <= gridRadius; gridCircleRadius += radiusStep) {
       if (gridCircleRadius > 0) {
         pathComponents[pathIndex++] = pathCircleComponent (centreX, centreY, gridCircleRadius);
