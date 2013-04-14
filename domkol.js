@@ -174,6 +174,7 @@ DomainCircle.prototype = {
     var minY = explorerModel.minY();
     var xRange = explorerModel.xRange();
     var yRange = explorerModel.yRange();
+    var heightInPixels = explorerModel.heightInPixels();
     var scaleFPixels = explorerModel.scaleF/unitsPerPixel;
     for (var i=0; i<numSteps+1; i++) {
       var sinTheta = Math.sin(theta);
@@ -181,7 +182,7 @@ DomainCircle.prototype = {
       var px = cx + r * sinTheta;
       var py = cy + r * cosTheta;
       var x = minX + px * unitsPerPixel;
-      var y = minY + py * unitsPerPixel;
+      var y = minY + (heightInPixels - 1 - py) * unitsPerPixel;
       var fValue = f([x, y]);
       var rReal = r + fValue[0] * scaleFPixels;
       var rImaginary = r + fValue[1] * scaleFPixels;
@@ -206,7 +207,7 @@ function ComplexFunctionExplorerModel(attributes) {
 
 ComplexFunctionExplorerModel.prototype = {
   "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
-  "minY": function() { return -(this.originPixelLocation[1]/this.pixelsPerUnit); }, 
+  "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
   
   "xRange": function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
   "yRange": function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
@@ -231,11 +232,11 @@ ComplexFunctionExplorerModel.prototype = {
     var x = minX;
     for (var i=0; i<widthInPixels; i++) {
       var y = minY;
-      for (var j=0; j<heightInPixels; j++) {
+      for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
         var z = f([x, y]);
-        var k = (i*widthInPixels+j)*4;
-        data[k] = (z[0]*colourScale+1.0)*128;
-        data[k+1] = (z[1]*colourScale+1.0)*128;
+        var k = (j*widthInPixels+i)*4;
+        data[k] = (z[0]*colourScale+1.0)*128; // positive real = red
+        data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary = green
         data[k+2] = 0;
         data[k+3] = 255;
         y += unitsPerPixel;
