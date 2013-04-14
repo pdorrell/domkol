@@ -19,8 +19,10 @@
 
 <div class="wideItem">
 <div style="position:relative;height:550px;">
-  <svg style="position:absolute;top:0;left:0;z-index:1;"
+  <svg id="domkol-svg" style="position:absolute;top:0;left:0;z-index:1;"
      width="550" height="550" viewbox="0 0 550 550">
+     <rect id="canvas-drag-handle" transform="translate(0 0)" x="0" y="0" width="550" height="550"
+           stroke-width="10" stroke="grey" fill="none"/>
      <g id="zero-handles" display="none" >
        <g id="zero3-handle" transform="translate(256 256)">
           <circle cx="0" cy="0" r="1.5" stroke="none" fill="white"/>

@@ -21,7 +21,8 @@ $(document).ready(function(){
                                                  domainCircle: explorerModel.domainCircle});
   
     var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                                        canvas: $('#domkol-canvas')[0], 
+                                                        canvasDragHandle: $('#canvas-drag-handle'), 
+                                                        canvas: $('#domkol-canvas'), 
                                                         domainCircleView: domainCircleView, 
                                                         scaleSlider: $("#scale-slider"), 
                                                         scaleValueText: $("#scale-value"), 
@@ -346,7 +347,7 @@ DomainCircleView.prototype = {
   
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText", 
+                ["explorerModel", "canvasDragHandle", "canvas", "domainCircleView", "scaleSlider", "scaleValueText", 
                  "colourScaleSlider", "colourScaleText"]);
   
   var view = this;
@@ -367,6 +368,8 @@ function ComplexFunctionExplorerView(attributes) {
   
   this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
   this.scaleSlider.on("change", function(event, ui) { view.fScaleUpdated(ui.value);} );
+  
+  svgDraggable(this.canvasDragHandle);
   
   this.setScaleFFromView(this.scaleSlider.slider("value"));
   this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
@@ -402,7 +405,7 @@ ComplexFunctionExplorerView.prototype = {
   }, 
   
   "drawDomainColouring" : function() {
-    var ctx = this.canvas.getContext("2d");
+    var ctx = this.canvas[0].getContext("2d");
     var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
                                         this.explorerModel.heightInPixels());
     this.explorerModel.writeToCanvasData(imageData.data);
