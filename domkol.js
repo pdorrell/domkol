@@ -5,7 +5,7 @@ $(document).ready(function(){
                                                            pixelsPerUnit: 256, 
                                                            originPixelLocation: [256, 256], 
                                                            pixelsDimension: [512, 512], 
-                                                           maxColourValue: 1.0,
+                                                           colourScale: 1.0,
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
 
@@ -24,8 +24,8 @@ $(document).ready(function(){
                                                         domainCircleView: domainCircleView, 
                                                         scaleSlider: $("#scale-slider"), 
                                                         scaleValueText: $("#scale-value"), 
-                                                        maxColourValueSlider: $("#max-colour-value-slider"), 
-                                                        maxColourValueText: $("#max-colour-value"), 
+                                                        colourScaleSlider: $("#colour-scale-slider"), 
+                                                        colourScaleText: $("#colour-scale"), 
       });
     
     readyZeroHandles();
@@ -196,7 +196,7 @@ function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
                 ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
                  "domainCircle", "scaleMax", 
-                 "maxColourValue"]);// e.g. f = maxColourValue maps to +255, -maxColourValue maps to 0.
+                 "colourScale"]);// e.g. f = colourScale maps to +255, -colourScale maps to 0.
   
   // attributes set by view: scaleF
     
@@ -224,7 +224,7 @@ ComplexFunctionExplorerModel.prototype = {
     var minY = this.minY();
     var yRange = this.yRange();
     var f = this.f;
-    var colorFactor = 1.0/this.maxColourValue;
+    var colourScale = this.colourScale;
     var unitsPerPixel = this.unitsPerPixel();
     
     var x = minX;
@@ -233,8 +233,8 @@ ComplexFunctionExplorerModel.prototype = {
       for (var j=0; j<heightInPixels; j++) {
         var z = f([x, y]);
         var k = (i*widthInPixels+j)*4;
-        data[k] = (z[0]*colorFactor+1.0)*128;
-        data[k+1] = (z[1]*colorFactor+1.0)*128;
+        data[k] = (z[0]*colourScale+1.0)*128;
+        data[k+1] = (z[1]*colourScale+1.0)*128;
         data[k+2] = 0;
         data[k+3] = 255;
         y += unitsPerPixel;
@@ -322,7 +322,7 @@ DomainCircleView.prototype = {
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText", 
-                 "maxColourValueSlider", "maxColourValueText"]);
+                 "colourScaleSlider", "colourScaleText"]);
   
   var view = this;
 
@@ -333,18 +333,18 @@ function ComplexFunctionExplorerView(attributes) {
   this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal", "slide": scaleChanged, "change": scaleChanged});
   
-  function maxColourValueChanged(event, ui) {
-    view.maxColourValueUpdated(ui.value);
+  function colourScaleChanged(event, ui) {
+    view.colourScaleUpdated(ui.value);
   }
   
-  this.maxColourValueSlider.slider({"min": 0, "max": 100, "value": 50,
-        "orientation": "horizontal", "slide": maxColourValueChanged, "change": maxColourValueChanged});
+  this.colourScaleSlider.slider({"min": 0, "max": 100, "value": 50,
+        "orientation": "horizontal", "slide": colourScaleChanged, "change": colourScaleChanged});
   
   this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
   this.scaleSlider.on("change", function(event, ui) { view.fScaleUpdated(ui.value);} );
   
   this.setScaleFFromView(this.scaleSlider.slider("value"));
-  this.setMaxColourValueFromView(this.maxColourValueSlider.slider("value"));
+  this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
   
   this.drawDomainColouring();
   this.drawFunctionGraphs();
@@ -357,8 +357,8 @@ ComplexFunctionExplorerView.prototype = {
     this.drawFunctionGraphs();
   }, 
   
-  "maxColourValueUpdated": function(value) {
-    this.setMaxColourValueFromView(value);
+  "colourScaleUpdated": function(value) {
+    this.setColourScaleFromView(value);
     this.drawDomainColouring();
   }, 
   
@@ -367,9 +367,9 @@ ComplexFunctionExplorerView.prototype = {
     this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
   }, 
   
-  "setMaxColourValueFromView": function(value) {
-    this.explorerModel.maxColourValue = 1.0 * Math.pow(1.2, value-50);
-    this.maxColourValueText.text(Math.round(this.explorerModel.maxColourValue*100)/100.0);
+  "setColourScaleFromView": function(value) {
+    this.explorerModel.colourScale = 1.0 * Math.pow(1.2, value-50);
+    this.colourScaleText.text(Math.round(this.explorerModel.colourScale*100)/100.0);
   }, 
 
   "drawFunctionGraphs": function() {
