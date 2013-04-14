@@ -89,6 +89,8 @@ function svgDraggable(handle) {
 
 function readyZeroHandles() {
   svgDraggable($("#zero1-handle"));
+  svgDraggable($("#zero2-handle"));
+  svgDraggable($("#zero3-handle"));
 }
 
 
