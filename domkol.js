@@ -51,27 +51,6 @@ function objectToString(object, maxValueLength) {
   return result;
 }
 
-function svgDraggable(handle) {
-  handle.draggable()
-    .css('cursor', 'move')
-    .bind('mousedown', function(event){
-        var handle = event.target;
-        var cx = handle.getAttribute("cx");
-        var cy = handle.getAttribute("cy");
-        $(event.target).data("offset", [cx - event.pageX, cy - event.pageY]);
-        $(handle).trigger('startSvgDrag', [cx, cy]);
-      })
-    .bind('drag', function(event, ui){
-        var handle = event.target;
-        var offset = $(handle).data("offset");
-        var x = event.pageX + offset[0];
-        var y = event.pageY + offset[1];
-        handle.setAttribute('cx', x);
-        handle.setAttribute('cy', y);
-        $(handle).trigger('svgDrag', [x, y]);
-    });
-}
-
 var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
 
 function getTranslation(handle) {
@@ -87,8 +66,9 @@ function setTranslation(handle, x, y) {
   handle.attr("transform", "translate(" + x + " " + y + ")");
 }  
 
-function svgDraggableTranslatee(handle) {
+function svgDraggable(handle) {
   var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
+  var position = getTranslation(handle); // test that the transform attribute is set properly
   handle.draggable()
     .css('cursor', 'move')
     .bind('mousedown', function(event){
@@ -108,7 +88,7 @@ function svgDraggableTranslatee(handle) {
 }
 
 function readyZeroHandles() {
-  svgDraggableTranslatee($("#zero1-handle"));
+  svgDraggable($("#zero1-handle"));
 }
 
 
@@ -267,8 +247,8 @@ function DomainCircleView (attributes) {
                 ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "polarGrid", 
                  "realPath", "imaginaryPath", 
                  "showCircleGraphCheckbox", "domainCircle"]);
-  svgDraggableTranslatee(this.centreHandle);
-  svgDraggableTranslatee(this.edgeHandle);
+  svgDraggable(this.centreHandle);
+  svgDraggable(this.edgeHandle);
   
   var view = this;
   var domainCircle = this.domainCircle;
