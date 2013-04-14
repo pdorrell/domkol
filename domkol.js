@@ -27,6 +27,8 @@ $(document).ready(function(){
                                                         maxColourValueSlider: $("#max-colour-value-slider"), 
                                                         maxColourValueText: $("#max-colour-value"), 
       });
+    
+    readyZeroHandles();
   });
 
 function objectToString(object, maxValueLength) {
@@ -69,6 +71,35 @@ function svgDraggable(handle) {
         $(handle).trigger('svgDrag', [x, y]);
     });
 }
+
+function svgDraggableTranslatee(handle) {
+  var translateRegexp = /^translate[(]([-0-9.]*)[ ]*([-0-9.]*)[)]$/;
+  handle.draggable()
+    .css('cursor', 'move')
+    .bind('mousedown', function(event){
+        var transform = handle.attr("transform");
+        var translateRegexpMatch = translateRegexp.exec(transform);
+        if (translateRegexpMatch == null) {
+          throw "Invalid transform attribute value for dragging (not a simple translate(x y)): " + transform;
+        }
+        var x = parseInt(translateRegexpMatch[1]);
+        var y = parseInt(translateRegexpMatch[2]);
+        handle.data("offset", [x - event.pageX, y - event.pageY]);
+        handle.trigger('startSvgDrag', [x, y]);
+      })
+    .bind('drag', function(event, ui){
+        var offset = handle.data("offset");
+        var x = event.pageX + offset[0];
+        var y = event.pageY + offset[1];
+        handle.attr("transform", "translate(" + x + "," + y + ")");
+        handle.trigger('svgDrag', [x, y]);
+    });
+}
+
+function readyZeroHandles() {
+  svgDraggableTranslatee($("#zero1-handle"));
+}
+
 
 // Draw an array of 2D points (each point is an array) into an SVG path
 function drawPointsPath(svgPath, points) {
