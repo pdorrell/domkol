@@ -14,6 +14,7 @@ $(document).ready(function(){
                                                  edgeHandle: $('#edge-handle'), 
                                                  bigCircle: $("#big-circle"), 
                                                  polarGrid: $("#polar-grid"), 
+                                                 polarGridCoarse: $("#polar-grid-coarse"), 
                                                  realPath: $("#real-path"), 
                                                  imaginaryPath: $("#imaginary-path"), 
                                                  showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
@@ -246,7 +247,8 @@ ComplexFunctionExplorerModel.prototype = {
   
 function DomainCircleView (attributes) {
   setAttributes(this, attributes, 
-                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", "polarGrid", 
+                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", 
+                 "polarGrid", "polarGridCoarse", 
                  "realPath", "imaginaryPath", 
                  "showCircleGraphCheckbox", "domainCircle"]);
   svgDraggable(this.centreHandle);
@@ -298,7 +300,9 @@ DomainCircleView.prototype = {
     var numRadialLines = numRadialLinesPerQuarter*4;
     var thetaIncrement = Math.PI * 2 / numRadialLines;
     var pathComponents = [];
+    var coarsePathComponents = [];
     var pathIndex = 0;
+    var coarsePathIndex = 0;
     var centrePos = this.domainCircle.centreHandlePosition;
     var centreX = centrePos[0];
     var centreY = centrePos[1];
@@ -314,18 +318,27 @@ DomainCircleView.prototype = {
       var lineEndX = centreX + gridRadius * sinTheta;
       var lineStartY = centreY + innerGridRadius * cosTheta;
       var lineEndY = centreY + gridRadius * cosTheta;
-      pathComponents[pathIndex++] = "M" + lineStartX + "," + lineStartY + " " + "L" + lineEndX + "," + lineEndY;
+      var lineComponent = "M" + lineStartX + "," + lineStartY + " " + "L" + lineEndX + "," + lineEndY;
+      pathComponents[pathIndex++] = lineComponent;
+      if (i%numRadialLinesPerQuarter == 0) {
+        coarsePathComponents[coarsePathIndex++] = lineComponent;
+      }
       theta += thetaIncrement;
     }
     var stepsPerScaledUnit = 10;
     var radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
-    for (var gridCircleRadius = innerRadius; gridCircleRadius <= gridRadius; gridCircleRadius += radiusStep) {
+    for (var i = -stepsPerScaledUnit; i <= stepsPerScaledUnit; i++) {
+      var gridCircleRadius = this.domainCircle.radius + i * radiusStep;
       if (gridCircleRadius > 0) {
-        pathComponents[pathIndex++] = pathCircleComponent (centreX, centreY, gridCircleRadius);
+        var circleComponent = pathCircleComponent (centreX, centreY, gridCircleRadius);
+        pathComponents[pathIndex++] = circleComponent;
+        if (i%stepsPerScaledUnit == 0) {
+          coarsePathComponents[coarsePathIndex++] = circleComponent;
+        }
       }
     }
-    
     this.polarGrid.attr("d", pathComponents.join(" "));
+    this.polarGridCoarse.attr("d", coarsePathComponents.join(" "));
   }
 
 };

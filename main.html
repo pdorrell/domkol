@@ -38,6 +38,7 @@
      <g id="circle-graph">
        <circle id="big-circle" cx="256" cy="256" r="150" stroke="white" stroke-width="2" fill="none"/>
        <path id="polar-grid" d="M0,0" fill="none" stroke="white" stroke-width="0.2"/>
+       <path id="polar-grid-coarse" d="M0,0" fill="none" stroke="white" stroke-width="0.4"/>
        <path id="real-path" d="M0,0" fill="none" stroke="black" stroke-width="2"/>
        <path id="imaginary-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
        <circle id="centre-handle" transform="translate(256 256)" 
@@ -98,6 +99,12 @@ a logarithmic scale.</p>
 
 <p>If the graph of <b>f</b> goes through
 the centre, then the graph becomes ambiguous, and you should use the slider to reduce the scale factor.</p>
+
+<p>A polar grid defines the scale of values for the real and imaginary components <b>f</b>, 
+where the outer-most circle of the grid represents 1 and the inner-most circle (which may not be visible,
+depending on the domain circle size and the chosen scale factor for <b>f</b>) represents -1.
+
+</p>
 
 <p>The "colour scale" specifies how the imaginary and real parts of <b>f</b> map to colour intensities.
 When the scale value is <b>1.0</b>, a value of +1 or -1 maps to maximum colour intensity
