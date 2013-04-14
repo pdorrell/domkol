@@ -294,27 +294,32 @@ DomainCircleView.prototype = {
   
   "drawPolarGrid": function() {
     var theta = 0;
-    var numRadialLines = 24;
+    var numRadialLinesPerQuarter = 6;
+    var numRadialLines = numRadialLinesPerQuarter*4;
     var thetaIncrement = Math.PI * 2 / numRadialLines;
     var pathComponents = [];
     var pathIndex = 0;
     var centrePos = this.domainCircle.centreHandlePosition;
     var centreX = centrePos[0];
     var centreY = centrePos[1];
-    var moveToCentrePathComponent = "M" + centreX + "," + centreY;
     var pixelsPerUnit = this.domainCircle.explorerModel.pixelsPerUnit;
     var pixelsPerScaledUnit = pixelsPerUnit * this.domainCircle.explorerModel.scaleF;
     var gridRadius = this.domainCircle.radius + pixelsPerScaledUnit;
+    var innerRadius = this.domainCircle.radius - pixelsPerScaledUnit;
+    var innerGridRadius = Math.max(innerRadius, 0);
     for (var i = 0; i<numRadialLines; i++) {
-      var lineEndX = centreX + gridRadius * Math.sin(theta);
-      var lineEndY = centreY + gridRadius * Math.cos(theta);
-      pathComponents[pathIndex++] = moveToCentrePathComponent + " " + "L" + lineEndX + "," + lineEndY;
+      var sinTheta = Math.sin(theta);
+      var cosTheta = Math.cos(theta);
+      var lineStartX = centreX + innerGridRadius * sinTheta;
+      var lineEndX = centreX + gridRadius * sinTheta;
+      var lineStartY = centreY + innerGridRadius * cosTheta;
+      var lineEndY = centreY + gridRadius * cosTheta;
+      pathComponents[pathIndex++] = "M" + lineStartX + "," + lineStartY + " " + "L" + lineEndX + "," + lineEndY;
       theta += thetaIncrement;
     }
     var stepsPerScaledUnit = 10;
     var radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
-    var initialRadius = this.domainCircle.radius - pixelsPerScaledUnit;
-    for (var gridCircleRadius = initialRadius; gridCircleRadius <= gridRadius; gridCircleRadius += radiusStep) {
+    for (var gridCircleRadius = innerRadius; gridCircleRadius <= gridRadius; gridCircleRadius += radiusStep) {
       if (gridCircleRadius > 0) {
         pathComponents[pathIndex++] = pathCircleComponent (centreX, centreY, gridCircleRadius);
       }
