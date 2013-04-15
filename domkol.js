@@ -36,6 +36,8 @@ $(document).ready(function(){
                                                         colourScaleText: $("#colour-scale"), 
       });
     
+    $(".controls").draggable();
+    
     readyZeroHandles();
   });
 

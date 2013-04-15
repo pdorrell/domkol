@@ -8,6 +8,7 @@
 <script language="javascript" type="text/javascript" src="lib/jquery-1.9.1.js"></script>
 <script language="javascript" type="text/javascript" src="lib/jquery-ui-1.10.2.js"></script>
 <script language="javascript" type="text/javascript" src="domkol.js"></script>
+<link rel="stylesheet" href="domkol.css" />
 
 </head>
 
@@ -55,7 +56,9 @@
   
   <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
         width="560" height="560"></canvas>
-  <table style="position:absolute;top:40px;left:520px;z-index:2;">
+
+  <div style="position:absolute;top:40px;left:520px;z-index:2;" class="controls">
+  <table >
     <tr><td colspan="3">Drag the small black circles to move and resize the large circle.</td></tr>
     <tr><td>&nbsp;</td></tr>
     <tr>
@@ -76,6 +79,8 @@
             <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked></input></td>
     </tr>
   </table>
+  </div>
+
 </div>
 </div>
 
