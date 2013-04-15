@@ -368,7 +368,13 @@ function CoordinatesView(attributes) {
 }
 
 function formatComplexNumber(x, y) {
-  return x + "+" + y + "i"; // todo slightly better
+  var showX = x != 0 || y == 0;
+  var xString = showX ? ""+x : "";
+  var showY = y != 1 & y != 0;
+  var yString = y == -1 ? "-" : (showY ? ""+y : "");
+  var showI = y != 0;
+  var showPlus = x != 0 && y > 0 && showI;
+  return xString + (showPlus ? "+" : "") + yString + (showI?"i" : "");
 }
 
 function makeSVG(tag, attrs) {
@@ -384,7 +390,7 @@ CoordinatesView.prototype = {
   "yCoordinateOffset": 3, 
   
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = makeSVG("text", {class: "coordinates", x: x, y: y, fill: "#c0c0c0"})
+    var textElement = makeSVG("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
     this.coordinatesGroup[0].appendChild(textElement);
@@ -423,7 +429,7 @@ CoordinatesView.prototype = {
       var yCoordinatePos = origin[1] + i*pixelsPerUnit - yCoordinateOffset;
       for (var j = minXIndex; j <= maxXIndex; j++) {
         var xCoordinatePos = origin[0] + j*pixelsPerUnit + xCoordinateOffset;
-        this.addCoordinatesText(formatComplexNumber(j, i), xCoordinatePos, yCoordinatePos);
+        this.addCoordinatesText(formatComplexNumber(j, -i), xCoordinatePos, yCoordinatePos);
       }
     }
     grid.attr("d", pathComponents.join(" "));
