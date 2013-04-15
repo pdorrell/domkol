@@ -8,7 +8,7 @@ $(document).ready(function(){
                                                            colourScale: 1.0,
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
-
+    
     var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
                                                  centreHandle: $('#centre-handle'), 
                                                  edgeHandle: $('#edge-handle'), 
@@ -20,9 +20,16 @@ $(document).ready(function(){
                                                  showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                  domainCircle: explorerModel.domainCircle});
   
+    var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
+                                               axes: $('#axes'), 
+                                               unitGrid: $('#unit-coordinate-grid'), 
+                                               fineGrid: $('#fine-coordinate-grid'), 
+                                               explorerModel: explorerModel });
+
     var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                                         canvas: $('#domkol-canvas')[0], 
                                                         domainCircleView: domainCircleView, 
+                                                        coordinatesView: coordinatesView, 
                                                         scaleSlider: $("#scale-slider"), 
                                                         scaleValueText: $("#scale-value"), 
                                                         colourScaleSlider: $("#colour-scale-slider"), 
@@ -343,10 +350,25 @@ DomainCircleView.prototype = {
   }
 
 };
+
+function CoordinatesView(attributes) {
+  setAttributes(this, attributes, 
+                ["explorerModel", "axes", "unitGrid", "fineGrid"]);
+  this.redraw();
+}
+
+CoordinatesView.prototype = {
+  "redraw": function() {
+    var origin = this.explorerModel.originPixelLocation;
+    var dimension = this.explorerModel.pixelsDimension;
+    this.axes.attr("d", "M0," + origin[1] + " L" + dimension[0] + "," + origin[1] + " " +
+                   "M" + origin[0] + ",0" + " L" + origin[0] + "," + dimension[1]);
+  }
+};
   
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "canvas", "domainCircleView", "scaleSlider", "scaleValueText", 
+                ["explorerModel", "canvas", "domainCircleView", "coordinatesView", "scaleSlider", "scaleValueText", 
                  "colourScaleSlider", "colourScaleText"]);
   
   var view = this;
