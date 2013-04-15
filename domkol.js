@@ -358,16 +358,17 @@ function CoordinatesView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "showCoordinateGridCheckbox", "coordinates", "axes", "unitGrid", "fineGrid"]);
   this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]');
-  console.log("length = " + this.coordinatesGroup.length);
   var view = this;
   
   this.showCoordinateGridCheckbox.on("change", function(event) {
       view.coordinates.toggle(this.checked);
     });
   
-  this.addCoordinatesText ("hello", 100, 100);
-  
   this.redraw();
+}
+
+function formatComplexNumber(x, y) {
+  return x + "+" + y + "i"; // todo slightly better
 }
 
 function makeSVG(tag, attrs) {
@@ -379,8 +380,11 @@ function makeSVG(tag, attrs) {
 
 CoordinatesView.prototype = {
   
+  "xCoordinateOffset": 3, 
+  "yCoordinateOffset": 3, 
+  
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = makeSVG("text", {class: "coordinate", x: x, y: y, fill: "white"})
+    var textElement = makeSVG("text", {class: "coordinates", x: x, y: y, fill: "#c0c0c0"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
     this.coordinatesGroup[0].appendChild(textElement);
@@ -410,11 +414,17 @@ CoordinatesView.prototype = {
     for (var i=minXIndex; i <= maxXIndex; i++) {
       pathComponents[componentsIndex++] = this.verticalPath(i*spacing);
     }
-    
+    var xCoordinateOffset = this.xCoordinateOffset;
+    var yCoordinateOffset = this.yCoordinateOffset;
     var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
     var maxYIndex = Math.floor(origin[1]/(pixelsPerUnit*spacing));
-    for (var i=minXIndex; i <= maxXIndex; i++) {
+    for (var i=minYIndex; i <= maxYIndex; i++) {
       pathComponents[componentsIndex++] = this.horizontalPath(i*spacing);
+      var yCoordinatePos = origin[1] + i*pixelsPerUnit - yCoordinateOffset;
+      for (var j = minXIndex; j <= maxXIndex; j++) {
+        var xCoordinatePos = origin[0] + j*pixelsPerUnit + xCoordinateOffset;
+        this.addCoordinatesText(formatComplexNumber(j, i), xCoordinatePos, yCoordinatePos);
+      }
     }
     grid.attr("d", pathComponents.join(" "));
   }, 
