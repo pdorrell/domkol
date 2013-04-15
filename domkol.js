@@ -358,11 +358,23 @@ function CoordinatesView(attributes) {
 }
 
 CoordinatesView.prototype = {
+  
+  "horizontalPath": function (y) {
+    var maxX = this.explorerModel.pixelsDimension[0];
+    var yPixels = this.explorerModel.originPixelLocation[1] + this.explorerModel.pixelsPerUnit * y;
+    return "M0," + yPixels + " L" + maxX + "," + yPixels;
+  }, 
+  
+  "verticalPath": function (x) {
+    var maxY = this.explorerModel.pixelsDimension[1];
+    var xPixels = this.explorerModel.originPixelLocation[0] + this.explorerModel.pixelsPerUnit * x;
+    return "M" + xPixels + ",0 L" + xPixels + "," + maxY;
+  }, 
+  
   "redraw": function() {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
-    this.axes.attr("d", "M0," + origin[1] + " L" + dimension[0] + "," + origin[1] + " " +
-                   "M" + origin[0] + ",0" + " L" + origin[0] + "," + dimension[1]);
+    this.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
   }
 };
   
