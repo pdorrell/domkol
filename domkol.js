@@ -2,9 +2,9 @@ $(document).ready(function(){
     var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
     
     var explorerModel = new ComplexFunctionExplorerModel({ f: cube, 
-                                                           pixelsPerUnit: 256, 
-                                                           originPixelLocation: [256, 256], 
-                                                           pixelsDimension: [512, 512], 
+                                                           pixelsPerUnit: 240, 
+                                                           originPixelLocation: [280, 280], 
+                                                           pixelsDimension: [560, 560], 
                                                            colourScale: 1.0,
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
