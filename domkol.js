@@ -24,6 +24,7 @@ $(document).ready(function(){
                                                axes: $('#axes'), 
                                                unitGrid: $('#unit-coordinate-grid'), 
                                                fineGrid: $('#fine-coordinate-grid'), 
+                                               showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
                                                explorerModel: explorerModel });
 
     var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -355,7 +356,14 @@ DomainCircleView.prototype = {
 
 function CoordinatesView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "axes", "unitGrid", "fineGrid"]);
+                ["explorerModel", "showCoordinateGridCheckbox", "coordinates", "axes", "unitGrid", "fineGrid"]);
+
+  var view = this;
+  
+  this.showCoordinateGridCheckbox.on("change", function(event) {
+      view.coordinates.toggle(this.checked);
+    });
+  
   this.redraw();
 }
 
