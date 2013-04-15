@@ -377,11 +377,15 @@ function formatComplexNumber(x, y) {
   return xString + (showPlus ? "+" : "") + yString + (showI?"i" : "");
 }
 
-function makeSVG(tag, attrs) {
-  var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
-  for (var k in attrs)
-    el.setAttribute(k, attrs[k]);
-  return el;
+/* JQuery cannot construct SVG elements the same way as it does HTML elements, but
+   the following function does the trick.
+   Taken from http://stackoverflow.com/questions/7261318/svg-chart-generation-in-javascript#answer-15582018
+ */
+function makeSvgElement(tag, attributes) {
+  var svgElement= document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (var key in attributes)
+    svgElement.setAttribute(key, attributes[key]);
+  return svgElement;
 }
 
 CoordinatesView.prototype = {
@@ -390,10 +394,10 @@ CoordinatesView.prototype = {
   "yCoordinateOffset": 3, 
   
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = makeSVG("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
+    var textElement = makeSvgElement("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
-    this.coordinatesGroup[0].appendChild(textElement);
+    this.coordinatesGroup.append(textElement);
   }, 
   
   "horizontalPath": function (y) {
@@ -422,6 +426,7 @@ CoordinatesView.prototype = {
     }
     var xCoordinateOffset = this.xCoordinateOffset;
     var yCoordinateOffset = this.yCoordinateOffset;
+    this.coordinatesGroup.empty();
     var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
     var maxYIndex = Math.floor(origin[1]/(pixelsPerUnit*spacing));
     for (var i=minYIndex; i <= maxYIndex; i++) {
