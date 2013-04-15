@@ -374,7 +374,6 @@ CoordinatesView.prototype = {
   }, 
   
   "drawGrid": function(grid, spacing) {
-    console.log("drawGrid, spacing = " + spacing);
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     var pixelsPerUnit = this.explorerModel.pixelsPerUnit;
