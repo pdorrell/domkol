@@ -5,3 +5,8 @@
   background-color: rgba(230,230,230,0.7);
   padding: 1em;
 }
+
+text.coordinates {
+  font-family: "Arial";
+  font-size: 0.9em;
+}

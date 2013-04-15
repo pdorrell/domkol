@@ -357,17 +357,34 @@ DomainCircleView.prototype = {
 function CoordinatesView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "showCoordinateGridCheckbox", "coordinates", "axes", "unitGrid", "fineGrid"]);
-
+  this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]');
+  console.log("length = " + this.coordinatesGroup.length);
   var view = this;
   
   this.showCoordinateGridCheckbox.on("change", function(event) {
       view.coordinates.toggle(this.checked);
     });
   
+  this.addCoordinatesText ("hello", 100, 100);
+  
   this.redraw();
 }
 
+function makeSVG(tag, attrs) {
+  var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (var k in attrs)
+    el.setAttribute(k, attrs[k]);
+  return el;
+}
+
 CoordinatesView.prototype = {
+  
+  "addCoordinatesText" : function(text, x, y) {
+    var textElement = makeSVG("text", {class: "coordinate", x: x, y: y, fill: "white"})
+    var textNode = document.createTextNode(text);
+    textElement.appendChild(textNode);
+    this.coordinatesGroup[0].appendChild(textElement);
+  }, 
   
   "horizontalPath": function (y) {
     var maxX = this.explorerModel.pixelsDimension[0];
