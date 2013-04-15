@@ -373,10 +373,35 @@ CoordinatesView.prototype = {
     return "M" + xPixels + ",0 L" + xPixels + "," + maxY;
   }, 
   
+  "drawGrid": function(grid, spacing) {
+    console.log("drawGrid, spacing = " + spacing);
+    var origin = this.explorerModel.originPixelLocation;
+    var dimension = this.explorerModel.pixelsDimension;
+    var pixelsPerUnit = this.explorerModel.pixelsPerUnit;
+    
+    var minXIndex = Math.ceil((0-origin[0])/(pixelsPerUnit*spacing));
+    var maxXIndex = Math.floor((dimension[0]-origin[0])/(pixelsPerUnit*spacing));
+    var pathComponents = [];
+    var componentsIndex = 0;
+    for (var i=minXIndex; i <= maxXIndex; i++) {
+      pathComponents[componentsIndex++] = this.verticalPath(i*spacing);
+    }
+    
+    var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
+    var maxYIndex = Math.floor(origin[1]/(pixelsPerUnit*spacing));
+    for (var i=minXIndex; i <= maxXIndex; i++) {
+      pathComponents[componentsIndex++] = this.horizontalPath(i*spacing);
+    }
+    grid.attr("d", pathComponents.join(" "));
+  }, 
+  
   "redraw": function() {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     this.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
+    
+    this.drawGrid(this.unitGrid, 1.0);
+    this.drawGrid(this.fineGrid, 0.1);
   }
 };
   
