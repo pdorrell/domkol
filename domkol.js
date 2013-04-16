@@ -67,7 +67,8 @@ function objectToString(object, maxValueLength) {
   return result;
 }
 
-var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
+// Note: allow for "," in between coordinates, even though that should not happen (but windows Firefox puts it there)
+var translateRegexp = /^translate[(]([-0-9.]+)[, ]+([-0-9.]+)[)]$/;
 
 function getTranslation(handle) {
   var transform = handle.attr("transform");
