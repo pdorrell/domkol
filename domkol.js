@@ -11,6 +11,10 @@ $(document).ready(function(){
                                                            scaleMax: 100, 
                                                            domainCircle: domainCircle });
     
+    var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
+                                                   functionModel: cubeFunction, 
+                                                   explorerModel: explorerModel});
+    
     var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
                                                  centreHandle: $('#centre-handle'), 
                                                  edgeHandle: $('#edge-handle'), 
@@ -40,8 +44,6 @@ $(document).ready(function(){
       });
     
     $(".controls").draggable({ handle: ".window-top-bar" });
-    
-    readyZeroHandles();
   });
 
 function objectToString(object, maxValueLength) {
@@ -99,13 +101,6 @@ function svgDraggable(handle) {
         handle.trigger('svgDrag', [x, y]);
     });
 }
-
-function readyZeroHandles() {
-  svgDraggable($("#zero1-handle"));
-  svgDraggable($("#zero2-handle"));
-  svgDraggable($("#zero3-handle"));
-}
-
 
 // Draw an array of 2D points (each point is an array) into an SVG path
 function drawPointsPath(svgPath, points) {
@@ -373,6 +368,31 @@ PolynomialFunction.prototype = {
         };
     }
 };
+
+function PolynomialFunctionView(attributes) {
+    setAttributes(this, attributes, 
+                  ["zeroHandles", "functionModel", "explorerModel"]);
+    var numZeroes = this.functionModel.zeroes.length;
+    var handles = this.zeroHandles.children(["class='zero'"]);
+    if (handles.length != numZeroes) {
+        throw "Number of zero handles does not match number of zeroes";
+    }
+    for (var i=0; i<numZeroes; i++) {
+        var handle = $(handles[numZeroes-1-i]);
+        this.setupHandle(i, handle);
+    }
+}
+
+PolynomialFunctionView.prototype = {
+    "setupHandle": function(i, handle) {
+        svgDraggable(handle);
+        var index = i;
+        handle.on('svgDrag', function(event, x, y) {
+            console.log("zero " + (index+1) + " dragged, x = " + x + ", y = " + y);
+        });
+    }
+};
+    
 
 function CoordinatesView(attributes) {
   setAttributes(this, attributes, 
