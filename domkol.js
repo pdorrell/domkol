@@ -19,7 +19,7 @@ $(document).ready(function(){
                                                  imaginaryPath: $("#imaginary-path"), 
                                                  showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                  domainCircle: explorerModel.domainCircle});
-  
+
     var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
                                                axes: $('#axes'), 
                                                unitGrid: $('#unit-coordinate-grid'), 
@@ -37,7 +37,7 @@ $(document).ready(function(){
                                                         colourScaleText: $("#colour-scale"), 
       });
     
-    $(".controls").draggable();
+    $(".controls").draggable({ handle: ".window-top-bar" });
     
     readyZeroHandles();
   });
