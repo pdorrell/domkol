@@ -391,7 +391,7 @@ function PolynomialFunctionView(attributes) {
 PolynomialFunctionView.prototype = {
     "setNumberLabel" : function(i, handle) {
         var z = this.functionModel.zeroes[i];
-        var formattedZ = formatComplexNumber(z[0], z[1]);
+        var formattedZ = formatComplexNumber(z[0], z[1], 3);
         handle[0].getElementsByTagName("text")[0].textContent = formattedZ;
     },    
     
@@ -425,11 +425,21 @@ function CoordinatesView(attributes) {
   this.redraw();
 }
 
-function formatComplexNumber(x, y) {
+var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)$/
+
+function reformatToPrecision(numberString, precision) {
+  var match = decimalNumberRegexp.exec(numberString);
+  var minusSign = match[1];
+  var wholeNumber = match[2];
+  var decimalPart = match[3].substring(0, precision+1);
+  return minusSign + wholeNumber + decimalPart;
+}
+
+function formatComplexNumber(x, y, precision) {
   var showX = x != 0 || y == 0;
-  var xString = showX ? ""+x : "";
+  var xString = showX ? reformatToPrecision(""+x, precision) : "";
   var showY = y != 1 & y != 0;
-  var yString = y == -1 ? "-" : (showY ? ""+y : "");
+  var yString = y == -1 ? "-" : (showY ? reformatToPrecision(""+y, precision) : "");
   var showI = y != 0;
   var showPlus = x != 0 && y > 0 && showI;
   return xString + (showPlus ? "+" : "") + yString + (showI?"i" : "");
@@ -492,7 +502,7 @@ CoordinatesView.prototype = {
       var yCoordinatePos = origin[1] + i*pixelsPerUnit - yCoordinateOffset;
       for (var j = minXIndex; j <= maxXIndex; j++) {
         var xCoordinatePos = origin[0] + j*pixelsPerUnit + xCoordinateOffset;
-        this.addCoordinatesText(formatComplexNumber(j, -i), xCoordinatePos, yCoordinatePos);
+        this.addCoordinatesText(formatComplexNumber(j, -i, 3), xCoordinatePos, yCoordinatePos);
       }
     }
     grid.attr("d", pathComponents.join(" "));
