@@ -61,7 +61,7 @@
   <div style="position:absolute;top:40px;left:480px;z-index:2;width:30em" class="controls">
     <div class="window-top-bar"></div>
   <table >
-    <tr><td>Function:</td><td colspan="2"><span id="formula">(z)(z)(z)</span></td></tr>
+    <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
     <tr><td colspan="3">Drag the small black circles to move and resize the large circle.</td></tr>
     <tr><td colspan="3">Drag the blue numbers to change the zeroes of the cubic polynomial (initially
 they are all located on the origin).</td></tr>
@@ -100,8 +100,8 @@ displays a complex function as a colouring of the complex plain (a technique
 known as <b>domain colouring</b>), with additional interactivity to show values as a 
 graph on a 1-dimensional subset of the domain (i.e. a 1-dimensional subset of the complex numbers
 considered as a 2-dimensional Real number space). 
-Right now, it is showing the function <b>f(z) = z<sup>3</sup></b>, with the origin in the centre, and 
-the corners are 1+i, 1-i, -1+i and -1-i (with the origin in the centre).</p>
+Initiall it shows the function <b>f(z) = z<sup>3</sup></b> (but you can change the function by moving
+the zeroes around with the mouse).</p>
 
 <p>The 1-dimensional curve showing is a circle. (Adding an option for viewing the values of the function
 on a chosen straight line is on the to-do list.)</p>
@@ -144,9 +144,9 @@ to work most correctly on that browser.</p>
 <p>Known issues are:</p>
 
 <ul>
- <li>Performance: Now that I have set the 1-dimensional graph to calculate a new value of <b>f</b> 
-roughly once per pixel in the domain curve, there are some noticeable performance variations between 
-browers, especially when dragging the circle handles.
+ <li>Performance: There are some noticeable performance variations between 
+browsers, especially when doing interactions which cause the coloured bitmap to be redrawn
+(i.e. changing the colour scale, or moving the function zeroes around).
 For example, Firefox on Linux is much "jumpier" than Chrome/Chromium on Linux. On Windows,
 Chrome and Opera seem smooth, Safari, IE and Firefox seem a bit jumpy. This is just my experience &ndash; 
 which almost certainly depends on specific details of my hardware setup and which operating systems I have installed.

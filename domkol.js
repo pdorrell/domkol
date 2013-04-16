@@ -567,8 +567,7 @@ function ComplexFunctionExplorerView(attributes) {
   this.setScaleFFromView(this.scaleSlider.slider("value"));
   this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
   
-  this.drawDomainColouring();
-  this.drawFunctionGraphs();
+  this.functionChanged();
 }
 
 ComplexFunctionExplorerView.prototype = {
