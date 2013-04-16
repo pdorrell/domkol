@@ -1,7 +1,9 @@
 $(document).ready(function(){
+    var cubeFunction = new PolynomialFunction({"zeroes": [[0, 0], [0, 0], [0, 0]]});
+    
     var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
     
-    var explorerModel = new ComplexFunctionExplorerModel({ f: cube, 
+    var explorerModel = new ComplexFunctionExplorerModel({ f: cubeFunction.getFunction(), 
                                                            pixelsPerUnit: 240, 
                                                            originPixelLocation: [280, 280], 
                                                            pixelsDimension: [560, 560], 
@@ -352,6 +354,24 @@ DomainCircleView.prototype = {
     this.polarGridCoarse.attr("d", coarsePathComponents.join(" "));
   }
 
+};
+
+function PolynomialFunction(attributes) {
+    setAttributes(this, attributes, ["zeroes"]);
+}
+
+PolynomialFunction.prototype = {
+    
+    "getFunction": function() {
+        var zeroes = this.zeroes;
+        return function(z) {
+            var result = [1, 0];
+            for (var i=0; i<zeroes.length; i++) {
+                result = times(result, minus(z, zeroes[i]));
+            }
+            return result;
+        };
+    }
 };
 
 function CoordinatesView(attributes) {
