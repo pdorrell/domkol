@@ -1,9 +1,9 @@
 $(document).ready(function(){
-    var cubeFunction = new PolynomialFunction({"zeroes": [[0, 0], [0, 0], [0, 0]]});
+    var complexFunction = new PolynomialFunction({"zeroes": [[0, 0], [0, 0], [0, 0]]});
     
     var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
     
-    var explorerModel = new ComplexFunctionExplorerModel({ f: cubeFunction.getFunction(), 
+    var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
                                                            pixelsPerUnit: 240, 
                                                            originPixelLocation: [280, 280], 
                                                            pixelsDimension: [560, 560], 
@@ -12,7 +12,7 @@ $(document).ready(function(){
                                                            domainCircle: domainCircle });
     
     var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
-                                                   functionModel: cubeFunction, 
+                                                   functionModel: complexFunction, 
                                                    explorerModel: explorerModel});
     
     var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
@@ -40,8 +40,8 @@ $(document).ready(function(){
                                                         scaleSlider: $("#scale-slider"), 
                                                         scaleValueText: $("#scale-value"), 
                                                         colourScaleSlider: $("#colour-scale-slider"), 
-                                                        colourScaleText: $("#colour-scale"), 
-      });
+                                                        colourScaleText: $("#colour-scale"),
+                                                        complexFunction: complexFunction});
     
     $(".controls").draggable({ handle: ".window-top-bar" });
   });
@@ -403,10 +403,10 @@ PolynomialFunctionView.prototype = {
         var view = this;
         this.setNumberLabel(index, handle);
         handle.on('svgDrag', function(event, x, y) {
-            console.log("zero " + (index+1) + " dragged, x = " + x + ", y = " + y);
-            var z = explorerModel.positionToComplexNumber(x, y);
-            functionModel.zeroes[index] = z;
-            view.setNumberLabel(index, handle);
+          var z = explorerModel.positionToComplexNumber(x, y);
+          functionModel.zeroes[index] = z;
+          view.setNumberLabel(index, handle);
+          functionModel.explorerView.functionChanged(); // todo: use event handling here ...
         });
     }
 };
@@ -521,8 +521,8 @@ CoordinatesView.prototype = {
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "canvas", "domainCircleView", "coordinatesView", "scaleSlider", "scaleValueText", 
-                 "colourScaleSlider", "colourScaleText"]);
-  
+                 "colourScaleSlider", "colourScaleText", "complexFunction"]);
+  this.complexFunction.explorerView = this;
   var view = this;
 
   function scaleChanged(event, ui) {
@@ -560,6 +560,11 @@ ComplexFunctionExplorerView.prototype = {
     this.setColourScaleFromView(value);
     this.drawDomainColouring();
   }, 
+  
+  "functionChanged": function(value) {
+    this.drawDomainColouring();
+    this.drawFunctionGraphs();
+  },    
   
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
