@@ -213,44 +213,49 @@ function ComplexFunctionExplorerModel(attributes) {
 }
 
 ComplexFunctionExplorerModel.prototype = {
-  "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
-  "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
-  
-  "xRange": function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
-  "yRange": function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
-  
-  "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
-  
-  "widthInPixels": function() { return this.pixelsDimension[0]; }, 
-
-  "heightInPixels": function() { return this.pixelsDimension[1]; }, 
-  
-  "writeToCanvasData": function(data) {
-    var widthInPixels = this.widthInPixels();
-    var heightInPixels = this.heightInPixels();
-    var minX = this.minX();
-    var xRange = this.xRange();
-    var minY = this.minY();
-    var yRange = this.yRange();
-    var f = this.f;
-    var colourScale = this.colourScale;
-    var unitsPerPixel = this.unitsPerPixel();
+    "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
+    "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
     
-    var x = minX;
-    for (var i=0; i<widthInPixels; i++) {
-      var y = minY;
-      for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
-        var z = f([x, y]);
-        var k = (j*widthInPixels+i)*4;
-        data[k] = (z[0]*colourScale+1.0)*128; // positive real = red
-        data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary = green
-        data[k+2] = 0;
-        data[k+3] = 255;
-        y += unitsPerPixel;
-      }
-      x += unitsPerPixel;
+    "xRange": function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
+    "yRange": function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
+    
+    "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
+    
+    "widthInPixels": function() { return this.pixelsDimension[0]; }, 
+    
+    "heightInPixels": function() { return this.pixelsDimension[1]; }, 
+    
+    "positionToComplexNumber": function(x, y) {
+        return [(x-this.originPixelLocation[0])/this.pixelsPerUnit, 
+                (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
+    }, 
+  
+    "writeToCanvasData": function(data) {
+        var widthInPixels = this.widthInPixels();
+        var heightInPixels = this.heightInPixels();
+        var minX = this.minX();
+        var xRange = this.xRange();
+        var minY = this.minY();
+        var yRange = this.yRange();
+        var f = this.f;
+        var colourScale = this.colourScale;
+        var unitsPerPixel = this.unitsPerPixel();
+        
+        var x = minX;
+        for (var i=0; i<widthInPixels; i++) {
+            var y = minY;
+            for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
+                var z = f([x, y]);
+                var k = (j*widthInPixels+i)*4;
+                data[k] = (z[0]*colourScale+1.0)*128; // positive real = red
+                data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary = green
+                data[k+2] = 0;
+                data[k+3] = 255;
+                y += unitsPerPixel;
+            }
+            x += unitsPerPixel;
+        }
     }
-  }
 };
   
 function DomainCircleView (attributes) {
@@ -384,11 +389,24 @@ function PolynomialFunctionView(attributes) {
 }
 
 PolynomialFunctionView.prototype = {
+    "setNumberLabel" : function(i, handle) {
+        var z = this.functionModel.zeroes[i];
+        var formattedZ = formatComplexNumber(z[0], z[1]);
+        handle[0].getElementsByTagName("text")[0].textContent = formattedZ;
+    },    
+    
     "setupHandle": function(i, handle) {
         svgDraggable(handle);
         var index = i;
+        var explorerModel = this.explorerModel;
+        var functionModel = this.functionModel;
+        var view = this;
+        this.setNumberLabel(index, handle);
         handle.on('svgDrag', function(event, x, y) {
             console.log("zero " + (index+1) + " dragged, x = " + x + ", y = " + y);
+            var z = explorerModel.positionToComplexNumber(x, y);
+            functionModel.zeroes[index] = z;
+            view.setNumberLabel(index, handle);
         });
     }
 };
