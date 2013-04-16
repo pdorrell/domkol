@@ -18,3 +18,8 @@ text.coordinates {
   background-color: white;
   cursor: move;
 }
+
+#formula {
+  font-weight: bold;
+  font-size: 0.9em;
+}

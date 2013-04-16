@@ -41,6 +41,7 @@ $(document).ready(function(){
                                                         scaleValueText: $("#scale-value"), 
                                                         colourScaleSlider: $("#colour-scale-slider"), 
                                                         colourScaleText: $("#colour-scale"),
+                                                        formula: $("#formula"), 
                                                         complexFunction: complexFunction});
     
     $(".controls").draggable({ handle: ".window-top-bar" });
@@ -362,16 +363,27 @@ function PolynomialFunction(attributes) {
 
 PolynomialFunction.prototype = {
     
-    "getFunction": function() {
-        var zeroes = this.zeroes;
-        return function(z) {
-            var result = [1, 0];
-            for (var i=0; i<zeroes.length; i++) {
-                result = times(result, minus(z, zeroes[i]));
-            }
-            return result;
-        };
+  "getFunction": function() {
+    var zeroes = this.zeroes;
+    return function(z) {
+      var result = [1, 0];
+      for (var i=0; i<zeroes.length; i++) {
+        result = times(result, minus(z, zeroes[i]));
+      }
+      return result;
+    };
+  }, 
+  
+  "getFormula": function() {
+    var formula = "";
+    var zeroes = this.zeroes;
+    for (var i=0; i<zeroes.length; i++) {
+      var zero = zeroes[i];
+      formula += ("(" + formatVariablePlusComplexNumber("z", -zero[0], -zero[1], 2) + ")");
     }
+    return formula;
+  }
+    
 };
 
 function PolynomialFunctionView(attributes) {
@@ -391,7 +403,7 @@ function PolynomialFunctionView(attributes) {
 PolynomialFunctionView.prototype = {
     "setNumberLabel" : function(i, handle) {
         var z = this.functionModel.zeroes[i];
-        var formattedZ = formatComplexNumber(z[0], z[1], 3);
+        var formattedZ = formatComplexNumber(z[0], z[1], 2);
         handle[0].getElementsByTagName("text")[0].textContent = formattedZ;
     },    
     
@@ -443,6 +455,16 @@ function formatComplexNumber(x, y, precision) {
   var showI = y != 0;
   var showPlus = x != 0 && y > 0 && showI;
   return xString + (showPlus ? "+" : "") + yString + (showI?"i" : "");
+}
+
+function formatVariablePlusComplexNumber(variableName, x, y, precision) {
+  if (x == 0 && y == 0) {
+    return variableName;
+  }
+  else {
+    var showPlus = x > 0 || (x == 0 && y > 0);
+    return variableName + (showPlus ? "+" : "") + formatComplexNumber(x, y, precision);
+  }
 }
 
 /* JQuery cannot construct SVG elements the same way as it does HTML elements, but
@@ -502,7 +524,7 @@ CoordinatesView.prototype = {
       var yCoordinatePos = origin[1] + i*pixelsPerUnit - yCoordinateOffset;
       for (var j = minXIndex; j <= maxXIndex; j++) {
         var xCoordinatePos = origin[0] + j*pixelsPerUnit + xCoordinateOffset;
-        this.addCoordinatesText(formatComplexNumber(j, -i, 3), xCoordinatePos, yCoordinatePos);
+        this.addCoordinatesText(formatComplexNumber(j, -i, 2), xCoordinatePos, yCoordinatePos);
       }
     }
     grid.attr("d", pathComponents.join(" "));
@@ -521,7 +543,7 @@ CoordinatesView.prototype = {
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "canvas", "domainCircleView", "coordinatesView", "scaleSlider", "scaleValueText", 
-                 "colourScaleSlider", "colourScaleText", "complexFunction"]);
+                 "colourScaleSlider", "colourScaleText", "complexFunction", "formula"]);
   this.complexFunction.explorerView = this;
   var view = this;
 
@@ -561,7 +583,8 @@ ComplexFunctionExplorerView.prototype = {
     this.drawDomainColouring();
   }, 
   
-  "functionChanged": function(value) {
+  "functionChanged": function() {
+    this.formula.text(this.complexFunction.getFormula());
     this.drawDomainColouring();
     this.drawFunctionGraphs();
   },    
