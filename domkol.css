@@ -23,3 +23,11 @@ text.coordinates {
   font-weight: bold;
   font-size: 0.9em;
 }
+
+.worksBest {
+  border: 1px solid #808080;
+  background-color: #d0e0f0;
+  font-size: 0.8em;
+  padding: 0.5em;
+  line-height: 1.2em;
+}

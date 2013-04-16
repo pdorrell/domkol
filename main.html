@@ -15,7 +15,7 @@
 <body>
 <div class="masthead">
 <div class="logo"><a href="../index.html"><img src="../images/site.logo.png" border="0"/></a></div>
-<h1 class="main">Domkol: Complex Function Visualisation with Domain Colouring</h1>
+<h1 class="main">Domkol: HTML5 Complex Function Visualisation using Canvas and SVG</h1>
 </div>
 
 <div class="wideItem">
@@ -58,7 +58,12 @@
   <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
         width="560" height="560"></canvas>
 
-  <div style="position:absolute;top:40px;left:480px;z-index:2;width:30em" class="controls">
+  <div style="position:absolute;top:10px;left:600px;z-index:3;width:300px" class="worksBest">
+        Works best on <b>Chrome/Chromium</b>. (Does work on other browsers, but <i>so</i>
+        much more slowly for anything involving bitmap redrawing. See "Issues and Browser Compatibility" below.)
+  </div>
+
+  <div style="position:absolute;top:120px;left:480px;z-index:2;width:30em" class="controls">
     <div class="window-top-bar"></div>
   <table >
     <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
@@ -145,14 +150,11 @@ to work most correctly on that browser.</p>
 
 <ul>
  <li>Performance: There are some noticeable performance variations between 
-browsers, especially when doing interactions which cause the coloured bitmap to be redrawn
-(i.e. changing the colour scale, or moving the function zeroes around).
-For example, Firefox on Linux is much "jumpier" than Chrome/Chromium on Linux. On Windows,
-Chrome and Opera seem smooth, Safari, IE and Firefox seem a bit jumpy. This is just my experience &ndash; 
-which almost certainly depends on specific details of my hardware setup and which operating systems I have installed.
-You may have to experiment to determine which browser works best for you. (My immediate plans are that if it works
-well on at least one browser, I prefer to concentrate on developing new functionality, rather than spending time optimising
-for other browsers.)</li>
+browsers, especially when doing interactions which cause the coloured bitmap to be redrawn, 
+i.e. changing the colour scale, or moving the function zeroes around.
+In fact, the only browsers that give acceptable performance for redrawing the bitmap are Chrome and Chromium.
+So for the moment, this application should be considered to be a Chrome/Chromium application.
+</li>
  <li>The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
