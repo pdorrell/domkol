@@ -41,6 +41,7 @@ $(document).ready(function(){
                                                         scaleValueText: $("#scale-value"), 
                                                         colourScaleSlider: $("#colour-scale-slider"), 
                                                         colourScaleText: $("#colour-scale"),
+                                                        repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
                                                         formula: $("#formula"), 
                                                         complexFunction: complexFunction});
     
@@ -92,8 +93,6 @@ function svgDraggable(handle) {
       var position = getTranslation(handle);
       var x = position[0];
       var y = position[1];
-      console.log("mousedown, x = " + x + ", y = " + y + 
-                  ", event.pageX = " + event.pageX + ", event.pageY = " + event.pageY);
       handle.data("offset", [x - event.pageX, y - event.pageY]);
       handle.trigger('startSvgDrag', [x, y]);
     })
@@ -101,19 +100,19 @@ function svgDraggable(handle) {
       var offset = handle.data("offset");
       var x = event.pageX + offset[0];
       var y = event.pageY + offset[1];
-      console.log("drag, x = " + x + ", y = " + y + 
-                  ", event.pageX = " + event.pageX + ", event.pageY = " + event.pageY);
       setTranslation(handle, x, y);
-      console.log("handle = " + handle[0].tagName);
       handle.trigger('svgDrag', [x, y]);
     })
     .bind('dragstop', function(event){
-      console.log("end of dragging");
       handle.css({'left' : '0', 'top' : '0'}); /* remove CSS changes that Jquery UI makes 
-                                                (We have replaced those CSS changes with setTranslation because the CSS 
-                                                properties set by JQuery UI don't work in all browser. But when
-                                                the CSS changes do work, we want to reset them, to avoid
-                                                getting a double effect.) */
+                      (We have replaced those CSS changes with setTranslation because the CSS 
+                      properties set by JQuery UI don't work in all browser. But when
+                      the CSS changes do work, we want to reset them, to avoid
+                      getting a double effect.) */
+      var position = getTranslation(handle);
+      var x = position[0];
+      var y = position[1];
+      handle.trigger('svgDragStop', [x, y]);
     })      
   ;
 }
@@ -433,7 +432,13 @@ PolynomialFunctionView.prototype = {
           var z = explorerModel.positionToComplexNumber(x, y);
           functionModel.zeroes[index] = z;
           view.setNumberLabel(index, handle);
-          functionModel.explorerView.functionChanged(); // todo: use event handling here ...
+          functionModel.explorerView.functionChanging(true);
+        });
+        handle.on('svgDragStop', function(event, x, y) {
+          var z = explorerModel.positionToComplexNumber(x, y);
+          functionModel.zeroes[index] = z;
+          view.setNumberLabel(index, handle);
+          functionModel.explorerView.functionChanged(false);
         });
     }
 };
@@ -558,31 +563,44 @@ CoordinatesView.prototype = {
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", "canvas", "domainCircleView", "coordinatesView", "scaleSlider", "scaleValueText", 
-                 "colourScaleSlider", "colourScaleText", "complexFunction", "formula"]);
+                 "colourScaleSlider", "colourScaleText", "complexFunction", "formula", 
+                 "repaintContinuouslyCheckbox"]);
   this.complexFunction.explorerView = this;
   var view = this;
 
+  function scaleChanging(event, ui) {
+    view.fScaleUpdated(ui.value);
+  }
+  
   function scaleChanged(event, ui) {
     view.fScaleUpdated(ui.value);
   }
   
   this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
-        "orientation": "horizontal", "slide": scaleChanged, "change": scaleChanged});
+        "orientation": "horizontal", 
+                           "slide": scaleChanging, "change": scaleChanged
+                          });
   
   function colourScaleChanged(event, ui) {
-    view.colourScaleUpdated(ui.value);
+    view.colourScaleUpdated(ui.value, false);
+  }
+  
+  function colourScaleChanging(event, ui) {
+    view.colourScaleUpdated(ui.value, true);
   }
   
   this.colourScaleSlider.slider({"min": 0, "max": 100, "value": 50,
-        "orientation": "horizontal", "slide": colourScaleChanged, "change": colourScaleChanged});
-  
-  this.scaleSlider.on("slide", function(event, ui) { view.fScaleUpdated(ui.value);} );
-  this.scaleSlider.on("change", function(event, ui) { view.fScaleUpdated(ui.value);} );
+        "orientation": "horizontal", "slide": colourScaleChanging, "change": colourScaleChanged});
   
   this.setScaleFFromView(this.scaleSlider.slider("value"));
   this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
   
-  this.functionChanged();
+  this.repaintContinuouslyCheckbox.on("change", function(event) {
+    view.repaintContinuously = this.checked;
+  });
+  this.repaintContinuously = this.repaintContinuouslyCheckbox.is(":checked");
+  
+  this.functionChanged(false);
 }
 
 ComplexFunctionExplorerView.prototype = {
@@ -592,16 +610,20 @@ ComplexFunctionExplorerView.prototype = {
     this.drawFunctionGraphs();
   }, 
   
-  "colourScaleUpdated": function(value) {
+  "colourScaleUpdated": function(value, changing) {
     this.setColourScaleFromView(value);
-    this.drawDomainColouring();
+    this.drawDomainColouring(changing);
   }, 
   
-  "functionChanged": function() {
+  "functionChanged": function(changing) {
     this.formula.text(this.complexFunction.getFormula());
-    this.drawDomainColouring();
-    this.drawFunctionGraphs();
+    this.drawDomainColouring(changing);
+    this.drawFunctionGraphs(changing);
   },    
+  
+  "functionChanging": function() {
+    this.functionChanged(true);
+  }, 
   
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
@@ -617,12 +639,14 @@ ComplexFunctionExplorerView.prototype = {
     this.domainCircleView.drawFunctionOnCircle();
   }, 
   
-  "drawDomainColouring" : function() {
-    var ctx = this.canvas.getContext("2d");
-    var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
-                                        this.explorerModel.heightInPixels());
-    this.explorerModel.writeToCanvasData(imageData.data);
-    ctx.putImageData(imageData, 0, 0);
+  "drawDomainColouring" : function(changing) {
+    if (!changing || this.repaintContinuously) {
+      var ctx = this.canvas.getContext("2d");
+      var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
+                                          this.explorerModel.heightInPixels());
+      this.explorerModel.writeToCanvasData(imageData.data);
+      ctx.putImageData(imageData, 0, 0);
+    }
   }
     
 }

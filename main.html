@@ -62,12 +62,13 @@
         width="560" height="560"></canvas>
 
   <div style="position:absolute;top:10px;left:600px;z-index:3;width:300px" class="worksBest">
-        <b>Domkol</b> works best on <b>Chrome/Chromium</b>. (It can be used on other browsers,
-        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. There is also a bug
-        when dragging zeros in Firefox. See "Issues and Browser Compatibility" below.)
+        <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
+        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. (This can
+        be mitigated by unchecking "Repaint domain colouring continuously".) There is also a bug
+        when dragging zeros in Firefox. (See "Issues and Browser Compatibility" below.)
   </div>
 
-  <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
+  <div style="position:absolute;top:150px;left:480px;z-index:2;width:30em" class="controls">
     <div class="window-top-bar"></div>
   <table >
     <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
@@ -94,6 +95,9 @@ they are all located on the origin).</td></tr>
     </tr>
     <tr><td colspan="2">Show domain coordinate grid:
             <input style="text-align:left" type="checkbox" id="show-coordinate-grid-checkbox" checked></input></td>
+    </tr>
+    <tr><td colspan="2">Repaint domain colouring continuously:
+            <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
     </tr>
   </table>
   </div>
