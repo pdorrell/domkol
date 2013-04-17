@@ -32,7 +32,7 @@
        <circle id="big-circle" cx="280" cy="280" r="150" stroke="white" stroke-width="2" fill="none"/>
        <path id="polar-grid" d="M0,0" fill="none" stroke="white" stroke-width="0.2"/>
        <path id="polar-grid-coarse" d="M0,0" fill="none" stroke="white" stroke-width="0.4"/>
-       <path id="real-path" d="M0,0" fill="none" stroke="black" stroke-width="2"/>
+       <path id="real-path" d="M0,0" fill="none" stroke="#302010" stroke-width="2"/>
        <path id="imaginary-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
        <circle id="centre-handle" transform="translate(280 280)" 
                cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
@@ -62,12 +62,12 @@
         width="560" height="560"></canvas>
 
   <div style="position:absolute;top:10px;left:600px;z-index:3;width:300px" class="worksBest">
-        Works best on <b>Chrome/Chromium</b>. (May work on other browsers, but <i>so</i>
-        much more slowly for anything involving bitmap redrawing. There is also currently
-        a bug when dragging the zeroes and the redrawing is very slow. See "Issues and Browser Compatibility" below.)
+        <b>Domkol</b> works best on <b>Chrome/Chromium</b>. (It can be used on other browsers,
+        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. There is also a bug
+        when dragging zeros in Firefox. See "Issues and Browser Compatibility" below.)
   </div>
 
-  <div style="position:absolute;top:120px;left:480px;z-index:2;width:30em" class="controls">
+  <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
     <div class="window-top-bar"></div>
   <table >
     <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
@@ -104,23 +104,23 @@ they are all located on the origin).</td></tr>
 <div class="article">
 <h2>Explanation</h2>
 
-<p><b>Domkol</b> is an HTML5/Javascript/SVG/Canvas/JQuery application I am developing which 
-displays a complex function as a colouring of the complex plain (a technique
+<p><b>Domkol</b> is an HTML5/Javascript/SVG/Canvas/JQuery application which 
+displays a complex function as a colouring of the complex plane (a technique
 known as <b>domain colouring</b>), with additional interactivity to show values as a 
 graph on a 1-dimensional subset of the domain (i.e. a 1-dimensional subset of the complex numbers
 considered as a 2-dimensional Real number space). 
-Initiall it shows the function <b>f(z) = z<sup>3</sup></b> (but you can change the function by moving
+Initially the function <b>f(z) = z<sup>3</sup></b> is shown (but you can change the function by moving
 the zeroes around with the mouse).</p>
 
-<p>The 1-dimensional curve showing is a circle. (Adding an option for viewing the values of the function
-on a chosen straight line is on the to-do list.)</p>
+<p>The 1-dimensional curve showing currently is a circle. (Other options, such as a straight line,
+may eventually be added.)</p>
 
 <p>The circle is controlled by two draggable handles: a centre handle that moves the circle
 as a whole, and an edge handle that controls the radius of the circle. The values of <b>f</b>
 for values of <b>z</b> on the circle are shown
 in terms of distance from the centre of the circle, where <b>f = 0</b> is on the circumference itself,
 positive is outside the circle and negative is inside the circle. 
-Real is black; imaginary is blue.
+Real is dark brown; imaginary is blue.
 The scale of the mapping from the value of <b>f</b> to radius is controlled by the slider, which has
 a logarithmic scale.</p>
 
@@ -128,8 +128,8 @@ a logarithmic scale.</p>
 the centre, then the graph becomes ambiguous, and you should use the slider to reduce the scale factor.</p>
 
 <p>A polar grid defines the scale of values for the real and imaginary components <b>f</b>, 
-where the outer-most circle of the grid represents 1 and the inner-most circle (which may not be visible,
-depending on the domain circle size and the chosen scale factor for <b>f</b>) represents -1.
+where the outer-most circle of the grid represents 1 and the inner-most circle represents -1 
+(if it is visible, which depends on the domain circle size and the chosen scale factor for <b>f</b>).
 
 </p>
 
@@ -157,17 +157,21 @@ to work most correctly on that browser.</p>
 browsers, especially when doing interactions which cause the coloured bitmap to be redrawn, 
 i.e. changing the colour scale, or moving the function zeroes around.
 In fact, the only browsers that give acceptable performance for redrawing the bitmap are Chrome and Chromium.
-So for the moment, this application should be considered to be a Chrome/Chromium application.
+So for the moment, Domkol should be considered to be primarily a Chrome/Chromium application.
 </li>
- <li><b>Slow drag error:</b> In Firefox (and possibly other browsers), if a zero location is dragged, and the
-bitmap redraw is very slow, the SVG element showing the zero location ends up in the wrong place, 
-even though the value shown does match the changed function formula.</li>
+ <li><b>Firefox zero dragging error:</b> In Firefox, if a zero location is dragged, the box showing
+the location of the zero displays in the wrong position, until it is dropped. (The full reason for this is
+due to differences between HTML elements and SVG elements, even in HTML5 where they appear to have similar
+markup. The long-term fix will be to replace the draggable zero location SVG elements with HTML elements, 
+which will avoid the problem.)</li>
  <li><b>Touch screens:</b> The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
 </ul>
 
 <p><b>TL;DR:</b> Domkol works best with Chrome or Chromium on a desktop with a mouse.</p>
+
+<p>Last updated: 17 April 2013</p>
 </div>
 
 <div class="copyright">Copyright &copy; Philip Dorrell 2013</div>
