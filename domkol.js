@@ -489,14 +489,15 @@ function CoordinatesView(attributes) {
   this.redraw();
 }
 
-var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)$/
+var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)(e[-+]?[0-9]+|)$/
 
 function reformatToPrecision(numberString, precision) {
   var match = decimalNumberRegexp.exec(numberString);
   var minusSign = match[1];
   var wholeNumber = match[2];
   var decimalPart = match[3].substring(0, precision+1);
-  return minusSign + wholeNumber + decimalPart;
+  var exponentPart = match[4]; // todo: round down to zero if too small
+  return minusSign + wholeNumber + decimalPart + exponentPart;
 }
 
 function formatComplexNumber(x, y, precision) {
