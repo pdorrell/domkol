@@ -89,19 +89,33 @@ function svgDraggable(handle) {
   handle.draggable()
     .css('cursor', 'move')
     .bind('mousedown', function(event){
-        var position = getTranslation(handle);
-        var x = position[0];
-        var y = position[1];
-        handle.data("offset", [x - event.pageX, y - event.pageY]);
-        handle.trigger('startSvgDrag', [x, y]);
-      })
+      var position = getTranslation(handle);
+      var x = position[0];
+      var y = position[1];
+      console.log("mousedown, x = " + x + ", y = " + y + 
+                  ", event.pageX = " + event.pageX + ", event.pageY = " + event.pageY);
+      handle.data("offset", [x - event.pageX, y - event.pageY]);
+      handle.trigger('startSvgDrag', [x, y]);
+    })
     .bind('drag', function(event, ui){
-        var offset = handle.data("offset");
-        var x = event.pageX + offset[0];
-        var y = event.pageY + offset[1];
-        setTranslation(handle, x, y);
-        handle.trigger('svgDrag', [x, y]);
-    });
+      var offset = handle.data("offset");
+      var x = event.pageX + offset[0];
+      var y = event.pageY + offset[1];
+      console.log("drag, x = " + x + ", y = " + y + 
+                  ", event.pageX = " + event.pageX + ", event.pageY = " + event.pageY);
+      setTranslation(handle, x, y);
+      console.log("handle = " + handle[0].tagName);
+      handle.trigger('svgDrag', [x, y]);
+    })
+    .bind('dragstop', function(event){
+      console.log("end of dragging");
+      handle.css({'left' : '0', 'top' : '0'}); /* remove CSS changes that Jquery UI makes 
+                                                (We have replaced those CSS changes with setTranslation because the CSS 
+                                                properties set by JQuery UI don't work in all browser. But when
+                                                the CSS changes do work, we want to reset them, to avoid
+                                                getting a double effect.) */
+    })      
+  ;
 }
 
 // Draw an array of 2D points (each point is an array) into an SVG path
