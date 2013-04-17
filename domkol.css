@@ -32,7 +32,24 @@ text.coordinates {
   line-height: 1.2em;
 }
 
+.zero {
+  padding: 0;
+  margin: 0;
+}
+
 .zero-text {
   color: blue;
-  background-color: #ffffff;
+  padding: 0.1em;
+  margin: 0 0;
+  line-height: 100%;
+  background-color: rgba(255,255,255,0.35);
+}
+
+.point-circle {
+  background: rgba(0,0,255,0.5);
+  padding: 0;
+  margin: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
 }

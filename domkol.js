@@ -422,6 +422,16 @@ function PolynomialFunctionView(attributes) {
     }
 }
 
+var pxRegexp = /^([-0-9]+)px$/
+  
+function fromPx(pxExpression) {
+  var pxMatch = pxRegexp.exec(pxExpression);
+  if (pxMatch == null) {
+    throw "Invalid px expression (expecting '<integer>px'): " + pxExpression;
+  }
+  return parseInt(pxMatch[1]);
+}
+
 PolynomialFunctionView.prototype = {
     "setNumberLabel" : function(i, handle) {
       var z = this.functionModel.zeroes[i];
@@ -436,10 +446,13 @@ PolynomialFunctionView.prototype = {
       var functionModel = this.functionModel;
       var view = this;
       this.setNumberLabel(index, handle[0]);
+      var pointCircle = handle.children(".point-circle");
+      var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
+      var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
       handle.draggable({drag: 
                         function(event, ui) {
-                          var x = ui.position.left;
-                          var y = ui.position.top;
+                          var x = ui.position.left + pointXOffset;
+                          var y = ui.position.top + pointYOffset;
                           console.log("drag, x = " + x + ", y = " + y);
                           var z = explorerModel.positionToComplexNumber(x, y);
                           console.log("   z = " + z);
@@ -449,8 +462,8 @@ PolynomialFunctionView.prototype = {
                         }, 
                         stop: 
                         function(event, ui) {
-                          var x = ui.position.left;
-                          var y = ui.position.top;
+                          var x = ui.position.left + pointXOffset;
+                          var y = ui.position.top + pointYOffset;
                           console.log("stop, x = " + x + ", y = " + y);
                           var z = explorerModel.positionToComplexNumber(x, y);
                           console.log("   z = " + z);
