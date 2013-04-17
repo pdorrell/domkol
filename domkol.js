@@ -1,52 +1,60 @@
 $(document).ready(function(){
-    var complexFunction = new PolynomialFunction({"zeroes": [[0, 0], [0, 0], [0, 0]]});
-    
-    var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
-    
-    var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
-                                                           pixelsPerUnit: 240, 
-                                                           originPixelLocation: [280, 280], 
-                                                           pixelsDimension: [560, 560], 
-                                                           colourScale: 1.0,
-                                                           scaleMax: 100, 
-                                                           domainCircle: domainCircle });
-    
-    var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
-                                                   functionModel: complexFunction, 
-                                                   explorerModel: explorerModel});
-    
-    var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
-                                                 centreHandle: $('#centre-handle'), 
-                                                 edgeHandle: $('#edge-handle'), 
-                                                 bigCircle: $("#big-circle"), 
-                                                 polarGrid: $("#polar-grid"), 
-                                                 polarGridCoarse: $("#polar-grid-coarse"), 
-                                                 realPath: $("#real-path"), 
-                                                 imaginaryPath: $("#imaginary-path"), 
-                                                 showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
-                                                 domainCircle: explorerModel.domainCircle});
-
-    var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
-                                               axes: $('#axes'), 
-                                               unitGrid: $('#unit-coordinate-grid'), 
-                                               fineGrid: $('#fine-coordinate-grid'), 
-                                               showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
-                                               explorerModel: explorerModel });
-
-    var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                                        canvas: $('#domkol-canvas')[0], 
-                                                        domainCircleView: domainCircleView, 
-                                                        coordinatesView: coordinatesView, 
-                                                        scaleSlider: $("#scale-slider"), 
-                                                        scaleValueText: $("#scale-value"), 
-                                                        colourScaleSlider: $("#colour-scale-slider"), 
-                                                        colourScaleText: $("#colour-scale"),
-                                                        repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
-                                                        formula: $("#formula"), 
-                                                        complexFunction: complexFunction});
-    
-    $(".controls").draggable({ handle: ".window-top-bar" });
-  });
+  
+  var numZeroHandles = $('#zero-handles').children(["class='zero'"]).length;
+  
+  var zeroes = [];
+  for (var i=0; i<numZeroHandles; i++) {
+    zeroes.push([0, 0]);
+  }
+  
+  var complexFunction = new PolynomialFunction({"zeroes": zeroes});
+  
+  var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
+  
+  var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
+                                                         pixelsPerUnit: 240, 
+                                                         originPixelLocation: [280, 280], 
+                                                         pixelsDimension: [560, 560], 
+                                                         colourScale: 1.0,
+                                                         scaleMax: 100, 
+                                                         domainCircle: domainCircle });
+  
+  var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
+                                                 functionModel: complexFunction, 
+                                                 explorerModel: explorerModel});
+  
+  var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
+                                               centreHandle: $('#centre-handle'), 
+                                               edgeHandle: $('#edge-handle'), 
+                                               bigCircle: $("#big-circle"), 
+                                               polarGrid: $("#polar-grid"), 
+                                               polarGridCoarse: $("#polar-grid-coarse"), 
+                                               realPath: $("#real-path"), 
+                                               imaginaryPath: $("#imaginary-path"), 
+                                               showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
+                                               domainCircle: explorerModel.domainCircle});
+  
+  var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
+                                             axes: $('#axes'), 
+                                             unitGrid: $('#unit-coordinate-grid'), 
+                                             fineGrid: $('#fine-coordinate-grid'), 
+                                             showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
+                                             explorerModel: explorerModel });
+  
+  var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
+                                                      canvas: $('#domkol-canvas')[0], 
+                                                      domainCircleView: domainCircleView, 
+                                                      coordinatesView: coordinatesView, 
+                                                      scaleSlider: $("#scale-slider"), 
+                                                      scaleValueText: $("#scale-value"), 
+                                                      colourScaleSlider: $("#colour-scale-slider"), 
+                                                      colourScaleText: $("#colour-scale"),
+                                                      repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
+                                                      formula: $("#formula"), 
+                                                      complexFunction: complexFunction});
+  
+  $(".controls").draggable({ handle: ".window-top-bar" });
+});
 
 function objectToString(object, maxValueLength) {
   var result = "{";
