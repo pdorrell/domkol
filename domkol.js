@@ -435,7 +435,6 @@ function fromPx(pxExpression) {
 PolynomialFunctionView.prototype = {
     "setNumberLabel" : function(i, handle) {
       var z = this.functionModel.zeroes[i];
-      console.log("setNumberLabel, i = " + i + ", handle = " + handle + ", z = " + z);
       var formattedZ = formatComplexNumber(z[0], z[1], 2);
       $(handle).children(".zero-text").text(formattedZ);
     },    
@@ -453,9 +452,7 @@ PolynomialFunctionView.prototype = {
                         function(event, ui) {
                           var x = ui.position.left + pointXOffset;
                           var y = ui.position.top + pointYOffset;
-                          console.log("drag, x = " + x + ", y = " + y);
                           var z = explorerModel.positionToComplexNumber(x, y);
-                          console.log("   z = " + z);
                           functionModel.zeroes[index] = z;
                           view.setNumberLabel(index, this);
                           functionModel.explorerView.functionChanging(true);
@@ -464,9 +461,7 @@ PolynomialFunctionView.prototype = {
                         function(event, ui) {
                           var x = ui.position.left + pointXOffset;
                           var y = ui.position.top + pointYOffset;
-                          console.log("stop, x = " + x + ", y = " + y);
                           var z = explorerModel.positionToComplexNumber(x, y);
-                          console.log("   z = " + z);
                           functionModel.zeroes[index] = z;
                           view.setNumberLabel(index, this);
                           functionModel.explorerView.functionChanged(false);
