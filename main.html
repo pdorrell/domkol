@@ -39,19 +39,18 @@
        <circle id="edge-handle" transform="translate(430 280)" 
                cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
      </g>
-     <g id="zero-handles" >
-       <g class="zero" transform="translate(280 280)">
-          <circle cx="0" cy="0" r="1.5" stroke="none" fill="blue"/>
-          <rect x="3" y="-22" width="90" height="20" fill="white" fill-opacity="0.3"/>
-          <text x="5" y="-7" fill="blue">zero1</text>
-       </g>
-     </g>
   </svg>
+
+  <div id="zero-handles">
+     <div class="zero" style="position:absolute;top:280px;left:280px;z-index:2;">
+        <div class="zero-text">zero1</div>
+     </div>
+  </div>
   
   <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
         width="560" height="560"></canvas>
 
-  <div style="position:absolute;top:10px;left:600px;z-index:3;width:300px" class="worksBest">
+  <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:3;width:300px">
         <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
         but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. (This can
         be mitigated by unchecking "Repaint domain colouring continuously".) There is also a bug

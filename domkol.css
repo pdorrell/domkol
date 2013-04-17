@@ -31,3 +31,8 @@ text.coordinates {
   padding: 0.5em;
   line-height: 1.2em;
 }
+
+.zero-text {
+  color: blue;
+  background-color: #ffffff;
+}

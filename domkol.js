@@ -1,6 +1,6 @@
 $(document).ready(function(){
   
-  var numZeroHandles = $('#zero-handles').children(["class='zero'"]).length;
+  var numZeroHandles = $('#zero-handles').children(".zero").length;
   
   var zeroes = [];
   for (var i=0; i<numZeroHandles; i++) {
@@ -412,42 +412,53 @@ function PolynomialFunctionView(attributes) {
     setAttributes(this, attributes, 
                   ["zeroHandles", "functionModel", "explorerModel"]);
     var numZeroes = this.functionModel.zeroes.length;
-    var handles = this.zeroHandles.children(["class='zero'"]);
+    var handles = this.zeroHandles.children(".zero");
     if (handles.length != numZeroes) {
         throw "Number of zero handles does not match number of zeroes";
     }
     for (var i=0; i<numZeroes; i++) {
-        var handle = $(handles[numZeroes-1-i]);
-        this.setupHandle(i, handle);
+      var handle = handles.eq(numZeroes-1-i);
+      this.setupHandle(i, handle);
     }
 }
 
 PolynomialFunctionView.prototype = {
     "setNumberLabel" : function(i, handle) {
-        var z = this.functionModel.zeroes[i];
-        var formattedZ = formatComplexNumber(z[0], z[1], 2);
-        handle[0].getElementsByTagName("text")[0].textContent = formattedZ;
+      var z = this.functionModel.zeroes[i];
+      console.log("setNumberLabel, i = " + i + ", handle = " + handle + ", z = " + z);
+      var formattedZ = formatComplexNumber(z[0], z[1], 2);
+      $(handle).children(".zero-text").text(formattedZ);
     },    
     
     "setupHandle": function(i, handle) {
-        svgDraggable(handle);
-        var index = i;
-        var explorerModel = this.explorerModel;
-        var functionModel = this.functionModel;
-        var view = this;
-        this.setNumberLabel(index, handle);
-        handle.on('svgDrag', function(event, x, y) {
-          var z = explorerModel.positionToComplexNumber(x, y);
-          functionModel.zeroes[index] = z;
-          view.setNumberLabel(index, handle);
-          functionModel.explorerView.functionChanging(true);
-        });
-        handle.on('svgDragStop', function(event, x, y) {
-          var z = explorerModel.positionToComplexNumber(x, y);
-          functionModel.zeroes[index] = z;
-          view.setNumberLabel(index, handle);
-          functionModel.explorerView.functionChanged(false);
-        });
+      var index = i;
+      var explorerModel = this.explorerModel;
+      var functionModel = this.functionModel;
+      var view = this;
+      this.setNumberLabel(index, handle[0]);
+      handle.draggable({drag: 
+                        function(event, ui) {
+                          var x = ui.position.left;
+                          var y = ui.position.top;
+                          console.log("drag, x = " + x + ", y = " + y);
+                          var z = explorerModel.positionToComplexNumber(x, y);
+                          console.log("   z = " + z);
+                          functionModel.zeroes[index] = z;
+                          view.setNumberLabel(index, this);
+                          functionModel.explorerView.functionChanging(true);
+                        }, 
+                        stop: 
+                        function(event, ui) {
+                          var x = ui.position.left;
+                          var y = ui.position.top;
+                          console.log("stop, x = " + x + ", y = " + y);
+                          var z = explorerModel.positionToComplexNumber(x, y);
+                          console.log("   z = " + z);
+                          functionModel.zeroes[index] = z;
+                          view.setNumberLabel(index, this);
+                          functionModel.explorerView.functionChanged(false);
+                        }})
+        .css("cursor", "move");
     }
 };
     
