@@ -62,8 +62,9 @@
         width="560" height="560"></canvas>
 
   <div style="position:absolute;top:10px;left:600px;z-index:3;width:300px" class="worksBest">
-        Works best on <b>Chrome/Chromium</b>. (Does work on other browsers, but <i>so</i>
-        much more slowly for anything involving bitmap redrawing. See "Issues and Browser Compatibility" below.)
+        Works best on <b>Chrome/Chromium</b>. (May work on other browsers, but <i>so</i>
+        much more slowly for anything involving bitmap redrawing. There is also currently
+        a bug when dragging the zeroes and the redrawing is very slow. See "Issues and Browser Compatibility" below.)
   </div>
 
   <div style="position:absolute;top:120px;left:480px;z-index:2;width:30em" class="controls">
@@ -152,13 +153,16 @@ to work most correctly on that browser.</p>
 <p>Known issues are:</p>
 
 <ul>
- <li>Performance: There are some noticeable performance variations between 
+ <li><b>Performance:</b> There are some noticeable performance variations between 
 browsers, especially when doing interactions which cause the coloured bitmap to be redrawn, 
 i.e. changing the colour scale, or moving the function zeroes around.
 In fact, the only browsers that give acceptable performance for redrawing the bitmap are Chrome and Chromium.
 So for the moment, this application should be considered to be a Chrome/Chromium application.
 </li>
- <li>The handles and slider do not (yet) work on a touch screen. I tried 
+ <li><b>Slow drag error:</b> In Firefox (and possibly other browsers), if a zero location is dragged, and the
+bitmap redraw is very slow, the SVG element showing the zero location ends up in the wrong place, 
+even though the value shown does match the changed function formula.</li>
+ <li><b>Touch screens:</b> The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
 </ul>
