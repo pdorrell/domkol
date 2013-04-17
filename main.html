@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head><meta charset="utf-8">
-<title>Domkol: Complex Function Visualisation with Domain Colouring</title>
+<title>Domkol: HTML5 Complex Function Visualisation using Canvas and SVG</title>
 <link rel="stylesheet" type="text/css" href="../site.css" />
 
 <link rel="stylesheet" href="lib/jquery-ui-1.10.2.css" />
@@ -61,9 +61,9 @@
 
   <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:3;width:300px">
         <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
-        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. (This can
-        be mitigated by unchecking "Repaint domain colouring continuously".) There is also a bug
-        when dragging zeros in Firefox. (See "Issues and Browser Compatibility" below.)
+        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. 
+        To make the UI more responsive in a browser with slow bitmap drawing, uncheck
+        the "Repaint domain colouring continuously" checkbox. 
   </div>
 
   <div style="position:absolute;top:150px;left:480px;z-index:2;width:30em" class="controls">
@@ -161,11 +161,6 @@ i.e. changing the colour scale, or moving the function zeroes around.
 In fact, the only browsers that give acceptable performance for redrawing the bitmap are Chrome and Chromium.
 So for the moment, Domkol should be considered to be primarily a Chrome/Chromium application.
 </li>
- <li><b>Firefox zero dragging error:</b> In Firefox, if a zero location is dragged, the box showing
-the location of the zero displays in the wrong position, until it is dropped. (The full reason for this is
-due to differences between HTML elements and SVG elements, even in HTML5 where they appear to have similar
-markup. The long-term fix will be to replace the draggable zero location SVG elements with HTML elements, 
-which will avoid the problem.)</li>
  <li><b>Touch screens:</b> The handles and slider do not (yet) work on a touch screen. I tried 
 <a href="http://touchpunch.furf.com/">Touch Punch</a>, which worked for the slider, but not very well for
 the draggable handles.</li>
@@ -173,7 +168,7 @@ the draggable handles.</li>
 
 <p><b>TL;DR:</b> Domkol works best with Chrome or Chromium on a desktop with a mouse.</p>
 
-<p>Last updated: 17 April 2013</p>
+<p>Last updated: 18 April 2013</p>
 </div>
 
 <div class="copyright">Copyright &copy; Philip Dorrell 2013</div>
