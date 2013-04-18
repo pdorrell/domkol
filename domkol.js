@@ -1,16 +1,38 @@
+/** 
+    Domkol. 
+    
+    Complex function visualisation with domain colouring, interactive "domain circle" and dragging of
+    polynomial function zeroes.
+    
+    Copyright (2013) Philip Dorrell (thinkinghard.com)
+    
+    This application has a "model/view" structure. 
+    All references to actual HTML/SVG/Canvas objects are in the view objects.
+    Each view has a reference to an associated model, but not the other way round.
+    (In effect the "view" is both the view and the controller.)
+    
+    Complex numbers are directly represented as arrays of two reals, i.e. [x,y] represents x+yi
+ */
+
 $(document).ready(function(){
   
+  /* From the view, calculate how many draggable function zeroes there are 
+     (and therefore how many zeros the polynomial function */
   var numZeroHandles = $('#zero-handles').children(".zero").length;
   
+  /* Create an array of repeated [0, 0] (i.e. 0+0i) */
   var zeroes = [];
   for (var i=0; i<numZeroHandles; i++) {
     zeroes.push([0, 0]);
   }
   
+  /* The model of the polynomial function */
   var complexFunction = new PolynomialFunction({"zeroes": zeroes});
   
+  #/ The model of the circular subset of the complex plane */
   var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
   
+  /* The main model of the application */
   var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
                                                          pixelsPerUnit: 240, 
                                                          originPixelLocation: [280, 280], 
@@ -19,10 +41,13 @@ $(document).ready(function(){
                                                          scaleMax: 100, 
                                                          domainCircle: domainCircle });
   
+  /* The view of the polynomial function (consisting of the draggable handles) */
   var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
+  /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
+     a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
                                                centreHandle: $('#centre-handle'), 
                                                edgeHandle: $('#edge-handle'), 
@@ -33,14 +58,18 @@ $(document).ready(function(){
                                                imaginaryPath: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
-  
+
+  /* The view of the coordinates in the complex plane. There is a grid for integral values, and  
+     a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
+     a checkbox controlling visibility of the coordinate grid. */
   var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
                                              axes: $('#axes'), 
                                              unitGrid: $('#unit-coordinate-grid'), 
                                              fineGrid: $('#fine-coordinate-grid'), 
                                              showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
                                              explorerModel: explorerModel });
-  
+
+  /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                                       canvas: $('#domkol-canvas')[0], 
                                                       domainCircleView: domainCircleView, 
@@ -53,9 +82,11 @@ $(document).ready(function(){
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
+  /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
 });
 
+/* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
 function objectToString(object, maxValueLength) {
   var result = "{";
   var first = true;
@@ -75,10 +106,14 @@ function objectToString(object, maxValueLength) {
   result += "}";
   return result;
 }
-
-// Note: allow for "," in between coordinates, even though that should not happen (but windows Firefox puts it there)
+ /* Regular expression to parse SVG transform attributes like "translate(245 -28)" */
+/# Note: allow for "," in between coordinates, even though that should not happen (but Windows Firefox puts it there) */
 var translateRegexp = /^translate[(]([-0-9.]+)[, ]+([-0-9.]+)[)]$/;
 
+/* Get the SVG translation from the "transform" attribute of a JQuery element wrapper.
+   This is used to implement dragging of SVG elements, which do not consistently respond
+   to changes in the "top" and "left" CSS attributes.
+   (The assumption is that the element has a simple translate transform attribute, and not anything else.) */
 function getTranslation(handle) {
   var transform = handle.attr("transform");
   var translateRegexpMatch = translateRegexp.exec(transform);
@@ -88,13 +123,25 @@ function getTranslation(handle) {
   return [parseInt(translateRegexpMatch[1]), parseInt(translateRegexpMatch[2])];
 }
 
+/* Set the translation of an SVG element in its "transform" attribute. x and y are pixel values.
+   getTranslation and setTranslation are effectively inverses, except getTranslation returns x and y as an array. */
 function setTranslation(handle, x, y) {
   handle.attr("transform", "translate(" + x + " " + y + ")");
 }  
 
+/* A function which adds "draggable" functionality to SVG elements.
+   This function is a work-around for the issue that JQuery UI "draggable" does
+   not work with SVG elements.
+   Unfortunately this work-around does not work consistently across browsers for "g" (group) elements.
+   But it does work for "circle" elements (and probably others as well, but I haven't tried).
+   It causes the element to fire its own "startSvgDrag", "svgDrag" and "svgDragStop" events.
+   How it works: 
+        * it manages the position of the object using the "translate" SVG element "transform" attribute.
+        * dragging position is determined from JQuery event.pageX and event.pageY values
+        * the offset between the translate value and the pageX/pageY values is stored when dragging starts */
 function svgDraggable(handle) {
   var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
-  var position = getTranslation(handle); // test that the transform attribute is set properly
+  var position = getTranslation(handle); /* test that the transform attribute is set properly */
   handle.draggable()
     .css('cursor', 'move')
     .bind('mousedown', function(event){
@@ -112,11 +159,6 @@ function svgDraggable(handle) {
       handle.trigger('svgDrag', [x, y]);
     })
     .bind('dragstop', function(event){
-      handle.css({'left' : '0', 'top' : '0'}); /* remove CSS changes that Jquery UI makes 
-                      (We have replaced those CSS changes with setTranslation because the CSS 
-                      properties set by JQuery UI don't work in all browser. But when
-                      the CSS changes do work, we want to reset them, to avoid
-                      getting a double effect.) */
       var position = getTranslation(handle);
       var x = position[0];
       var y = position[1];
@@ -125,10 +167,12 @@ function svgDraggable(handle) {
   ;
 }
 
-// Draw an array of 2D points (each point is an array) into an SVG path
+/* Draw an array of 2D points (each point is an array of 2 pixel coordinates) into an SVG path element */
 function drawPointsPath(svgPath, points) {
   var pointStrings = new Array();
   for (var i=0; i<points.length; i++) {
+    /* Reduce point values to 3dp to help reduce path string size
+       (sometimes (0.001*x)*1000 is not 3dp due to rounding errors, but that doesn't matter) */
     pointStrings[i] = (0.001*Math.round(points[i][0]*1000) + "," + 
                        0.001*Math.round(points[i][1]*1000));
   }
@@ -138,12 +182,16 @@ function drawPointsPath(svgPath, points) {
   svgPath.attr("d", pathString);
 }
 
+/* Create an SVG path element to draw a circle */
 function pathCircleComponent(cx, cy, r) {
   return "M" + cx + "," + cy + " " +
     "m " + (-r) + ",0 " + 
     "a " + r + "," + r + " 0 1,0 " + (2*r) + ",0 " +
     "a " + r + "," + r + " 0 1,0 " + (-2*r) + ",0";
 }
+
+/* The following functions do calculations on complex numbers represented as 
+   arrays of the real and imaginary components, i.e. [x, y] represents x+yi . */
 
 function minus(z1, z2) {
   return [z1[0]-z2[0], z1[1]-z2[1]];
@@ -154,14 +202,8 @@ function times(z1, z2) {
           z1[0]*z2[1] + z1[1]*z2[0]];
 }
 
-function square(z) {
-  return times(z, z);
-}
-
-function cube(z) {
-  return times(z, times(z, z));
-}
-
+/* Set attributes on a Javascript object from an object literal and an array of keys
+   This is a convenient method to construct an object from multiple named parameters. */
 function setAttributes(object, attributes, keys) {
   for (var i=0; i<keys.length; i++) {
     var key = keys[i];
@@ -174,6 +216,9 @@ function setAttributes(object, attributes, keys) {
   }
 }
 
+/* Model of the domain circle, i.e. a 1-D subset of the domain which is the circumference of 
+   the circle, and for which the values of the function f will be displayed as two graphs of
+   the real and imaginary values of f going around the circle. */
 function DomainCircle(attributes) {
   setAttributes(this, attributes, 
                 ["circumferenceIncrementInPixels"]);
@@ -187,7 +232,7 @@ DomainCircle.prototype = {
     this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
   }, 
   
-  // return real & imaginary paths as arrays of points
+  /* Return real & imaginary of f on the domain circle as arrays of points */
   "functionGraphPointArrays": function () {
     var explorerModel = this.explorerModel;
     var unitsPerPixel = explorerModel.unitsPerPixel();
@@ -270,8 +315,8 @@ ComplexFunctionExplorerModel.prototype = {
             for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
                 var z = f([x, y]);
                 var k = (j*widthInPixels+i)*4;
-                data[k] = (z[0]*colourScale+1.0)*128; // positive real = red
-                data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary = green
+                data[k] = (z[0]*colourScale+1.0)*128; // positive real & negative imaginary = red
+                data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary & negative real = green
                 data[k+2] = 0;
                 data[k+3] = 255;
                 y += unitsPerPixel;
@@ -491,7 +536,7 @@ function reformatToPrecision(numberString, precision) {
   var minusSign = match[1];
   var wholeNumber = match[2];
   var decimalPart = match[3].substring(0, precision+1);
-  var exponentPart = match[4]; // todo: round down to zero if too small
+  var exponentPart = match[4]; /* todo: round down to zero if too small */
   return minusSign + wholeNumber + decimalPart + exponentPart;
 }
 
