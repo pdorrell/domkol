@@ -100,18 +100,18 @@ function objectToString(object, maxValueLength) {
   var result = "{";
   var first = true;
   $.each(object, function(key,value){
-      if (first) {
-        first = false;
-      }
-      else {
-        result += ", ";
-      }
-      var valueString = "" + value;
-      if (maxValueLength && valueString.length > maxValueLength) {
-        valueString = valueString.substring(0, maxValueLength) + " ...";
-      }
-      result += key + ": " + valueString;
-    });
+    if (first) {
+      first = false;
+    }
+    else {
+      result += ", ";
+    }
+    var valueString = "" + value;
+    if (maxValueLength && valueString.length > maxValueLength) {
+      valueString = valueString.substring(0, maxValueLength) + " ...";
+    }
+    result += key + ": " + valueString;
+  });
   result += "}";
   return result;
 }
@@ -293,43 +293,46 @@ function ComplexFunctionExplorerModel(attributes) {
 }
 
 ComplexFunctionExplorerModel.prototype = {
-    "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
-    "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
-    
-    "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
-    
-    "widthInPixels": function() { return this.pixelsDimension[0]; },     
-    "heightInPixels": function() { return this.pixelsDimension[1]; }, 
-    
-    "positionToComplexNumber": function(x, y) {
-        return [(x-this.originPixelLocation[0])/this.pixelsPerUnit, 
-                (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
-    }, 
+  /** minimum value of X = re(z) in complex viewport */
+  "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
   
-    "writeToCanvasData": function(data) {
-        var widthInPixels = this.widthInPixels();
-        var heightInPixels = this.heightInPixels();
-        var minX = this.minX();
-        var minY = this.minY();
-        var f = this.f;
-        var colourScale = this.colourScale;
-        var unitsPerPixel = this.unitsPerPixel();
-        
-        var x = minX;
-        for (var i=0; i<widthInPixels; i++) {
-            var y = minY;
-            for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
-                var z = f([x, y]);
-                var k = (j*widthInPixels+i)*4;
-                data[k] = (z[0]*colourScale+1.0)*128; // positive real & negative imaginary = red
-                data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary & negative real = green
-                data[k+2] = 0;
-                data[k+3] = 255;
-                y += unitsPerPixel;
-            }
-            x += unitsPerPixel;
-        }
+  /** minimum value of Y = im(z) in complex viewport */
+  "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
+    
+  "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
+    
+  "widthInPixels": function() { return this.pixelsDimension[0]; },     
+  "heightInPixels": function() { return this.pixelsDimension[1]; }, 
+  
+  "positionToComplexNumber": function(x, y) {
+    return [(x-this.originPixelLocation[0])/this.pixelsPerUnit, 
+            (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
+  }, 
+  
+  "writeToCanvasData": function(data) {
+    var widthInPixels = this.widthInPixels();
+    var heightInPixels = this.heightInPixels();
+    var minX = this.minX();
+    var minY = this.minY();
+    var f = this.f;
+    var colourScale = this.colourScale;
+    var unitsPerPixel = this.unitsPerPixel();
+    
+    var x = minX;
+    for (var i=0; i<widthInPixels; i++) {
+      var y = minY;
+      for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
+        var z = f([x, y]);
+        var k = (j*widthInPixels+i)*4;
+        data[k] = (z[0]*colourScale+1.0)*128; // positive real & negative imaginary = red
+        data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary & negative real = green
+        data[k+2] = 0;
+        data[k+3] = 255;
+        y += unitsPerPixel;
+      }
+      x += unitsPerPixel;
     }
+  }
 };
   
 function DomainCircleView (attributes) {
@@ -345,23 +348,23 @@ function DomainCircleView (attributes) {
   var domainCircle = this.domainCircle;
   
   this.centreHandle.on('svgDrag', function(event, x, y) {
-      view.bigCircle.attr('cx', x);
-      view.bigCircle.attr('cy', y);
-      var edgePos = domainCircle.edgeHandlePosition;
-      setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]);
-      view.setModel();
-      view.drawFunctionOnCircle();
-    });
+    view.bigCircle.attr('cx', x);
+    view.bigCircle.attr('cy', y);
+    var edgePos = domainCircle.edgeHandlePosition;
+    setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]);
+    view.setModel();
+    view.drawFunctionOnCircle();
+  });
   
   this.edgeHandle.on('svgDrag', function(event, x, y) {
-      view.setModel();
-      view.bigCircle.attr('r', domainCircle.radius);
-      view.drawFunctionOnCircle();
-    });
+    view.setModel();
+    view.bigCircle.attr('r', domainCircle.radius);
+    view.drawFunctionOnCircle();
+  });
   
   this.showCircleGraphCheckbox.on("change", function(event) {
-      view.circleGraph.toggle(this.checked);
-    });
+    view.circleGraph.toggle(this.checked);
+  });
   
   this.setModel();
 }
