@@ -65,8 +65,8 @@ $(document).ready(function(){
                                                bigCircle: $("#big-circle"), 
                                                polarGrid: $("#polar-grid"), 
                                                polarGridCoarse: $("#polar-grid-coarse"), 
-                                               realPath: $("#real-path"), 
-                                               imaginaryPath: $("#imaginary-path"), 
+                                               realPathElement: $("#real-path"), 
+                                               imaginaryPathElement: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
@@ -175,8 +175,7 @@ function svgDraggable(handle) {
       var x = position[0];
       var y = position[1];
       handle.trigger('svgDragStop', [x, y]);
-    })      
-  ;
+    });
 }
 
 /* Create SVG path attribute for an array of points */
@@ -193,12 +192,6 @@ function createPointsPath(points) {
   var pathString = pointStrings.join(" ");
   return pathString;
 }
-
-/* Draw an array of 2D points (each point is an array of 2 pixel coordinates) into an SVG path element */
-function drawPointsPath(svgPath, points) {
-  svgPath.attr("d", this.createPointsPath(points));
-}
-  
 
 /* Create an SVG path element to draw a circle */
 function pathCircleComponent(cx, cy, r) {
@@ -372,8 +365,9 @@ function DomainCircleView (attributes) {
                  "polarGridCoarse", /** JQuery wrapper for SVG path representing 
                                         the "coarse" part of polar grid, inner&outer radial circles and 
                                         vert&horiz radial axes  */
-                 "realPath", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
-                 "imaginaryPath", /** JQuery wrapper for SVG path representing imaginary parts of f on the domain circle */
+                 "realPathElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
+                 "imaginaryPathElement", /** JQuery wrapper for SVG path representing imaginary parts of f 
+                                             on the domain circle */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
@@ -421,8 +415,10 @@ DomainCircleView.prototype = {
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
   "drawFunctionOnCircle": function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
-    drawPointsPath(this.realPath, pointArrays[0]);
-    drawPointsPath(this.imaginaryPath, pointArrays[1]);
+    this.realPath = createPointsPath(pointArrays[0]);
+    this.imaginaryPath = createPointsPath(pointArrays[1]);
+    this.realPathElement.attr("d", this.realPath);
+    this.imaginaryPathElement.attr("d", this.imaginaryPath);
     this.drawPolarGrid();
   }, 
   
