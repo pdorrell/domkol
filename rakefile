@@ -9,9 +9,13 @@ end
 
 puts "DOMKOL_WEB_DIR = #{DOMKOL_WEB_DIR}"
 
+DOMKOL_WEB_TEMPLATE_DIR = File.expand_path(File.join(DOMKOL_WEB_DIR, "..", "_domkol"))
+
+puts "DOMKOL_WEB_TEMPLATE_DIR = #{DOMKOL_WEB_TEMPLATE_DIR}"
+
 task :default => [:web]
 
-task :web do |t|
+task :copyFiles do |t|
   if File.directory? DOMKOL_WEB_DIR
     FileUtils.rm_r DOMKOL_WEB_DIR, :verbose => true
   end
@@ -21,3 +25,33 @@ task :web do |t|
   FileUtils.cp Dir.glob("*.css"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp_r "lib", DOMKOL_WEB_DIR, :verbose => true
 end
+
+task :web => [:copyFiles, :substituteMainHtml]
+
+def substituteCommentLine(fileName, fileContents)
+  commentLine = "<!-- #{fileName} -->"
+  replacementContent = File.read(File.join(DOMKOL_WEB_TEMPLATE_DIR, fileName))
+  fileContents.gsub(commentLine, replacementContent)
+end
+
+# This task updates the main.html to match the style of the website it is being inserted into
+# (without having to include that data into this project source)
+task :substituteMainHtml do
+  mainHtmlFile = File.join(DOMKOL_WEB_DIR, "main.html")
+  puts "Doing substitutions in #{mainHtmlFile} ..."
+  
+  mainHtmlFileContents = File.read(mainHtmlFile)
+  
+  for entry in Dir.entries(DOMKOL_WEB_TEMPLATE_DIR) do
+    if entry.end_with?(".html")
+      puts " doing substitution for #{entry} ..."
+      mainHtmlFileContents = substituteCommentLine(entry, mainHtmlFileContents)
+    end
+  end
+  
+  File.open(mainHtmlFile, "w") do |f|
+    f.write(mainHtmlFileContents)
+  end
+end
+
+

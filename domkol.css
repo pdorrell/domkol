@@ -53,3 +53,32 @@ text.coordinates {
   height: 4px;
   border-radius: 50%;
 }
+
+h1 {
+  font-family: Tahoma,Helvetica,sans-serif;
+  font-weight: bold;
+  font-size: 1.6em;
+  border: 1px solid #a0a0a0;
+  background-color: #f0f0f0;
+  padding: 0 0 0.2em 0.5em;
+  margin: 0.3em;
+  color: #000060;
+}
+
+.wideItem {
+  border: 1px solid #000060;
+  padding: 0.4em 0.4em;
+  margin: 0.1em 0.1em;
+  line-height: 1.5em;
+  background-color: #ffffff;
+  font-family: Georgia, "Times New Roman",serif;
+}
+
+.article {
+  border: 1px solid #000060;
+  padding: 1em 1em 0.5em 1em;
+  margin: 1em 3em 1em 5em;
+  line-height: 1.5em;
+  background-color: #ffffff;
+  font-family: Georgia, "Times New Roman",serif;
+}
