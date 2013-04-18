@@ -12,6 +12,15 @@
     (In effect the "view" is both the view and the controller.)
     
     Complex numbers are directly represented as arrays of two reals, i.e. [x,y] represents x+yi
+    
+    "Units" refers to complex units, like 1 and i
+    "Pixels" refers to web-browser pixels (not necessarily the same as screen pixels)
+    
+    "Complex viewport" refers to the rectangular subset of the complex plane represented by the Canvas element.
+    It has pixel coordinates, starting with (0,0) at the top left. It has (complex) unit coordinates, 
+    real component increasing to the right, imaginary component increasing upwards. The mapping between the two
+    is determined by the origin location in pixel coordinates, and the "pixelsPerUnit" value (which is the same
+    in both directions, to enforce an aspect ratio of 1:1).
  */
 
 $(document).ready(function(){
@@ -59,7 +68,7 @@ $(document).ready(function(){
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
-  /* The view of the coordinates in the complex plane. There is a grid for integral values, and  
+  /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
   var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
@@ -226,54 +235,57 @@ function DomainCircle(attributes) {
 }
 
 DomainCircle.prototype = {
+
+  /** Calculate and store the radius value (in pixels) */
   "calculateRadius": function() {
     var edgeX = this.edgeHandlePosition[0];
     var edgeY = this.edgeHandlePosition[1];
     this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
   }, 
   
-  /* Return real & imaginary of f on the domain circle as arrays of points */
+  /* Return real & imaginary of f on the domain circle as arrays of points (in pixel coordinates) */
   "functionGraphPointArrays": function () {
     var explorerModel = this.explorerModel;
     var unitsPerPixel = explorerModel.unitsPerPixel();
-    var cx = this.centreHandlePosition[0];
-    var cy = this.centreHandlePosition[1];
-    var r = this.radius;
-    var angleIncrement = this.circumferenceIncrementInPixels / r;
-    var numSteps = 2*Math.PI/angleIncrement;
-    var pointsReal = new Array();
-    var pointsImaginary = new Array();
-    var theta = 0;
-    var f = explorerModel.f;
-    var minX = explorerModel.minX();
-    var minY = explorerModel.minY();
-    var xRange = explorerModel.xRange();
-    var yRange = explorerModel.yRange();
-    var heightInPixels = explorerModel.heightInPixels();
-    var scaleFPixels = explorerModel.scaleF/unitsPerPixel;
+    var cx = this.centreHandlePosition[0]; // pixel X coordinate of circle centre
+    var cy = this.centreHandlePosition[1]; // pixel X coordinate of circle centre
+    var r = this.radius; // radius of circle in pixels
+    var angleIncrement = this.circumferenceIncrementInPixels / r; // How often to recalculate f going round the circle
+    var numSteps = 2*Math.PI/angleIncrement; // Number of values of f that will be calculated
+    var pointsReal = new Array(); // Array of points representing the real components of value of f
+    var pointsImaginary = new Array(); // Array of points representing the real components of value of f
+    var theta = 0; // Current angular position in circle
+    var f = explorerModel.f; // The function
+    var minX = explorerModel.minX(); // Minimum x value in complex viewport (in units)
+    var minY = explorerModel.minY(); // Minimum y value in complex viewport (in units)
+    var heightInPixels = explorerModel.heightInPixels(); // Height of complex viewport in pixels
+    var scaleFPixels = explorerModel.scaleF/unitsPerPixel; // How a unit maps to pixels in the displayed f values.
     for (var i=0; i<numSteps+1; i++) {
       var sinTheta = Math.sin(theta);
       var cosTheta = Math.cos(theta);
-      var px = cx + r * sinTheta;
-      var py = cy + r * cosTheta;
-      var x = minX + px * unitsPerPixel;
-      var y = minY + (heightInPixels - 1 - py) * unitsPerPixel;
-      var fValue = f([x, y]);
-      var rReal = r + fValue[0] * scaleFPixels;
-      var rImaginary = r + fValue[1] * scaleFPixels;
-      pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy];
-      pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy];
-      theta += angleIncrement;
+      var px = cx + r * sinTheta; // re(z) pixel coordinate
+      var py = cy + r * cosTheta; // im(z) pixel coordinate
+      var x = minX + px * unitsPerPixel; // re(z) unit coordinate
+      var y = minY + (heightInPixels - 1 - py) * unitsPerPixel; // im(z) unit coordinate
+      var fValue = f([x, y]); // calculated value of f
+      var rReal = r + fValue[0] * scaleFPixels; // represented location of re(fValue) in pixels from circle centre
+      var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
+      pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy]; // add pixel coordinate of re(fValue) to real path
+      pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
+      theta += angleIncrement; // step around to angle of next value to compute
     }
     return [pointsReal, pointsImaginary];
   }
 };
 
+/** The main model of the application */
 function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
                 ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
                  "domainCircle", "scaleMax", 
-                 "colourScale"]);// e.g. f = colourScale maps to +255, -colourScale maps to 0.
+                 "colourScale"]);/* multiply re(f) and im(f) values by colourScale to get values 
+                                    where values in range -1 to 1.0 are represented by 0 to 255
+                                    in the specified RGB components. (currently hardcoded to real=>R, imaginary=>G)*/
   
   // attributes set by view: scaleF
     
