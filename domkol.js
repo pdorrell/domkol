@@ -47,7 +47,6 @@ $(document).ready(function(){
                                                          originPixelLocation: [280, 280], 
                                                          pixelsDimension: [560, 560], 
                                                          colourScale: 1.0,
-                                                         scaleMax: 100, 
                                                          domainCircle: domainCircle });
   
   /* The view of the polynomial function (consisting of the draggable handles) */
@@ -230,7 +229,9 @@ function setAttributes(object, attributes, keys) {
    the real and imaginary values of f going around the circle. */
 function DomainCircle(attributes) {
   setAttributes(this, attributes, 
-                ["circumferenceIncrementInPixels"]);
+                ["circumferenceIncrementInPixels"]); /* for each increment going around the circumference, calculate
+                                                        a new value of f */
+
   // attributes set by view: centreHandlePosition, edgeHandlePosition, radius
 }
 
@@ -281,8 +282,11 @@ DomainCircle.prototype = {
 /** The main model of the application */
 function ComplexFunctionExplorerModel(attributes) {
   setAttributes(this, attributes, 
-                ["f", "pixelsPerUnit", "originPixelLocation", "pixelsDimension", 
-                 "domainCircle", "scaleMax", 
+                ["f", /** The complex function, satisfying f([re(z),im(z)]) = [re(f(z)),im(f(z))] */
+                 "pixelsPerUnit", /** How many pixels make one complex unit? */
+                 "originPixelLocation", /** What is the pixel location of the complex origin? */
+                 "pixelsDimension", /** pixelsDimension = [width, height], width & height of complex viewport in pixels */
+                 "domainCircle", /** An object of class DomainCircle */
                  "colourScale"]);/* multiply re(f) and im(f) values by colourScale to get values 
                                     where values in range -1 to 1.0 are represented by 0 to 255
                                     in the specified RGB components. (currently hardcoded to real=>R, imaginary=>G)*/
@@ -346,10 +350,20 @@ ComplexFunctionExplorerModel.prototype = {
     as two separate real and imaginary graphs.*/
 function DomainCircleView (attributes) {
   setAttributes(this, attributes, 
-                ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", 
-                 "polarGrid", "polarGridCoarse", 
-                 "realPath", "imaginaryPath", 
-                 "showCircleGraphCheckbox", "domainCircle"]);
+                ["circleGraph", /** JQuery wrapper for element contain the whole view (for showing/hiding) */
+                 "centreHandle", /** JQuery wrapper for centre handle which is a SVG circle */
+                 "edgeHandle", /** JQuery wrapper for edge handle which is a SVG circle */
+                 "bigCircle", /** JQuery wrapper for SVG circle element representing the subset of the domain*/
+                 "polarGrid", /** JQuery wrapper for SVG path representing 
+                                  the polar grid (circles & radial axes) */
+                 "polarGridCoarse", /** JQuery wrapper for SVG path representing 
+                                        the "coarse" part of polar grid, inner&outer radial circles and 
+                                        vert&horiz radial axes  */
+                 "realPath", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
+                 "imaginaryPath", /** JQuery wrapper for SVG path representing imaginary parts of f on the domain circle */
+                 "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
+                 "domainCircle"]); /** An object of class DomainCircle, the model for this view */
+  
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
   svgDraggable(this.edgeHandle); // Make the edge handle (which is an SVG element) draggable
   
@@ -443,12 +457,16 @@ DomainCircleView.prototype = {
 
 };
 
+/** The model for a polynomial function of type (z-a)(z-b)(z-c) with zeroes at a,b,c 
+    (Of degree 3 in that example, but could be any degree.)*/
 function PolynomialFunction(attributes) {
-    setAttributes(this, attributes, ["zeroes"]);
+    setAttributes(this, attributes, 
+                  ["zeroes"]); /** The array of complex numbers which are the zeroes of the polynomial */
 }
 
 PolynomialFunction.prototype = {
     
+  /** Retrieve the function f such that f(z) = f([re(z),im(z)]) is the value of the polynomial applied to z */
   "getFunction": function() {
     var zeroes = this.zeroes;
     return function(z) {
@@ -460,6 +478,7 @@ PolynomialFunction.prototype = {
     };
   }, 
   
+  /** Get a displayable formula for the function (with roots displayed to 2DP) */
   "getFormula": function() {
     var formula = "";
     var zeroes = this.zeroes;
@@ -474,7 +493,9 @@ PolynomialFunction.prototype = {
 
 function PolynomialFunctionView(attributes) {
     setAttributes(this, attributes, 
-                  ["zeroHandles", "functionModel", "explorerModel"]);
+                  ["zeroHandles", /** JQuery wrapper for the HTML div that holds the zero handle elements */
+                   "functionModel", /** An object of class PolynomialFunction which is the model for this view */
+                   "explorerModel"]); /** Reference to the main model for the application */
     var numZeroes = this.functionModel.zeroes.length;
     var handles = this.zeroHandles.children(".zero");
     if (handles.length != numZeroes) {
@@ -535,9 +556,18 @@ PolynomialFunctionView.prototype = {
 };
     
 
+/** The view representing the coordinates in the complex plane as displayed within the complex viewport */
 function CoordinatesView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "showCoordinateGridCheckbox", "coordinates", "axes", "unitGrid", "fineGrid"]);
+                ["explorerModel", /** A reference to the main application model */
+                 "showCoordinateGridCheckbox", /** Checkbox controlling visibility of the coordinates */
+                 "coordinates", /** JQuery wrapper for the element containing all the coordinate elements */
+                 "axes", /** JQuery wrapper for the SVG path representing the real & imaginary axes */
+                 "unitGrid", /** JQuery wrapper for the SVG path representing the grid with spacing 1 complex unit */
+                 "fineGrid"]); /** JQuery wrapper for the SVG path representing the grid with spacing 0.1 complex units */
+  
+  /** Note: the SVG text elements for coordinate values are generated dynamically */
+  
   this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]');
   var view = this;
   
@@ -652,11 +682,22 @@ CoordinatesView.prototype = {
   }
 };
   
+/** The main view for the application */
 function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
-                ["explorerModel", "canvas", "domainCircleView", "coordinatesView", "scaleSlider", "scaleValueText", 
-                 "colourScaleSlider", "colourScaleText", "complexFunction", "formula", 
-                 "repaintContinuouslyCheckbox"]);
+                ["explorerModel", /** The model for this view */
+                 "canvas", /** JQuery wrapper for the canvas element, onto which the domain colouring is painted */
+                 "domainCircleView", /** Object of class DomainCircleView, being the domain circle view*/
+                 "coordinatesView", /** Object of class CoordinatesView, being the coordinates view */
+                 "scaleSlider", /** JQuery wrapper for the slider that sets the function scale in the domain circle */
+                 "scaleValueText", /** JQuery wrapper for display of function scale value */
+                 "colourScaleSlider", /** JQuery wrapper for the slider that sets the 
+                                          colour scale (of the domain colouring) */
+                 "colourScaleText", /** JQuery wrapper for display of colour scale */
+                 "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
+                                        being the model of the complex function being visualised*/
+                 "formula", /** JQuery wrapper for display of the formula for the complex function */
+                 "repaintContinuouslyCheckbox"]); /** JQuery wrapper for checkbox that controls continuous repainting */
   this.complexFunction.explorerView = this;
   var view = this;
 
