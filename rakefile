@@ -1,3 +1,7 @@
+# The purpose of this rakefile is to deploy the Domkol web pages
+# into a larger website, possibly making alterations to the content of main.html.
+# It is not required for development.
+
 STDOUT.sync = true
 BASE_DIR = File.dirname(__FILE__)
 
