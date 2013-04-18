@@ -117,7 +117,8 @@ function objectToString(object, maxValueLength) {
   result += "}";
   return result;
 }
- /* Regular expression to parse SVG transform attributes like "translate(245 -28)" */
+
+/* Regular expression to parse SVG transform attributes like "translate(245 -28)" */
 /# Note: allow for "," in between coordinates, even though that should not happen (but Windows Firefox puts it there) */
 var translateRegexp = /^translate[(]([-0-9.]+)[, ]+([-0-9.]+)[)]$/;
 
@@ -202,12 +203,15 @@ function pathCircleComponent(cx, cy, r) {
 }
 
 /* The following functions do calculations on complex numbers represented as 
-   arrays of the real and imaginary components, i.e. [x, y] represents x+yi . */
+   arrays of the real and imaginary components, i.e. [x, y] represents x+yi
+   (equivalently, z = [re(z), im(z)], re(z) = z[0], im(z) = z[1]). */
 
+/** Subtract second complex number from the first complex number */
 function minus(z1, z2) {
   return [z1[0]-z2[0], z1[1]-z2[1]];
 }
 
+/** Multiply two complex numbers together */
 function times(z1, z2) {
   return [z1[0]*z2[0] - z1[1]*z2[1], 
           z1[0]*z2[1] + z1[1]*z2[0]];
@@ -682,11 +686,12 @@ CoordinatesView.prototype = {
   }, 
   
   /** Draw the coordinate grid with specified spacing (in complex units) into the SVG path component */
-  "drawGrid": function(grid, spacing, showCoordinates) {
+  "drawGrid": function(gridPathElement, spacing, showCoordinateLabels) {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     var pixelsPerUnit = this.explorerModel.pixelsPerUnit;
     
+    // draw the vertical grid lines
     var minXIndex = Math.ceil((0-origin[0])/(pixelsPerUnit*spacing));
     var maxXIndex = Math.floor((dimension[0]-origin[0])/(pixelsPerUnit*spacing));
     var pathComponents = [];
@@ -694,9 +699,10 @@ CoordinatesView.prototype = {
     for (var i=minXIndex; i <= maxXIndex; i++) {
       pathComponents[componentsIndex++] = this.verticalPath(i*spacing);
     }
+    // draw the horizontal grid lines, and, if required, add the coordinate labels
     var xCoordinateOffset = this.xCoordinateOffset;
     var yCoordinateOffset = this.yCoordinateOffset;
-    if (showCoordinates) {
+    if (showCoordinateLabels) {
       this.coordinatesGroup.empty();
     }
     var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
@@ -704,14 +710,15 @@ CoordinatesView.prototype = {
     for (var i=minYIndex; i <= maxYIndex; i++) {
       pathComponents[componentsIndex++] = this.horizontalPath(i*spacing);
       var yCoordinatePos = origin[1] + i*spacing*pixelsPerUnit - yCoordinateOffset;
-      if (showCoordinates) {
+      if (showCoordinateLabels) {
+        // add all the coordinate labels along this horizontal grid line
         for (var j = minXIndex; j <= maxXIndex; j++) {
           var xCoordinatePos = origin[0] + j*spacing*pixelsPerUnit + xCoordinateOffset;
           this.addCoordinatesText(formatComplexNumber(j*spacing, -i*spacing, 2), xCoordinatePos, yCoordinatePos);
         }
       }
     }
-    grid.attr("d", pathComponents.join(" "));
+    gridPathElement.attr("d", pathComponents.join(" "));
   }, 
   
   /** redraw the grid and coordinate labels into the relevant SVG elements */
@@ -744,77 +751,102 @@ function ComplexFunctionExplorerView(attributes) {
   this.complexFunction.explorerView = this;
   var view = this;
 
+  /** The scale for displaying f on the domain circle is changing (but hasn't finished changing) */
   function scaleChanging(event, ui) {
-    view.fScaleUpdated(ui.value);
+    view.fScaleUpdated(ui.value); // todo : maybe have option to update when it's changing ?
   }
   
+  /** The scale for displaying f on the domain circle has changed */
   function scaleChanged(event, ui) {
     view.fScaleUpdated(ui.value);
   }
   
   this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
         "orientation": "horizontal", 
-                           "slide": scaleChanging, "change": scaleChanged
+                           "slide": scaleChanging, 
+                           "change": scaleChanged
                           });
   
+  /** The colour scale has changed */
   function colourScaleChanged(event, ui) {
     view.colourScaleUpdated(ui.value, false);
   }
   
+  /** The colour scale is changing (but hasn't finished changing, so maybe don't redraw the domain colouring yet) */
   function colourScaleChanging(event, ui) {
     view.colourScaleUpdated(ui.value, true);
   }
   
   this.colourScaleSlider.slider({"min": 0, "max": 100, "value": 50,
-        "orientation": "horizontal", "slide": colourScaleChanging, "change": colourScaleChanged});
+                                 "orientation": "horizontal", 
+                                 "slide": colourScaleChanging, 
+                                 "change": colourScaleChanged});
   
+  /** set initial function scale from slider */
   this.setScaleFFromView(this.scaleSlider.slider("value"));
+  
+  /** set initial colour scale from slider */
   this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
   
+  /** When "repaint continously" checkbox is checked, repaint continuously */
   this.repaintContinuouslyCheckbox.on("change", function(event) {
     view.repaintContinuously = this.checked;
   });
   this.repaintContinuously = this.repaintContinuouslyCheckbox.is(":checked");
-  
-  this.functionChanged(false);
+
+  this.functionChanged(false); // force initial repaint
 }
 
 ComplexFunctionExplorerView.prototype = {
   
+  /** The function scale has been updated, so update the value in the model and 
+      redraw the function graph on the domain circle */
   "fScaleUpdated": function(value) {
     this.setScaleFFromView(value);
     this.drawFunctionGraphs();
   }, 
   
+  /** The colour scale has been updated (but may not have finished changing),
+      update the value in the model and optionally repaint the domain colouring. */
   "colourScaleUpdated": function(value, changing) {
     this.setColourScaleFromView(value);
     this.drawDomainColouring(changing);
   }, 
   
+  /** The function has changed (e.g. from dragging the zeroes around), and may or may not
+      have finished changing. Update the displayed formular, optionally repaint the domain 
+      colouring, and redraw the function graph on the domain circle.*/
   "functionChanged": function(changing) {
     this.formula.text(this.complexFunction.getFormula());
     this.drawDomainColouring(changing);
     this.drawFunctionGraphs(changing);
   },    
   
+  /** The function is changing, but has not yet finished changing. */
   "functionChanging": function() {
     this.functionChanged(true);
   }, 
   
+  /** Set the function scale (for displaying the domain circle graph) in the model 
+      according to a logarithmic scale on the slider. Update the displayed scale value. */
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
     this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
   }, 
   
+  /** Set the colour scale (for displaying the domain circle graph) in the model 
+      according to a logarithmic scale on the slider. Update the displayed scale value. */
   "setColourScaleFromView": function(value) {
     this.explorerModel.colourScale = 1.0 * Math.pow(1.2, value-50);
     this.colourScaleText.text(Math.round(this.explorerModel.colourScale*100)/100.0);
   }, 
 
+  /** Draw all function graphs (of which there is only one currently - the function graph on the domain circle) */
   "drawFunctionGraphs": function() {
     this.domainCircleView.drawFunctionOnCircle();
   }, 
   
+  /** repaint the domain colouring into the canvas element */
   "drawDomainColouring" : function(changing) {
     if (!changing || this.repaintContinuously) {
       var ctx = this.canvas.getContext("2d");
