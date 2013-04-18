@@ -298,17 +298,24 @@ ComplexFunctionExplorerModel.prototype = {
   
   /** minimum value of Y = im(z) in complex viewport */
   "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
-    
+
+  /** How much the z value in complex units changes per pixel */
   "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
     
+  /** Width of complex viewport in pixels */
   "widthInPixels": function() { return this.pixelsDimension[0]; },     
+  
+  /** Height of complex viewport in pixels */
   "heightInPixels": function() { return this.pixelsDimension[1]; }, 
   
+  /** Convert pixel position to a complex number */
   "positionToComplexNumber": function(x, y) {
     return [(x-this.originPixelLocation[0])/this.pixelsPerUnit, 
             (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
   }, 
   
+  /** Compute f for every pixel and write the representative colour values
+      to the "data" array in the format that can be directly written to HTML canvas element. */
   "writeToCanvasData": function(data) {
     var widthInPixels = this.widthInPixels();
     var heightInPixels = this.heightInPixels();
@@ -335,30 +342,32 @@ ComplexFunctionExplorerModel.prototype = {
   }
 };
   
+/** The view for the circular domain which displays values of f for points on the circle
+    as two separate real and imaginary graphs.*/
 function DomainCircleView (attributes) {
   setAttributes(this, attributes, 
                 ["circleGraph", "centreHandle", "edgeHandle", "bigCircle", 
                  "polarGrid", "polarGridCoarse", 
                  "realPath", "imaginaryPath", 
                  "showCircleGraphCheckbox", "domainCircle"]);
-  svgDraggable(this.centreHandle);
-  svgDraggable(this.edgeHandle);
+  svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
+  svgDraggable(this.edgeHandle); // Make the edge handle (which is an SVG element) draggable
   
+  /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
   
   this.centreHandle.on('svgDrag', function(event, x, y) {
-    view.bigCircle.attr('cx', x);
-    view.bigCircle.attr('cy', y);
+    view.bigCircle.attr({cx: x, cy: y}); // Move the centre of the domain circle
     var edgePos = domainCircle.edgeHandlePosition;
-    setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]);
-    view.setModel();
+    setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]); // Also move the edge handle
+    view.updateModel();
     view.drawFunctionOnCircle();
   });
   
   this.edgeHandle.on('svgDrag', function(event, x, y) {
-    view.setModel();
-    view.bigCircle.attr('r', domainCircle.radius);
+    view.updateModel();
+    view.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
     view.drawFunctionOnCircle();
   });
   
@@ -366,11 +375,12 @@ function DomainCircleView (attributes) {
     view.circleGraph.toggle(this.checked);
   });
   
-  this.setModel();
+  this.updateModel();
 }
 
 DomainCircleView.prototype = {
-  "setModel": function() {
+  /** Update the model from view changes. */
+  "updateModel": function() {
     this.domainCircle.centreHandlePosition = getTranslation(this.centreHandle);
     this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
