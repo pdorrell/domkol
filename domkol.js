@@ -9,7 +9,10 @@
     This application has a "model/view" structure. 
     All references to actual HTML/SVG/Canvas objects are in the view objects.
     Each view has a reference to an associated model, but not the other way round.
-    (In effect the "view" is both the view and the controller.)
+    (One current exception: the complex function model has a reference to the main explorer view, 
+    in order to propagate updates.)
+    In effect the "view" is both the view and the controller.
+    
     
     Complex numbers are directly represented as arrays of two reals, i.e. [x,y] represents x+yi
     
@@ -329,10 +332,10 @@ ComplexFunctionExplorerModel.prototype = {
     var colourScale = this.colourScale;
     var unitsPerPixel = this.unitsPerPixel();
     
-    var x = minX;
+    var x = minX; // start with lowest value of re(z)
     for (var i=0; i<widthInPixels; i++) {
-      var y = minY;
-      for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down
+      var y = minY; // start with lowest value of im(z)
+      for (var j=heightInPixels-1; j >= 0; j--) { // note - canvas Y coords are upside down, so we start at the bottom
         var z = f([x, y]);
         var k = (j*widthInPixels+i)*4;
         data[k] = (z[0]*colourScale+1.0)*128; // positive real & negative imaginary = red
@@ -370,7 +373,8 @@ function DomainCircleView (attributes) {
   /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
-  
+
+  // drag the centre handle to move the domain circle around
   this.centreHandle.on('svgDrag', function(event, x, y) {
     view.bigCircle.attr({cx: x, cy: y}); // Move the centre of the domain circle
     var edgePos = domainCircle.edgeHandlePosition;
@@ -379,16 +383,19 @@ function DomainCircleView (attributes) {
     view.drawFunctionOnCircle();
   });
   
+  // drag the edge handle to change the radius of the domain circle
   this.edgeHandle.on('svgDrag', function(event, x, y) {
     view.updateModel();
     view.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
     view.drawFunctionOnCircle();
   });
   
+  // check/uncheck checkbox to show/hide the domain circle view
   this.showCircleGraphCheckbox.on("change", function(event) {
     view.circleGraph.toggle(this.checked);
   });
   
+  // initial update of model for the initial state of the view
   this.updateModel();
 }
 
@@ -401,6 +408,7 @@ DomainCircleView.prototype = {
     this.domainCircle.calculateRadius();
   }, 
   
+  /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
   "drawFunctionOnCircle": function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
     drawPointsPath(this.realPath, pointArrays[0]);
@@ -408,6 +416,12 @@ DomainCircleView.prototype = {
     this.drawPolarGrid();
   }, 
   
+  /** Draw the polar grid. Circles represent the range of f values from -1.0 to 1.0,
+      in steps of 0.1. (When the f values are "scaled" via the slider, the polar grid is resized to match, 
+      so the grid is always showing actual f values.) Also shows radial axes every 15 degrees.
+      There are two paths, one "coarse" ("coarsePathComponents" showing the more important parts of the grid
+      using thicker lines) and one "fine" ("pathComponents" for showing all the grid using thinner lines).
+  */
   "drawPolarGrid": function() {
     var theta = 0;
     var numRadialLinesPerQuarter = 6;
@@ -425,6 +439,7 @@ DomainCircleView.prototype = {
     var gridRadius = this.domainCircle.radius + pixelsPerScaledUnit;
     var innerRadius = this.domainCircle.radius - pixelsPerScaledUnit;
     var innerGridRadius = Math.max(innerRadius, 0);
+    // draw the radial axes into the paths
     for (var i = 0; i<numRadialLines; i++) {
       var sinTheta = Math.sin(theta);
       var cosTheta = Math.cos(theta);
@@ -439,6 +454,7 @@ DomainCircleView.prototype = {
       }
       theta += thetaIncrement;
     }
+    // draw the circles into the paths
     var stepsPerScaledUnit = 10;
     var radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
     for (var i = -stepsPerScaledUnit; i <= stepsPerScaledUnit; i++) {
@@ -491,6 +507,8 @@ PolynomialFunction.prototype = {
     
 };
 
+/** The view for the polynomial function, consisting of draggable handles for changing the zeroes of
+    the polynomial, and a textual display of the formula for the function.*/
 function PolynomialFunctionView(attributes) {
     setAttributes(this, attributes, 
                   ["zeroHandles", /** JQuery wrapper for the HTML div that holds the zero handle elements */
@@ -507,8 +525,10 @@ function PolynomialFunctionView(attributes) {
     }
 }
 
+/** Regular expression to parse CSS pixel dimensions such as "35px" or "-45px" */
 var pxRegexp = /^([-0-9]+)px$/
   
+/** A function to parse an expression like "-45px", and return (for that example) the number -45. */
 function fromPx(pxExpression) {
   var pxMatch = pxRegexp.exec(pxExpression);
   if (pxMatch == null) {
@@ -518,41 +538,46 @@ function fromPx(pxExpression) {
 }
 
 PolynomialFunctionView.prototype = {
-    "setNumberLabel" : function(i, handle) {
-      var z = this.functionModel.zeroes[i];
-      var formattedZ = formatComplexNumber(z[0], z[1], 2);
-      $(handle).children(".zero-text").text(formattedZ);
-    },    
-    
-    "setupHandle": function(i, handle) {
-      var index = i;
-      var explorerModel = this.explorerModel;
-      var functionModel = this.functionModel;
-      var view = this;
-      this.setNumberLabel(index, handle[0]);
-      var pointCircle = handle.children(".point-circle");
-      var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
-      var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
-      handle.draggable({drag: 
-                        function(event, ui) {
-                          var x = ui.position.left + pointXOffset;
-                          var y = ui.position.top + pointYOffset;
-                          var z = explorerModel.positionToComplexNumber(x, y);
-                          functionModel.zeroes[index] = z;
-                          view.setNumberLabel(index, this);
-                          functionModel.explorerView.functionChanging(true);
-                        }, 
-                        stop: 
-                        function(event, ui) {
-                          var x = ui.position.left + pointXOffset;
-                          var y = ui.position.top + pointYOffset;
-                          var z = explorerModel.positionToComplexNumber(x, y);
-                          functionModel.zeroes[index] = z;
-                          view.setNumberLabel(index, this);
-                          functionModel.explorerView.functionChanged(false);
-                        }})
-        .css("cursor", "move");
-    }
+  
+  /** Set the number label on the draggable handle for the ith zero. */
+  "setNumberLabel" : function(i, handle) {
+    var z = this.functionModel.zeroes[i];
+    var formattedZ = formatComplexNumber(z[0], z[1], 2);
+    $(handle).children(".zero-text").text(formattedZ);
+  },    
+  
+  /** Initialise the draggable handle for the ith zero. */
+  "setupHandle": function(i, handle) {
+    var index = i;
+    var explorerModel = this.explorerModel;
+    var functionModel = this.functionModel;
+    var view = this;
+    this.setNumberLabel(index, handle[0]);
+    var pointCircle = handle.children(".point-circle");
+    var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
+    var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
+    /** When dragged, update the corresponding zero in the function model, and tell the 
+        explorer view to redraw & repaint everything that depends on the function. */
+    handle.draggable({drag: 
+                      function(event, ui) {
+                        var x = ui.position.left + pointXOffset;
+                        var y = ui.position.top + pointYOffset;
+                        var z = explorerModel.positionToComplexNumber(x, y);
+                        functionModel.zeroes[index] = z;
+                        view.setNumberLabel(index, this);
+                        functionModel.explorerView.functionChanging();
+                      }, 
+                      stop: 
+                      function(event, ui) {
+                        var x = ui.position.left + pointXOffset;
+                        var y = ui.position.top + pointYOffset;
+                        var z = explorerModel.positionToComplexNumber(x, y);
+                        functionModel.zeroes[index] = z;
+                        view.setNumberLabel(index, this);
+                        functionModel.explorerView.functionChanged(false);
+                      }})
+      .css("cursor", "move");
+  }
 };
     
 
@@ -568,9 +593,13 @@ function CoordinatesView(attributes) {
   
   /** Note: the SVG text elements for coordinate values are generated dynamically */
   
-  this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]');
+  this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]'); /* note: selector ".coordinates-group"
+                                                                                       doesn't work on SVG elements */
+  
+  // put view in local variable for access by event handlers
   var view = this;
   
+  /** Toggle the checkbox to show/hide the coordinates */
   this.showCoordinateGridCheckbox.on("change", function(event) {
       view.coordinates.toggle(this.checked);
     });
@@ -578,8 +607,11 @@ function CoordinatesView(attributes) {
   this.redraw();
 }
 
+/** Regex to parse the normal Javascript representation of a float value */
 var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)(e[-+]?[0-9]+|)$/
 
+/** Reformat a Javascript number to show no more than specified number of 
+    decimal places (but don't trim trailing 0's) */
 function reformatToPrecision(numberString, precision) {
   var match = decimalNumberRegexp.exec(numberString);
   var minusSign = match[1];
@@ -589,6 +621,7 @@ function reformatToPrecision(numberString, precision) {
   return minusSign + wholeNumber + decimalPart + exponentPart;
 }
 
+/** Format a complex number to specified precision, using standard notation */
 function formatComplexNumber(x, y, precision) {
   var showX = x != 0 || y == 0;
   var xString = showX ? reformatToPrecision(""+x, precision) : "";
@@ -599,6 +632,7 @@ function formatComplexNumber(x, y, precision) {
   return xString + (showPlus ? "+" : "") + yString + (showI?"i" : "");
 }
 
+/** Format a complex number added to a variable. e.g. for "z" and 0-3.0233i, and precision 3 show "z-3.023i" */
 function formatVariablePlusComplexNumber(variableName, x, y, precision) {
   if (x == 0 && y == 0) {
     return variableName;
@@ -622,9 +656,10 @@ function makeSvgElement(tag, attributes) {
 
 CoordinatesView.prototype = {
   
-  "xCoordinateOffset": 3, 
-  "yCoordinateOffset": 3, 
+  "xCoordinateOffset": 3, // amount to offset (rightwards) the bottom left corner of coordinate value from actual location
+  "yCoordinateOffset": 3, // amount to offset (upwards) the bottom left corner of coordinate value from actual location
   
+  /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
   "addCoordinatesText" : function(text, x, y) {
     var textElement = makeSvgElement("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
@@ -632,19 +667,22 @@ CoordinatesView.prototype = {
     this.coordinatesGroup.append(textElement);
   }, 
   
+  /** Return SVG path component for a horizontal axis for y = im(z). */
   "horizontalPath": function (y) {
     var maxX = this.explorerModel.pixelsDimension[0];
     var yPixels = this.explorerModel.originPixelLocation[1] + this.explorerModel.pixelsPerUnit * y;
     return "M0," + yPixels + " L" + maxX + "," + yPixels;
   }, 
   
+  /** Return SVG path component for a vertical axis for x = re(z). */
   "verticalPath": function (x) {
     var maxY = this.explorerModel.pixelsDimension[1];
     var xPixels = this.explorerModel.originPixelLocation[0] + this.explorerModel.pixelsPerUnit * x;
     return "M" + xPixels + ",0 L" + xPixels + "," + maxY;
   }, 
   
-  "drawGrid": function(grid, spacing) {
+  /** Draw the coordinate grid with specified spacing (in complex units) into the SVG path component */
+  "drawGrid": function(grid, spacing, showCoordinates) {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     var pixelsPerUnit = this.explorerModel.pixelsPerUnit;
@@ -658,27 +696,32 @@ CoordinatesView.prototype = {
     }
     var xCoordinateOffset = this.xCoordinateOffset;
     var yCoordinateOffset = this.yCoordinateOffset;
-    this.coordinatesGroup.empty();
+    if (showCoordinates) {
+      this.coordinatesGroup.empty();
+    }
     var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
     var maxYIndex = Math.floor(origin[1]/(pixelsPerUnit*spacing));
     for (var i=minYIndex; i <= maxYIndex; i++) {
       pathComponents[componentsIndex++] = this.horizontalPath(i*spacing);
-      var yCoordinatePos = origin[1] + i*pixelsPerUnit - yCoordinateOffset;
-      for (var j = minXIndex; j <= maxXIndex; j++) {
-        var xCoordinatePos = origin[0] + j*pixelsPerUnit + xCoordinateOffset;
-        this.addCoordinatesText(formatComplexNumber(j, -i, 2), xCoordinatePos, yCoordinatePos);
+      var yCoordinatePos = origin[1] + i*spacing*pixelsPerUnit - yCoordinateOffset;
+      if (showCoordinates) {
+        for (var j = minXIndex; j <= maxXIndex; j++) {
+          var xCoordinatePos = origin[0] + j*spacing*pixelsPerUnit + xCoordinateOffset;
+          this.addCoordinatesText(formatComplexNumber(j*spacing, -i*spacing, 2), xCoordinatePos, yCoordinatePos);
+        }
       }
     }
     grid.attr("d", pathComponents.join(" "));
   }, 
   
+  /** redraw the grid and coordinate labels into the relevant SVG elements */
   "redraw": function() {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     this.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
     
-    this.drawGrid(this.unitGrid, 1.0);
-    this.drawGrid(this.fineGrid, 0.1);
+    this.drawGrid(this.unitGrid, 1.0, true);
+    this.drawGrid(this.fineGrid, 0.1, false);
   }
 };
   
