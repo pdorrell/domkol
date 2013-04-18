@@ -281,7 +281,7 @@ DomainCircle.prototype = {
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
       theta += angleIncrement; // step around to angle of next value to compute
     }
-    return [pointsReal, pointsImaginary];
+    return {real: pointsReal, imaginary: pointsImaginary};
   }
 };
 
@@ -415,8 +415,8 @@ DomainCircleView.prototype = {
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
   "drawFunctionOnCircle": function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
-    this.realPath = createPointsPath(pointArrays[0]);
-    this.imaginaryPath = createPointsPath(pointArrays[1]);
+    this.realPath = createPointsPath(pointArrays["real"]);
+    this.imaginaryPath = createPointsPath(pointArrays["imaginary"]);
     this.realPathElement.attr("d", this.realPath);
     this.imaginaryPathElement.attr("d", this.imaginaryPath);
     this.drawPolarGrid();
