@@ -29,7 +29,7 @@ $(document).ready(function(){
   /* The model of the polynomial function */
   var complexFunction = new PolynomialFunction({"zeroes": zeroes});
   
-  #/ The model of the circular subset of the complex plane */
+  /* The model of the circular subset of the complex plane */
   var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
   
   /* The main model of the application */
