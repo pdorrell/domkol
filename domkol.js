@@ -296,13 +296,9 @@ ComplexFunctionExplorerModel.prototype = {
     "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
     "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
     
-    "xRange": function() { return this.widthInPixels() / this.pixelsPerUnit; }, 
-    "yRange": function() { return this.heightInPixels() / this.pixelsPerUnit; }, 
-    
     "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
     
-    "widthInPixels": function() { return this.pixelsDimension[0]; }, 
-    
+    "widthInPixels": function() { return this.pixelsDimension[0]; },     
     "heightInPixels": function() { return this.pixelsDimension[1]; }, 
     
     "positionToComplexNumber": function(x, y) {
@@ -314,9 +310,7 @@ ComplexFunctionExplorerModel.prototype = {
         var widthInPixels = this.widthInPixels();
         var heightInPixels = this.heightInPixels();
         var minX = this.minX();
-        var xRange = this.xRange();
         var minY = this.minY();
-        var yRange = this.yRange();
         var f = this.f;
         var colourScale = this.colourScale;
         var unitsPerPixel = this.unitsPerPixel();
