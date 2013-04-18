@@ -179,8 +179,8 @@ function svgDraggable(handle) {
   ;
 }
 
-/* Draw an array of 2D points (each point is an array of 2 pixel coordinates) into an SVG path element */
-function drawPointsPath(svgPath, points) {
+/* Create SVG path attribute for an array of points */
+function createPointsPath(points) {
   var pointStrings = new Array();
   for (var i=0; i<points.length; i++) {
     /* Reduce point values to 3dp to help reduce path string size
@@ -191,8 +191,14 @@ function drawPointsPath(svgPath, points) {
   pointStrings[0] = "M" + pointStrings[0];
   pointStrings[1] = "L" + pointStrings[1];
   var pathString = pointStrings.join(" ");
-  svgPath.attr("d", pathString);
+  return pathString;
 }
+
+/* Draw an array of 2D points (each point is an array of 2 pixel coordinates) into an SVG path element */
+function drawPointsPath(svgPath, points) {
+  svgPath.attr("d", this.createPointsPath(points));
+}
+  
 
 /* Create an SVG path element to draw a circle */
 function pathCircleComponent(cx, cy, r) {
