@@ -95,6 +95,8 @@ $(document).ready(function(){
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
+  
+  $("#wiggle").on("click", function(event) { explorerView.domainCircleView.toggleWiggled(); });
 });
 
 /* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
@@ -261,6 +263,8 @@ DomainCircle.prototype = {
     var numSteps = 2*Math.PI/angleIncrement; // Number of values of f that will be calculated
     var pointsReal = new Array(); // Array of points representing the real components of value of f
     var pointsImaginary = new Array(); // Array of points representing the real components of value of f
+    var pointsWiggled = new Array(); // Array of points representing the wiggled real components of value of f
+    var wiggleFactor = 0.05;
     var theta = 0; // Current angular position in circle
     var f = explorerModel.f; // The function
     var minX = explorerModel.minX(); // Minimum x value in complex viewport (in units)
@@ -275,13 +279,16 @@ DomainCircle.prototype = {
       var x = minX + px * unitsPerPixel; // re(z) unit coordinate
       var y = minY + (heightInPixels - 1 - py) * unitsPerPixel; // im(z) unit coordinate
       var fValue = f([x, y]); // calculated value of f
+      var wiggledFValue = fValue[0] + wiggleFactor*fValue[1];
       var rReal = r + fValue[0] * scaleFPixels; // represented location of re(fValue) in pixels from circle centre
       var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
+      var rWiggled = r + wiggledFValue * scaleFPixels;
       pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy]; // add pixel coordinate of re(fValue) to real path
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
+      pointsWiggled[i] = [rWiggled * sinTheta + cx, rWiggled * cosTheta + cy];
       theta += angleIncrement; // step around to angle of next value to compute
     }
-    return {real: pointsReal, imaginary: pointsImaginary};
+    return {real: pointsReal, imaginary: pointsImaginary, wiggled: pointsWiggled};
   }
 };
 
@@ -371,6 +378,8 @@ function DomainCircleView (attributes) {
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
+  this.wiggled = false;
+  
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
   svgDraggable(this.edgeHandle); // Make the edge handle (which is an SVG element) draggable
   
@@ -417,9 +426,15 @@ DomainCircleView.prototype = {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
     this.realPath = createPointsPath(pointArrays["real"]);
     this.imaginaryPath = createPointsPath(pointArrays["imaginary"]);
-    this.realPathElement.attr("d", this.realPath);
+    this.wiggledPath = createPointsPath(pointArrays["wiggled"]);
+    this.realPathElement.attr("d", this.wiggled ? this.wiggledPath : this.realPath);
     this.imaginaryPathElement.attr("d", this.imaginaryPath);
     this.drawPolarGrid();
+  }, 
+  
+  "toggleWiggled" : function() {
+    this.wiggled = !this.wiggled;
+    this.realPathElement.attr("d", this.wiggled ? this.wiggledPath : this.realPath);
   }, 
   
   /** Draw the polar grid. Circles represent the range of f values from -1.0 to 1.0,
