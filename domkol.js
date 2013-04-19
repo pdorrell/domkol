@@ -264,7 +264,7 @@ DomainCircle.prototype = {
     var pointsReal = new Array(); // Array of points representing the real components of value of f
     var pointsImaginary = new Array(); // Array of points representing the real components of value of f
     var pointsWiggled = new Array(); // Array of points representing the wiggled real components of value of f
-    var wiggleFactor = 0.05;
+    var wiggleFactor = 0.4;
     var theta = 0; // Current angular position in circle
     var f = explorerModel.f; // The function
     var minX = explorerModel.minX(); // Minimum x value in complex viewport (in units)
@@ -283,9 +283,11 @@ DomainCircle.prototype = {
       var rReal = r + fValue[0] * scaleFPixels; // represented location of re(fValue) in pixels from circle centre
       var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
       var rWiggled = r + wiggledFValue * scaleFPixels;
-      pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy]; // add pixel coordinate of re(fValue) to real path
+      var realPoint = [rReal * sinTheta + cx, rReal * cosTheta + cy]; // add pixel coordinate of re(fValue) to real path
+      pointsReal[i] = realPoint;
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
-      pointsWiggled[i] = [rWiggled * sinTheta + cx, rWiggled * cosTheta + cy];
+      var wiggle = fValue[1] * scaleFPixels * wiggleFactor;
+      pointsWiggled[i] = [realPoint[0] + wiggle, realPoint[1]];
       theta += angleIncrement; // step around to angle of next value to compute
     }
     return {real: pointsReal, imaginary: pointsImaginary, wiggled: pointsWiggled};
