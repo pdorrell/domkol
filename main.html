@@ -23,6 +23,9 @@
 <div style="position:relative;height:560px;">
   <svg style="position:absolute;top:0;left:0;z-index:1;"
      width="560" height="560" viewbox="0 0 560 560">
+     <g id="circle-graph-under">
+       <path id="real-path-under" d="M0,0" fill="none" stroke="#808090" stroke-width="2"/>
+     </g>
      <g id="coordinates">
        <g class="coordinates-group"></g>
        <path id="axes" d="M0,0" stroke="#909090" stroke-width="0.6"/>
@@ -34,6 +37,7 @@
        <path id="polar-grid" d="M0,0" fill="none" stroke="white" stroke-width="0.2"/>
        <path id="polar-grid-coarse" d="M0,0" fill="none" stroke="white" stroke-width="0.4"/>
        <path id="real-path" d="M0,0" fill="none" stroke="blue" stroke-width="2"/>
+       <path id="real-path-shadow" d="M0,0" fill="none" stroke="#404040" stroke-width="2"/>
        <path id="imaginary-path" d="M0,0" fill="none" stroke="#302010" stroke-width="2"/>
        <circle id="centre-handle" transform="translate(280 280)" 
                cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
@@ -98,6 +102,9 @@ they are all located on the origin).</td></tr>
     <tr><td colspan="2">Repaint domain colouring continuously:
             <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
     </tr>
+    <tr><td colspan="2">Show graph on circular domain in 3D:
+      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox"></input></td>
+     </tr>
   </table>
   </div>
 
