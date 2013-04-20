@@ -68,6 +68,7 @@ $(document).ready(function(){
                                                realPathElement: $("#real-path"), 
                                                imaginaryPathElement: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
+                                               wiggleCheckbox: $("#wiggle-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
@@ -96,7 +97,6 @@ $(document).ready(function(){
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
   
-  $("#wiggle").on("click", function(event) { explorerView.domainCircleView.toggleWiggled(); });
 });
 
 /* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
@@ -183,14 +183,22 @@ function svgDraggable(handle) {
 /* Create SVG path attribute for an array of points */
 function createPointsPath(points) {
   var pointStrings = new Array();
+  var dashLength = 9;
+  var dashGap = 4;
+  var dashStartPos = dashLength-dashGap;
   for (var i=0; i<points.length; i++) {
-    /* Reduce point values to 3dp to help reduce path string size
-       (sometimes (0.001*x)*1000 is not 3dp due to rounding errors, but that doesn't matter) */
-    pointStrings[i] = (0.001*Math.round(points[i][0]*1000) + "," + 
-                       0.001*Math.round(points[i][1]*1000));
+    var dashPos = i%dashLength;
+    if (dashPos >= dashGap) {
+      prefix = dashPos == dashGap ? "M" : ((dashPos == dashGap+1) ? "L" : "");
+      /* Reduce point values to 3dp to help reduce path string size
+         (sometimes (0.001*x)*1000 is not 3dp due to rounding errors, but that doesn't matter) */
+      pointStrings[i] = prefix + (0.001*Math.round(points[i][0]*1000) + "," + 
+                                  0.001*Math.round(points[i][1]*1000));
+    }
+    else {
+      pointStrings[i] = "";
+    }
   }
-  pointStrings[0] = "M" + pointStrings[0];
-  pointStrings[1] = "L" + pointStrings[1];
   var pathString = pointStrings.join(" ");
   return pathString;
 }
@@ -264,7 +272,7 @@ DomainCircle.prototype = {
     var pointsReal = new Array(); // Array of points representing the real components of value of f
     var pointsImaginary = new Array(); // Array of points representing the real components of value of f
     var pointsWiggled = new Array(); // Array of points representing the wiggled real components of value of f
-    var wiggleFactor = 0.4;
+    var wiggleFactor = 0.15;
     var theta = 0; // Current angular position in circle
     var f = explorerModel.f; // The function
     var minX = explorerModel.minX(); // Minimum x value in complex viewport (in units)
@@ -378,6 +386,7 @@ function DomainCircleView (attributes) {
                  "imaginaryPathElement", /** JQuery wrapper for SVG path representing imaginary parts of f 
                                              on the domain circle */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
+                 "wiggleCheckbox", /** Checkbox to turn wiggling mode on or off */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   this.wiggled = false;
@@ -410,6 +419,19 @@ function DomainCircleView (attributes) {
     view.circleGraph.toggle(this.checked);
   });
   
+  this.wiggleCheckbox.on("change", function(event) {
+    view.wiggling = this.checked;
+    view.redrawFunctionAsWiggled();
+  });
+  view.wiggling = this.wiggleCheckbox[0].checked;
+  
+  setInterval(function(){ 
+    if (view.wiggling) { 
+      view.wiggled = !view.wiggled; 
+      view.redrawFunctionAsWiggled();
+    }
+  }, 100);
+  
   // initial update of model for the initial state of the view
   this.updateModel();
 }
@@ -421,6 +443,11 @@ DomainCircleView.prototype = {
     this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
+  }, 
+  
+  "redrawFunctionAsWiggled": function() {
+    this.realPathElement.attr("d", (this.wiggled && this.wiggling) ? this.wiggledPath : this.realPath);
+    // todo 
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
