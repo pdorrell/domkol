@@ -260,6 +260,7 @@ DomainCircle.prototype = {
     var angleIncrement = this.circumferenceIncrementInPixels / r; // How often to recalculate f going round the circle
     var numSteps = 2*Math.PI/angleIncrement; // Number of values of f that will be calculated
     var pointsReal = new Array(); // Array of points representing the real components of value of f
+    var pointsReal3D = new Array(); // Array of points representing the real components of value of f + imaginary in Z-axis
     var pointsImaginary = new Array(); // Array of points representing the real components of value of f
     var theta = 0; // Current angular position in circle
     var f = explorerModel.f; // The function
@@ -277,11 +278,14 @@ DomainCircle.prototype = {
       var fValue = f([x, y]); // calculated value of f
       var rReal = r + fValue[0] * scaleFPixels; // represented location of re(fValue) in pixels from circle centre
       var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
-      pointsReal[i] = [rReal * sinTheta + cx, rReal * cosTheta + cy]; // add pixel coordinate of re(fValue) to real path
+      var realX = rReal * sinTheta + cx;
+      var realY = rReal * cosTheta + cy;
+      pointsReal[i] = [realX, realY]; // add pixel coordinate of re(fValue) to real path
+      pointsReal3D[i] = [realX, realY, fValue[1] * scaleFPixels];
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
       theta += angleIncrement; // step around to angle of next value to compute
     }
-    return {real: pointsReal, imaginary: pointsImaginary};
+    return {real: pointsReal, imaginary: pointsImaginary, real3D: pointsReal3D};
   }
 };
 
