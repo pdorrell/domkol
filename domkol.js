@@ -181,11 +181,12 @@ function svgDraggable(handle) {
     });
 }
 
-/* Create SVG 2 path attributes for an array of 3D points -
- 3rd value of point determines which path it belongs to */
+/* Create 3 SVG path attributes for an array of 3D points -
+ 3rd value of point determines which path it belongs to
+ for over, under and "shadow" */
 
-function createOverAndUnderPointPaths(points) {
-  var pointStrings = [new Array(), new Array()];
+function createOverUnderAndShadowPointPaths(points) {
+  var pointStrings = [new Array(), new Array(), new Array()];
   var currentPath = -1; // initially neither 0 or 1
   var currentPointNum = -1; // Initially not 0 or 1
   for (var i=0; i<points.length; i++) {
@@ -199,11 +200,17 @@ function createOverAndUnderPointPaths(points) {
       currentPointNum++;
     }
     var prefix = currentPointNum == 0 ? "M" : (currentPointNum == 1 ? "L" : "");
-    var pointString = prefix + (0.001*Math.round(points[i][0]*1000)) + "," + 
-      (0.001*Math.round(points[i][1]*1000));
+    var pointString = prefix + (0.001*Math.round(point[0]*1000)) + "," + 
+      (0.001*Math.round(point[1]*1000));
     pointStrings[whichPath].push(pointString);
+    if (whichPath == 0) { // if "above", then do the shadow
+      var shadowPoint = [point[0] + point[2], point[1] + point[2]]; // simple 45 deg altitude NW lighting
+      var shadowPointString = prefix + (0.001*Math.round(shadowPoint[0]*1000)) + "," + 
+        (0.001*Math.round(shadowPoint[1]*1000));
+      pointStrings[2].push(shadowPointString);
+    }
   }
-  return [pointStrings[0].join(" "), pointStrings[1].join(" ")];
+  return [pointStrings[0].join(" "), pointStrings[1].join(" "), pointStrings[2].join(" ")];
 }
 
 /* Create SVG path attribute for an array of points */
@@ -465,9 +472,10 @@ DomainCircleView.prototype = {
     this.imaginaryPathElement.toggle(!show3DGraph);
     
     if (this.domainCircle.show3DGraph) {
-      var paths = createOverAndUnderPointPaths(pointArrays["real3D"]);
+      var paths = createOverUnderAndShadowPointPaths(pointArrays["real3D"]);
       this.realPathElement.attr("d", paths[0]);
       this.realPathUnderElement.attr("d", paths[1]);
+      this.realPathShadowElement.attr("d", paths[2]);
     }
     else {
       this.realPath = createPointsPath(pointArrays["real"]);
