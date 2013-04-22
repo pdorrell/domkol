@@ -66,8 +66,11 @@ $(document).ready(function(){
                                                polarGrid: $("#polar-grid"), 
                                                polarGridCoarse: $("#polar-grid-coarse"), 
                                                realPathElement: $("#real-path"), 
+                                               realPathUnderElement: $("#real-path-under"), 
+                                               realPathShadowElement: $("#real-path-shadow"), 
                                                imaginaryPathElement: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
+                                               show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
@@ -176,6 +179,31 @@ function svgDraggable(handle) {
       var y = position[1];
       handle.trigger('svgDragStop', [x, y]);
     });
+}
+
+/* Create SVG 2 path attributes for an array of 3D points -
+ 3rd value of point determines which path it belongs to */
+
+function createOverAndUnderPointPaths(points) {
+  var pointStrings = [new Array(), new Array()];
+  var currentPath = -1; // initially neither 0 or 1
+  var currentPointNum = -1; // Initially not 0 or 1
+  for (var i=0; i<points.length; i++) {
+    var point = points[i];
+    var whichPath = point[2] >= 0 ? 0 : 1; // over = 1st path, under = 2nd path
+    if (whichPath != currentPath) {
+      currentPointNum = 0;
+      currentPath = whichPath;
+    }
+    else {
+      currentPointNum++;
+    }
+    var prefix = currentPointNum == 0 ? "M" : (currentPointNum == 1 ? "L" : "");
+    var pointString = prefix + (0.001*Math.round(points[i][0]*1000)) + "," + 
+      (0.001*Math.round(points[i][1]*1000));
+    pointStrings[whichPath].push(pointString);
+  }
+  return [pointStrings[0].join(" "), pointStrings[1].join(" ")];
 }
 
 /* Create SVG path attribute for an array of points */
@@ -372,7 +400,12 @@ function DomainCircleView (attributes) {
                  "realPathElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
                  "imaginaryPathElement", /** JQuery wrapper for SVG path representing imaginary parts of f 
                                              on the domain circle */
+                 "realPathUnderElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle 
+                                          for negative imaginary value */
+                 "realPathShadowElement", /** JQuery wrapper for SVG path representing shadow real parts of f on the 
+                                              domain circle for positive imaginary value */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
+                 "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -401,7 +434,14 @@ function DomainCircleView (attributes) {
   // check/uncheck checkbox to show/hide the domain circle view
   this.showCircleGraphCheckbox.on("change", function(event) {
     view.circleGraph.toggle(this.checked);
+    view.realPathUnderElement.toggle(this.checked);
   });
+  
+  this.show3DGraphCheckbox.on("change", function(event) {
+    domainCircle.show3DGraph = this.checked;
+    view.drawFunctionOnCircle();
+  });
+  domainCircle.show3DGraph = this.show3DGraphCheckbox[0].checked;
   
   // initial update of model for the initial state of the view
   this.updateModel();
@@ -419,10 +459,22 @@ DomainCircleView.prototype = {
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
   "drawFunctionOnCircle": function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
-    this.realPath = createPointsPath(pointArrays["real"]);
-    this.imaginaryPath = createPointsPath(pointArrays["imaginary"]);
-    this.realPathElement.attr("d", this.realPath);
-    this.imaginaryPathElement.attr("d", this.imaginaryPath);
+    var show3DGraph = this.domainCircle.show3DGraph;
+    this.realPathUnderElement.toggle(show3DGraph);
+    this.realPathShadowElement.toggle(show3DGraph);
+    this.imaginaryPathElement.toggle(!show3DGraph);
+    
+    if (this.domainCircle.show3DGraph) {
+      var paths = createOverAndUnderPointPaths(pointArrays["real3D"]);
+      this.realPathElement.attr("d", paths[0]);
+      this.realPathUnderElement.attr("d", paths[1]);
+    }
+    else {
+      this.realPath = createPointsPath(pointArrays["real"]);
+      this.imaginaryPath = createPointsPath(pointArrays["imaginary"]);
+      this.realPathElement.attr("d", this.realPath);
+      this.imaginaryPathElement.attr("d", this.imaginaryPath);
+    }
     this.drawPolarGrid();
   }, 
   
