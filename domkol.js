@@ -68,6 +68,7 @@ $(document).ready(function(){
                                                realPathElement: $("#real-path"), 
                                                realPathUnderElement: $("#real-path-under"), 
                                                realPathShadowElement: $("#real-path-shadow"), 
+                                               realPathShadow2Element: $("#real-path-shadow2"), 
                                                imaginaryPathElement: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
@@ -186,7 +187,7 @@ function svgDraggable(handle) {
  for over, under and "shadow" */
 
 function createOverUnderAndShadowPointPaths(points) {
-  var pointStrings = [new Array(), new Array(), new Array()];
+  var pointStrings = [new Array(), new Array(), new Array(), new Array()];
   var currentPath = -1; // initially neither 0 or 1
   var currentPointNum = -1; // Initially not 0 or 1
   var dashLength = 9;
@@ -216,10 +217,15 @@ function createOverUnderAndShadowPointPaths(points) {
         var shadowPointString = prefix + (0.001*Math.round(shadowPoint[0]*1000)) + "," + 
           (0.001*Math.round(shadowPoint[1]*1000));
         pointStrings[2].push(shadowPointString);
+        shadowPoint = [point[0] + 0.7 * point[2], point[1] + 0.5 * point[2]]; // 2nd shadow from second higher light
+        shadowPointString = prefix + (0.001*Math.round(shadowPoint[0]*1000)) + "," + 
+          (0.001*Math.round(shadowPoint[1]*1000));
+        pointStrings[3].push(shadowPointString);
       }
     }
   }
-  return [pointStrings[0].join(" "), pointStrings[1].join(" "), pointStrings[2].join(" ")];
+  return [pointStrings[0].join(" "), pointStrings[1].join(" "), 
+          pointStrings[2].join(" "), pointStrings[3].join(" ")];
 }
 
 /* Create SVG path attribute for an array of points */
@@ -418,7 +424,9 @@ function DomainCircleView (attributes) {
                                              on the domain circle */
                  "realPathUnderElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle 
                                           for negative imaginary value */
-                 "realPathShadowElement", /** JQuery wrapper for SVG path representing shadow real parts of f on the 
+                 "realPathShadowElement", /** JQuery wrapper for SVG path representing shadow of real parts of f on the 
+                                              domain circle for positive imaginary value */
+                 "realPathShadow2Element", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on the 
                                               domain circle for positive imaginary value */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
@@ -478,6 +486,7 @@ DomainCircleView.prototype = {
     var show3DGraph = this.domainCircle.show3DGraph;
     this.realPathUnderElement.toggle(show3DGraph);
     this.realPathShadowElement.toggle(show3DGraph);
+    this.realPathShadow2Element.toggle(show3DGraph);
     this.imaginaryPathElement.toggle(!show3DGraph);
     
     if (this.domainCircle.show3DGraph) {
@@ -485,6 +494,7 @@ DomainCircleView.prototype = {
       this.realPathElement.attr("d", paths[0]);
       this.realPathUnderElement.attr("d", paths[1]);
       this.realPathShadowElement.attr("d", paths[2]);
+      this.realPathShadow2Element.attr("d", paths[3]);
     }
     else {
       this.realPath = createPointsPath(pointArrays["real"]);
