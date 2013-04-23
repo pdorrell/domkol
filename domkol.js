@@ -189,6 +189,9 @@ function createOverUnderAndShadowPointPaths(points) {
   var pointStrings = [new Array(), new Array(), new Array()];
   var currentPath = -1; // initially neither 0 or 1
   var currentPointNum = -1; // Initially not 0 or 1
+  var dashLength = 9;
+  var dashGap = 3;
+  var dashPos = 0;
   for (var i=0; i<points.length; i++) {
     var point = points[i];
     var whichPath = point[2] >= 0 ? 0 : 1; // over = 1st path, under = 2nd path
@@ -199,15 +202,21 @@ function createOverUnderAndShadowPointPaths(points) {
     else {
       currentPointNum++;
     }
-    var prefix = currentPointNum == 0 ? "M" : (currentPointNum == 1 ? "L" : "");
-    var pointString = prefix + (0.001*Math.round(point[0]*1000)) + "," + 
-      (0.001*Math.round(point[1]*1000));
-    pointStrings[whichPath].push(pointString);
-    if (whichPath == 0) { // if "above", then do the shadow
-      var shadowPoint = [point[0] + point[2], point[1] + point[2]]; // simple 45 deg altitude NW lighting
-      var shadowPointString = prefix + (0.001*Math.round(shadowPoint[0]*1000)) + "," + 
-        (0.001*Math.round(shadowPoint[1]*1000));
-      pointStrings[2].push(shadowPointString);
+    dashPos = i % dashLength;
+    if (dashPos == 0) {
+      currentPointNum = 0;
+    }
+    if (dashPos + dashGap < dashLength) {
+      var prefix = currentPointNum == 0 ? "M" : (currentPointNum == 1 ? "L" : "");
+      var pointString = prefix + (0.001*Math.round(point[0]*1000)) + "," + 
+        (0.001*Math.round(point[1]*1000));
+      pointStrings[whichPath].push(pointString);
+      if (whichPath == 0) { // if "above", then do the shadow
+        var shadowPoint = [point[0] + point[2], point[1] + point[2]]; // simple 45 deg altitude NW lighting
+        var shadowPointString = prefix + (0.001*Math.round(shadowPoint[0]*1000)) + "," + 
+          (0.001*Math.round(shadowPoint[1]*1000));
+        pointStrings[2].push(shadowPointString);
+      }
     }
   }
   return [pointStrings[0].join(" "), pointStrings[1].join(" "), pointStrings[2].join(" ")];
