@@ -99,13 +99,20 @@ $(document).ready(function(){
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
-  $("#reset-sliders").click(function() {
-    explorerView.resetSliders();
-  });
-  
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
 });
+
+function setSliderKeyboardShortcuts(slider) {
+  var initialValue = slider.slider("value");
+  slider.keypress(function(e) { 
+    var char = String.fromCharCode(e.which);
+    if (char == "c") {
+      slider.slider("value", initialValue);
+    }
+  });
+}
+
 
 /* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
 function objectToString(object, maxValueLength) {
@@ -485,6 +492,9 @@ function DomainCircleView (attributes) {
                                  "orientation": "horizontal", 
                                  "slide": rotationChanged, 
                                  "change": rotationChanged});
+  
+  setSliderKeyboardShortcuts(this.rotateGraphSlider);
+  
   view.rotationUpdated(50);
   
   // initial update of model for the initial state of the view
@@ -912,6 +922,8 @@ function ComplexFunctionExplorerView(attributes) {
                            "change": scaleChanged
                           });
   
+  setSliderKeyboardShortcuts(this.scaleSlider);
+  
   /** The colour scale has changed */
   function colourScaleChanged(event, ui) {
     view.colourScaleUpdated(ui.value, false);
@@ -926,6 +938,8 @@ function ComplexFunctionExplorerView(attributes) {
                                  "orientation": "horizontal", 
                                  "slide": colourScaleChanging, 
                                  "change": colourScaleChanged});
+  
+  setSliderKeyboardShortcuts(this.colourScaleSlider);
   
   /** set initial function scale from slider */
   this.setScaleFFromView(this.scaleSlider.slider("value"));
@@ -944,12 +958,6 @@ function ComplexFunctionExplorerView(attributes) {
 
 ComplexFunctionExplorerView.prototype = {
   
-  "resetSliders": function() {
-    this.scaleSlider.slider("value", 50);
-    this.colourScaleSlider.slider("value", 50);
-    this.domainCircleView.rotateGraphSlider.slider("value", 50);
-  }, 
-
   /** The function scale has been updated, so update the value in the model and 
       redraw the function graph on the domain circle */
   "fScaleUpdated": function(value) {
