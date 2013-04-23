@@ -190,7 +190,7 @@ function createOverUnderAndShadowPointPaths(points) {
   var currentPath = -1; // initially neither 0 or 1
   var currentPointNum = -1; // Initially not 0 or 1
   var dashLength = 9;
-  var dashGap = 3;
+  var dashGap = 2
   var dashPos = 0;
   for (var i=0; i<points.length; i++) {
     var point = points[i];
@@ -392,7 +392,7 @@ ComplexFunctionExplorerModel.prototype = {
         data[k] = (z[0]*colourScale+1.0)*128; // positive real & negative imaginary = red
         data[k+1] = (z[1]*colourScale+1.0)*128; // positive imaginary & negative real = green
         data[k+2] = 0;
-        data[k+3] = 255;
+        data[k+3] = 200;
         y += unitsPerPixel;
       }
       x += unitsPerPixel;
