@@ -107,7 +107,7 @@ they are all located on the origin).</td></tr>
             <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
     </tr>
     <tr><td colspan="2">Show graph on circular domain in 3D:
-      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>
+      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox"></input></td>
      </tr>
   </table>
   </div>
@@ -151,6 +151,16 @@ where the outer-most circle of the grid represents 1 and the inner-most circle r
 When the scale value is <b>1.0</b>, a value of +1 or -1 maps to maximum colour intensity
 (which with the current colour scheme corresponds to the colours black, green, red and yellow for 
 1+i, -1+i, 1-i and -1-i respectively).</p>
+
+<h3>3D View and the "Winding Number"</h3>
+
+<p>Check the "Show graph on circular domain in 3D" checkbox to see a simple 3D view of the graph of 
+the function <b>f</b> on the circular domain, where the imaginary value is represented by height above
+the complex plane.</p>
+
+<p>With this option you can verify that the "winding number" of a complex function around a circular path
+is equal to the multiplicity of zeroes inside the circle (note: this theorem of complex analysis actually 
+applies to <i>any</i> closed curve).</p>
 
 <h2>Issues and Browser Compatibility</h2>
 

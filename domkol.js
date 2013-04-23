@@ -462,10 +462,10 @@ function DomainCircleView (attributes) {
   });
   
   this.show3DGraphCheckbox.on("change", function(event) {
-    domainCircle.show3DGraph = this.checked;
+    view.toggle3D(this.checked);
     view.drawFunctionOnCircle();
   });
-  domainCircle.show3DGraph = this.show3DGraphCheckbox[0].checked;
+  view.toggle3D(this.show3DGraphCheckbox[0].checked);
   
   // initial update of model for the initial state of the view
   this.updateModel();
@@ -480,14 +480,21 @@ DomainCircleView.prototype = {
     this.domainCircle.calculateRadius();
   }, 
   
+  "toggle3D": function(show3D) {
+    this.domainCircle.show3DGraph = show3D;
+    this.bigCircle.attr("stroke-width", show3D ? 7 : 2);
+    this.realPathElement.attr("stroke-width", show3D ? 5 : 2);
+    this.imaginaryPathElement.attr("stroke-width", show3D ? 5 : 2);
+    this.realPathUnderElement.toggle(show3D);
+    this.realPathShadowElement.toggle(show3D);
+    this.realPathShadow2Element.toggle(show3D);
+    this.imaginaryPathElement.toggle(!show3D);
+  }, 
+  
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
   "drawFunctionOnCircle": function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
     var show3DGraph = this.domainCircle.show3DGraph;
-    this.realPathUnderElement.toggle(show3DGraph);
-    this.realPathShadowElement.toggle(show3DGraph);
-    this.realPathShadow2Element.toggle(show3DGraph);
-    this.imaginaryPathElement.toggle(!show3DGraph);
     
     if (this.domainCircle.show3DGraph) {
       var paths = createOverUnderAndShadowPointPaths(pointArrays["real3D"]);
