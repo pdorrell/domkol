@@ -488,7 +488,7 @@ function DomainCircleView (attributes) {
     view.drawFunctionOnCircle();
   }
   
-  this.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50, 
+  this.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
                                  "orientation": "horizontal", 
                                  "slide": rotationChanged, 
                                  "change": rotationChanged});
@@ -499,6 +499,11 @@ function DomainCircleView (attributes) {
   
   // initial update of model for the initial state of the view
   this.updateModel();
+}
+
+function roundToZeroes(number, epsilon) {
+  if (Math.abs(number[0]) < epsilon) number[0] = 0;
+  if (Math.abs(number[1]) < epsilon) number[1] = 0;
 }
 
 DomainCircleView.prototype = {
@@ -513,6 +518,7 @@ DomainCircleView.prototype = {
   "rotationUpdated": function(sliderValue) {
     var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
     var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
+    roundToZeroes(graphRotation, 0.0001);
     this.domainCircle.graphRotation = graphRotation;
     this.graphRotationText.text(formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
