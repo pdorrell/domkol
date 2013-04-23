@@ -72,6 +72,8 @@ $(document).ready(function(){
                                                imaginaryPathElement: $("#imaginary-path"), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
+                                               rotateGraphSlider: $("#rotate-graph-slider"), 
+                                               graphRotationText: $("#graph-rotation"), 
                                                domainCircle: explorerModel.domainCircle});
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
@@ -326,6 +328,7 @@ DomainCircle.prototype = {
       var x = minX + px * unitsPerPixel; // re(z) unit coordinate
       var y = minY + (heightInPixels - 1 - py) * unitsPerPixel; // im(z) unit coordinate
       var fValue = f([x, y]); // calculated value of f
+      fValue = times(this.graphRotation, fValue);
       var rReal = r + fValue[0] * scaleFPixels; // represented location of re(fValue) in pixels from circle centre
       var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
       var realX = rReal * sinTheta + cx;
@@ -430,6 +433,8 @@ function DomainCircleView (attributes) {
                                               domain circle for positive imaginary value */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
+                 "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
+                 "graphRotationText", /** Text element to show current graph rotation */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -467,6 +472,17 @@ function DomainCircleView (attributes) {
   });
   view.toggle3D(this.show3DGraphCheckbox[0].checked);
   
+  function rotationChanged(event, ui) {
+    view.rotationUpdated(ui.value);
+    view.drawFunctionOnCircle();
+  }
+  
+  this.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50, 
+                                 "orientation": "horizontal", 
+                                 "slide": rotationChanged, 
+                                 "change": rotationChanged});
+  view.rotationUpdated(50);
+  
   // initial update of model for the initial state of the view
   this.updateModel();
 }
@@ -478,6 +494,13 @@ DomainCircleView.prototype = {
     this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
+  }, 
+  
+  "rotationUpdated": function(sliderValue) {
+    var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
+    var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
+    this.domainCircle.graphRotation = graphRotation;
+    this.graphRotationText.text(formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
   
   "toggle3D": function(show3D) {
