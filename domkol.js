@@ -713,8 +713,34 @@ function reformatToPrecision(numberString, precision) {
   var minusSign = match[1];
   var wholeNumber = match[2];
   var decimalPart = match[3].substring(0, precision+1);
-  var exponentPart = match[4]; /* todo: round down to zero if too small */
-  return minusSign + wholeNumber + decimalPart + exponentPart;
+  var exponentPart = match[4]; 
+  if (exponentPart != "") {
+    var exponent = parseInt(exponentPart.substring(1));
+    var digits = wholeNumber + (match[3] == "" ? "" : match[3].substring(1));
+    var decimalPos = wholeNumber.length + exponent;
+    var newNumberString;
+    if (decimalPos < 0) {
+      for (var i=0; i<-decimalPos; i++) {
+        digits = "0" + digits;
+      }
+      newNumberString = "." + digits;
+    }
+    else if (decimalPos > digits.length) {
+      for (var i=digits.length; i<decimalPos; i++) {
+        digits = digits + "0";
+      }
+      newNumberString = digits;
+    }
+    else {
+      newNumberString = digits.substring(0, decimalPos) + "." + digits.substring(decimalPos);
+    }
+    newNumberString = minusSign + newNumberString;
+    var reformattedWithoutExponent = reformatToPrecision(newNumberString, precision);
+    return reformattedWithoutExponent;
+  }
+  else {
+    return minusSign + wholeNumber + decimalPart + exponentPart;
+  }
 }
 
 /** Format a complex number to specified precision, using standard notation */
