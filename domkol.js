@@ -99,6 +99,10 @@ $(document).ready(function(){
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
+  $("#reset-sliders").click(function() {
+    explorerView.resetSliders();
+  });
+  
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
 });
@@ -891,7 +895,7 @@ function ComplexFunctionExplorerView(attributes) {
                  "repaintContinuouslyCheckbox"]); /** JQuery wrapper for checkbox that controls continuous repainting */
   this.complexFunction.explorerView = this;
   var view = this;
-
+  
   /** The scale for displaying f on the domain circle is changing (but hasn't finished changing) */
   function scaleChanging(event, ui) {
     view.fScaleUpdated(ui.value); // todo : maybe have option to update when it's changing ?
@@ -940,6 +944,12 @@ function ComplexFunctionExplorerView(attributes) {
 
 ComplexFunctionExplorerView.prototype = {
   
+  "resetSliders": function() {
+    this.scaleSlider.slider("value", 50);
+    this.colourScaleSlider.slider("value", 50);
+    this.domainCircleView.rotateGraphSlider.slider("value", 50);
+  }, 
+
   /** The function scale has been updated, so update the value in the model and 
       redraw the function graph on the domain circle */
   "fScaleUpdated": function(value) {
