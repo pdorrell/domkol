@@ -74,7 +74,6 @@ $(document).ready(function(){
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
-                                               viewpointSlider: $("#viewpoint-slider"), 
                                                wiggleCheckbox: $("#wiggle-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
@@ -304,7 +303,7 @@ function DomainCircle(attributes) {
                 ["circumferenceIncrementInPixels"]); /* for each increment going around the circumference, calculate
                                                         a new value of f */
 
-  // attributes set by view: centreHandlePosition, edgeHandlePosition, radius, graphRotation, viewpointAngle
+  // attributes set by view: centreHandlePosition, edgeHandlePosition, radius, graphRotation, wiggleAngle
 }
 
 DomainCircle.prototype = {
@@ -334,7 +333,7 @@ DomainCircle.prototype = {
     var minY = explorerModel.minY(); // Minimum y value in complex viewport (in units)
     var heightInPixels = explorerModel.heightInPixels(); // Height of complex viewport in pixels
     var scaleFPixels = explorerModel.scaleF/unitsPerPixel; // How a unit maps to pixels in the displayed f values.
-    var viewpointAngle = this.viewpointAngle;
+    var wiggleAngle = this.wiggleAngle;
     for (var i=0; i<numSteps+1; i++) {
       var sinTheta = Math.sin(theta);
       var cosTheta = Math.cos(theta);
@@ -350,7 +349,7 @@ DomainCircle.prototype = {
       var realY = rReal * cosTheta + cy;
       var imaginaryZ = fValue[1] * scaleFPixels;
       pointsReal[i] = [realX, realY]; // add pixel coordinate of re(fValue) to real path
-      realX += viewpointAngle * imaginaryZ;
+      realX += wiggleAngle * imaginaryZ;
       pointsReal3D[i] = [realX, realY, imaginaryZ];
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
       theta += angleIncrement; // step around to angle of next value to compute
@@ -452,7 +451,6 @@ function DomainCircleView (attributes) {
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
-                 "viewpointSlider", /** Slider to move 3D viewpoint left and right */
                  "wiggleCheckbox", /** Checkbox to turn wiggling mode on or off */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
@@ -503,24 +501,12 @@ function DomainCircleView (attributes) {
   setSliderKeyboardShortcuts(this.rotateGraphSlider);
   view.rotationUpdated(50);
   
-  function viewpointChanged(event, ui) {
-    view.viewpointUpdated(ui.value);
-    view.drawFunctionOnCircle();
-  }
-  
-  this.viewpointSlider.slider({"min": 0, "max": 100, "value": 50,
-                               "orientation": "horizontal", 
-                               "slide": viewpointChanged, 
-                               "change": viewpointChanged});
-  setSliderKeyboardShortcuts(this.viewpointSlider);
-  view.viewpointUpdated(50);
-  
   this.initialiseWiggleAngles();
   
   this.wiggleCheckbox.on("change", function(event) {
     view.wiggling = this.checked;
     if (!view.wiggling) {
-      domainCircle.viewpointAngle = 0;
+      domainCircle.wiggleAngle = 0;
       view.drawFunctionOnCircle();
     }
   });
@@ -562,7 +548,7 @@ DomainCircleView.prototype = {
   
   "wiggleOneStep" : function() {
     this.wiggleIndex = (this.wiggleIndex+1) % this.wiggleAngles.length;
-    this.domainCircle.viewpointAngle = this.wiggleAngles[this.wiggleIndex];
+    this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
     this.drawFunctionOnCircle();
   },    
   
@@ -573,11 +559,6 @@ DomainCircleView.prototype = {
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
   }, 
-  
-  "viewpointUpdated": function(sliderValue) {
-    var viewpointAngle = ((sliderValue-50)/50.0 * 2.0);
-    this.domainCircle.viewpointAngle = viewpointAngle;
-  },
   
   "rotationUpdated": function(sliderValue) {
     var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
