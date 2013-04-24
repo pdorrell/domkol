@@ -578,6 +578,14 @@ DomainCircleView.prototype = {
     this.realPathShadowElement.toggle(show3D);
     this.realPathShadow2Element.toggle(show3D);
     this.imaginaryPathElement.toggle(!show3D);
+    if (show3D) {
+      this.wiggleCheckbox.removeAttr("disabled");
+    }
+    else {
+      this.wiggleCheckbox.attr("disabled", true);
+      this.wiggleCheckbox.removeAttr("checked");
+      this.wiggling = false;
+    }
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
