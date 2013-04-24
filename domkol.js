@@ -522,7 +522,9 @@ DomainCircleView.prototype = {
   }, 
   
   "rotationUpdated": function(sliderValue) {
-    var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
+    var rotationAngle = ((sliderValue-50)/40.0)*Math.PI; /** This mapping is chosen to work best with
+                                                             JQuery UI slider numPages = 5.
+                                                         Todo: Change JQuery UI so that numPages can be an option. */
     var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
     roundComponentsToIntegerIfClose(graphRotation, 0.0001);
     this.domainCircle.graphRotation = graphRotation;
