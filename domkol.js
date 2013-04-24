@@ -75,6 +75,7 @@ $(document).ready(function(){
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
                                                viewpointSlider: $("#viewpoint-slider"), 
+                                               wiggleCheckbox: $("#wiggle-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
@@ -102,6 +103,7 @@ $(document).ready(function(){
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
+  
 });
 
 function setSliderKeyboardShortcuts(slider) {
@@ -451,6 +453,7 @@ function DomainCircleView (attributes) {
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
                  "viewpointSlider", /** Slider to move 3D viewpoint left and right */
+                 "wiggleCheckbox", /** Checkbox to turn wiggling mode on or off */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -512,6 +515,23 @@ function DomainCircleView (attributes) {
   setSliderKeyboardShortcuts(this.viewpointSlider);
   view.viewpointUpdated(50);
   
+  this.initialiseWiggleAngles();
+  
+  this.wiggleCheckbox.on("change", function(event) {
+    view.wiggling = this.checked;
+    if (!view.wiggling) {
+      domainCircle.viewpointAngle = 0;
+      view.drawFunctionOnCircle();
+    }
+  });
+  view.wiggling = this.wiggleCheckbox[0].checked;
+  
+  setInterval(function(){ 
+    if (view.wiggling) { 
+      view.wiggleOneStep();
+    }
+  }, 80);
+  
   // initial update of model for the initial state of the view
   this.updateModel();
 }
@@ -528,6 +548,24 @@ function roundComponentsToIntegerIfClose(number, epsilon) {
 }
 
 DomainCircleView.prototype = {
+  
+  "initialiseWiggleAngles" : function() {
+    var maxWiggle = 0.3;
+    var numWiggles = 15;
+    this.wiggleAngles = new Array(numWiggles);
+    for (var i=0; i<numWiggles; i++) {
+      var angleAngle = (Math.PI * 2 * i)/numWiggles;
+      this.wiggleAngles[i] = maxWiggle * Math.sin(angleAngle);
+    }
+    this.wiggleIndex = 0;
+  }, 
+  
+  "wiggleOneStep" : function() {
+    this.wiggleIndex = (this.wiggleIndex+1) % this.wiggleAngles.length;
+    this.domainCircle.viewpointAngle = this.wiggleAngles[this.wiggleIndex];
+    this.drawFunctionOnCircle();
+  },    
+  
   /** Update the model from view changes. */
   "updateModel": function() {
     this.domainCircle.centreHandlePosition = getTranslation(this.centreHandle);
