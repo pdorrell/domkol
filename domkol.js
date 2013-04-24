@@ -74,6 +74,7 @@ $(document).ready(function(){
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
+                                               viewpointSlider: $("#viewpoint-slider"), 
                                                domainCircle: explorerModel.domainCircle});
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
@@ -446,6 +447,7 @@ function DomainCircleView (attributes) {
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
+                 "viewpointSlider", /** Slider to move 3D viewpoint left and right */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -491,11 +493,21 @@ function DomainCircleView (attributes) {
   this.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
                                  "orientation": "horizontal", 
                                  "slide": rotationChanged, 
-                                 "change": rotationChanged});
-  
+                                 "change": rotationChanged});  
   setSliderKeyboardShortcuts(this.rotateGraphSlider);
-  
   view.rotationUpdated(50);
+  
+  function viewpointChanged(event, ui) {
+    view.viewpointUpdated(ui.value);
+    view.drawFunctionOnCircle();
+  }
+  
+  this.viewpointSlider.slider({"min": 0, "max": 100, "value": 50,
+                               "orientation": "horizontal", 
+                               "slide": viewpointChanged, 
+                               "change": viewpointChanged});
+  setSliderKeyboardShortcuts(this.viewpointSlider);
+  view.viewpointUpdated(50);
   
   // initial update of model for the initial state of the view
   this.updateModel();
@@ -520,6 +532,11 @@ DomainCircleView.prototype = {
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
   }, 
+  
+  "viewpointUpdated": function(sliderValue) {
+    var viewpointAngle = ((sliderValue-50)/50.0 * 0.05);
+    this.domainCircle.viewpointAngle = viewpointAngle;
+  },
   
   "rotationUpdated": function(sliderValue) {
     var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
