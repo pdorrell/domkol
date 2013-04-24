@@ -75,14 +75,13 @@
         the "Repaint domain colouring continuously" checkbox. 
   </div>
 
-  <div style="position:absolute;top:150px;left:480px;z-index:2;width:30em" class="controls">
+  <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
     <div class="window-top-bar"></div>
   <table >
     <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
-    <tr><td colspan="3">Drag the small black circles to move and resize the large circle.</td></tr>
-    <tr><td colspan="3">Drag the blue numbers to change the zeroes of the cubic polynomial (initially
+    <tr><td colspan="3" class="instructions">Drag the small black circles to move and resize the large circle.</td></tr>
+    <tr><td colspan="3" class="instructions">Drag the blue numbers to change the zeroes of the cubic polynomial (initially
 they are all located on the origin).</td></tr>
-    <tr><td>&nbsp;</td></tr>
     <tr>
       <td>Graph scale:</td>
       <td>
@@ -97,6 +96,19 @@ they are all located on the origin).</td></tr>
       </td>
       <td id="colour-scale" style="width:5em;text-align:right"></td>
     </tr>
+    <tr><td colspan="2">Show graph on circular domain in 3D:
+      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>
+     </tr>
+    <tr><td colspan="2">3D Wiggle animation:
+            <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>
+    </tr>
+    <tr>
+      <td>Rotate <b>f</b> values:</td>
+      <td>
+        <div id="rotate-graph-slider" style="width:240px;"></div>
+      </td>
+      <td id="graph-rotation" style="width:5em;text-align:right;font-size:0.8em"></td>
+    </tr>
     <tr><td colspan="2">Show graph on circular domain:
             <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked></input></td>
     </tr>
@@ -106,19 +118,7 @@ they are all located on the origin).</td></tr>
     <tr><td colspan="2">Repaint domain colouring continuously:
             <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
     </tr>
-    <tr><td colspan="2">Show graph on circular domain in 3D:
-      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>
-     </tr>
-    <tr>
-      <td>Rotate <b>f</b> values:</td>
-      <td>
-        <div id="rotate-graph-slider" style="width:240px;"></div>
-      </td>
-      <td id="graph-rotation" style="width:5em;text-align:right;font-size:0.8em"></td>
-    </tr>
-    <tr><td colspan="2">3D Wiggle animation:
-            <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>
-    <tr><td colspan="3" style="font-size:0.7em">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>(Note: press "c" to recentre any slider that currently has focus.)</i></td></tr>
+    <tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.)</td></tr>
   </table>
   </div>
 

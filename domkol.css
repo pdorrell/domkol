@@ -82,3 +82,18 @@ h1 {
   background-color: #ffffff;
   font-family: Georgia, "Times New Roman",serif;
 }
+
+.instructions {
+  font-size: 0.9em;
+  padding: 0.3em 1em;
+  font-style: italic;
+  line-height: 1.1em;
+}
+
+.note {
+  font-size: 0.7em;
+  padding: 0.3em 1em;
+  font-style: italic;
+  line-height: 0.9em;
+}
+
