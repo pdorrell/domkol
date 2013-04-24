@@ -162,15 +162,28 @@ When the scale value is <b>1.0</b>, a value of +1 or -1 maps to maximum colour i
 (which with the current colour scheme corresponds to the colours black, green, red and yellow for 
 1+i, -1+i, 1-i and -1-i respectively).</p>
 
-<h3>3D View and the "Winding Number"</h3>
+<h3>3D View and 2D View of the Function Graph</h3>
 
-<p>Check the "Show graph on circular domain in 3D" checkbox to see a simple 3D view of the graph of 
-the function <b>f</b> on the circular domain, where the imaginary value is represented by height above
-the complex plane.</p>
+<p>The 3D view of the graph of <b>f</b> on the circular domain is implemented by three different 3D clues:</p>
 
-<p>With this option you can verify that the "winding number" of a complex function around a circular path
-is equal to the multiplicity of zeroes inside the circle (note: this theorem of complex analysis actually 
-applies to <i>any</i> closed curve).</p>
+<ol>
+ <li>A 3D "wiggle" animation</li>
+ <li>Over and under colouration of the graph</li>
+ <li>Two faint shadows (from two hypothetical light sources coming from the top left corner)</li>
+</ol>
+
+<p>If the 3D option is unchecked, then the circle graph will display two graphs, one for the real component and 
+one for the imaginary component of the value of the function <b>f</b>.</p>
+
+<h3>Residue Theorem</h3>
+
+<p>It is a consequence of the <a href="http://en.wikipedia.org/wiki/Residue_theorem">Residue theorem</a>
+that the number of times the phase of an analytic complex function <b>f</b> rotates while travelling around a 
+closed curve is equal to the number of simple zeroes of the function inside the curve. You can check that this
+holds for the white circle by dragging both the circle and the zeroes of the polynomial around, and seeing that
+the number of times that the 3D representation of <b>f</b> winds around the circle is always equal to the number
+of zeroes inside the circle (it may sometimes be necessary, after changing the zeroes and the location of the
+circle, to adjust the graph scale to see this more clearly).</p>
 
 <h3>F Value Rotation</h3>
 
