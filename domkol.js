@@ -501,9 +501,15 @@ function DomainCircleView (attributes) {
   this.updateModel();
 }
 
-function roundToZeroes(number, epsilon) {
-  if (Math.abs(number[0]) < epsilon) number[0] = 0;
-  if (Math.abs(number[1]) < epsilon) number[1] = 0;
+/** For numbers which are probably exact complex integers, but not quite due to rounding
+    errors, use this function to round them exactly. */
+function roundComponentsToIntegerIfClose(number, epsilon) {
+  for (var i=0; i<2; i++) {
+    var closestInteger = Math.round(number[i]);
+    if (Math.abs(number[i]-closestInteger) < epsilon) {
+      number[i] = closestInteger;
+    }
+  }
 }
 
 DomainCircleView.prototype = {
@@ -518,7 +524,7 @@ DomainCircleView.prototype = {
   "rotationUpdated": function(sliderValue) {
     var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
     var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
-    roundToZeroes(graphRotation, 0.0001);
+    roundComponentsToIntegerIfClose(graphRotation, 0.0001);
     this.domainCircle.graphRotation = graphRotation;
     this.graphRotationText.text(formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
