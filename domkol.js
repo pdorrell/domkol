@@ -544,6 +544,7 @@ DomainCircleView.prototype = {
       this.wiggleAngles[i] = maxWiggle * Math.sin(angleAngle);
     }
     this.wiggleIndex = 0;
+    this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
   }, 
   
   "wiggleOneStep" : function() {
