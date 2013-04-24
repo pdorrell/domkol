@@ -302,7 +302,7 @@ function DomainCircle(attributes) {
                 ["circumferenceIncrementInPixels"]); /* for each increment going around the circumference, calculate
                                                         a new value of f */
 
-  // attributes set by view: centreHandlePosition, edgeHandlePosition, radius
+  // attributes set by view: centreHandlePosition, edgeHandlePosition, radius, graphRotation, viewpointAngle
 }
 
 DomainCircle.prototype = {
@@ -332,6 +332,7 @@ DomainCircle.prototype = {
     var minY = explorerModel.minY(); // Minimum y value in complex viewport (in units)
     var heightInPixels = explorerModel.heightInPixels(); // Height of complex viewport in pixels
     var scaleFPixels = explorerModel.scaleF/unitsPerPixel; // How a unit maps to pixels in the displayed f values.
+    var viewpointAngle = this.viewpointAngle;
     for (var i=0; i<numSteps+1; i++) {
       var sinTheta = Math.sin(theta);
       var cosTheta = Math.cos(theta);
@@ -345,8 +346,10 @@ DomainCircle.prototype = {
       var rImaginary = r + fValue[1] * scaleFPixels; // represented location of im(fValue) in pixels from circle centre
       var realX = rReal * sinTheta + cx;
       var realY = rReal * cosTheta + cy;
+      var imaginaryZ = fValue[1] * scaleFPixels;
       pointsReal[i] = [realX, realY]; // add pixel coordinate of re(fValue) to real path
-      pointsReal3D[i] = [realX, realY, fValue[1] * scaleFPixels];
+      realX += viewpointAngle * imaginaryZ;
+      pointsReal3D[i] = [realX, realY, imaginaryZ];
       pointsImaginary[i] = [rImaginary * sinTheta + cx, rImaginary * cosTheta + cy]; // add pixel coordinate of im(fValue)
       theta += angleIncrement; // step around to angle of next value to compute
     }
@@ -534,7 +537,7 @@ DomainCircleView.prototype = {
   }, 
   
   "viewpointUpdated": function(sliderValue) {
-    var viewpointAngle = ((sliderValue-50)/50.0 * 0.05);
+    var viewpointAngle = ((sliderValue-50)/50.0 * 2.0);
     this.domainCircle.viewpointAngle = viewpointAngle;
   },
   
