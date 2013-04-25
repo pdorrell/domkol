@@ -501,6 +501,9 @@ function DomainCircleView (attributes) {
   
   this.show3DGraphCheckbox.on("change", function(event) {
     view.toggle3D(this.checked);
+    if (!view.wiggling) {
+      domainCircle.wiggleAngle = 0;
+    }      
     view.drawFunctionOnCircle();
   });
   view.toggle3D(this.show3DGraphCheckbox[0].checked);
