@@ -27,6 +27,7 @@ task :copyFiles do |t|
   FileUtils.cp Dir.glob("*.js"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.html"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.css"), DOMKOL_WEB_DIR, :verbose => true
+  FileUtils.cp Dir.glob("*.txt"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp_r "lib", DOMKOL_WEB_DIR, :verbose => true
 end
 

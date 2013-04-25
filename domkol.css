@@ -97,3 +97,11 @@ h1 {
   line-height: 0.9em;
 }
 
+.updated {
+  border: solid #505050 1px;
+  background-color: #e0f0f7;
+  padding: 0.5em;
+  margin: 0 2em 1em -7pt;
+  line-height: 1em;
+  font-size: 0.8em;
+}  
