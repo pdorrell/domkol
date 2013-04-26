@@ -1087,11 +1087,17 @@ ComplexFunctionExplorerView.prototype = {
   /** repaint the domain colouring into the canvas element */
   "drawDomainColouring" : function(changing) {
     if (!changing || this.repaintContinuously) {
+      var startTime = new Date().getTime();
+      
       var ctx = this.canvas.getContext("2d");
       var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
                                           this.explorerModel.heightInPixels());
       this.explorerModel.writeToCanvasData(imageData.data);
       ctx.putImageData(imageData, 0, 0);
+
+      var endTime = new Date().getTime();
+      var timeTaken = endTime - startTime;
+      console.log('Time to draw canvas = ' + timeTaken);
     }
   }
     
