@@ -42,6 +42,37 @@
     in both directions, to enforce an aspect ratio of 1:1).
  */
 
+/**
+* Provides requestAnimationFrame in a cross browser way.
+* based on shim from paulirish / http://paulirish.com/
+*/
+{
+  console.log("Shimming window.requestAnimationFrame ...");
+  if ( window.requestAnimationFrame ) {
+    console.log("  window.requestAnimationFrame exists");
+  }
+  else {
+    window.requestAnimationFrame = ( function() {
+
+      var possibleShims = ["webkitRequestAnimationFrame", "mozRequestAnimationFrame", 
+                           "oRequestAnimationFrame", "msRequestAnimationFrame"];
+      for (var i=0; i<possibleShims.length; i++) {
+        shim = window[possibleShims[i]];
+        if (shim) {
+          console.log("  using window." + possibleShims[i]);
+          return shim;
+        }
+      }
+
+      console.log("  using timeout");
+      return function( /* function FrameRequestCallback */ callback, 
+        /* DOMElement Element */ element ) {
+        window.setTimeout( callback, 1000 / 60 );
+      };
+    } )();
+  }
+}
+
 $(document).ready(function(){
   
   /* From the view, calculate how many draggable function zeroes there are 
@@ -985,6 +1016,8 @@ function ComplexFunctionExplorerView(attributes) {
   this.complexFunction.explorerView = this;
   var view = this;
   
+  this.pendingColourDraw = false;
+  
   /** The scale for displaying f on the domain circle is changing (but hasn't finished changing) */
   function scaleChanging(event, ui) {
     view.fScaleUpdated(ui.value); // todo : maybe have option to update when it's changing ?
@@ -1084,14 +1117,30 @@ ComplexFunctionExplorerView.prototype = {
     this.domainCircleView.drawFunctionOnCircle();
   }, 
   
+  "actuallyDrawDomainColouring" : function() {
+    var ctx = this.canvas.getContext("2d");
+    var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
+                                          this.explorerModel.heightInPixels());
+    this.explorerModel.writeToCanvasData(imageData.data);
+    ctx.putImageData(imageData, 0, 0);
+  },    
+  
   /** repaint the domain colouring into the canvas element */
   "drawDomainColouring" : function(changing) {
     if (!changing || this.repaintContinuously) {
-      var ctx = this.canvas.getContext("2d");
-      var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
-                                          this.explorerModel.heightInPixels());
-      this.explorerModel.writeToCanvasData(imageData.data);
-      ctx.putImageData(imageData, 0, 0);
+      if (changing) {
+        if (!this.pendingColourDraw) {
+          this.pendingColourDraw = true;
+          var $this = this;
+          window.requestAnimationFrame( function() {
+            $this.actuallyDrawDomainColouring();
+            $this.pendingColourDraw = false;
+          });
+        }
+      }
+      else {
+        this.actuallyDrawDomainColouring();
+      }
     }
   }
     
