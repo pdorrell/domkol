@@ -121,6 +121,28 @@ $(document).ready(function(){
   
 });
 
+function DomkolDiv(div, width, height) {
+  this.div = div;
+  this.width = width;
+  this.height = height;
+}
+
+DomkolDiv.prototype = {
+  "addGraphUnder": function() {
+    var svgElement = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:0;", 
+                                              width: this.width, height: this.height, 
+                                              viewbox: "0 0 " + this.width " " + this.height});
+    var circleGraphUnderElement = createSvgElement("g");
+    var realPathUnderElement = createSvgElement("path", 
+                                                {d: "M0,0", fill: "none", stroke: "blue", 
+                                                 "stroke-width": 5, "stroke-opacity": "1.0"});
+    this.div.append(svgElement);
+    svgElement.append(circleGraphUnderElement);
+    circleGraphUnderElement.append(realPathUnderElement):
+    return realPathUnderElement;
+  }
+};
+
 function setSliderKeyboardShortcuts(slider) {
   var initialValue = slider.slider("value");
   slider.keypress(function(e) { 
@@ -895,10 +917,10 @@ function formatVariablePlusComplexNumber(variableName, x, y, precision) {
    the following function does the trick.
    Taken from http://stackoverflow.com/questions/7261318/svg-chart-generation-in-javascript#answer-15582018
  */
-function makeSvgElement(tag, attributes) {
+function createSvgElement(tag, attributes) {
   var svgElement= document.createElementNS('http://www.w3.org/2000/svg', tag);
   for (var key in attributes)
-    svgElement.setAttribute(key, attributes[key]);
+    svgElement.setAttribute(key, attributes[key].toString());
   return svgElement;
 }
 
@@ -909,7 +931,7 @@ CoordinatesView.prototype = {
   
   /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = makeSvgElement("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
+    var textElement = createSvgElement("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
     this.coordinatesGroup.append(textElement);
