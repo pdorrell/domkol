@@ -44,6 +44,12 @@
 
 $(document).ready(function(){
   
+  var domkolDivElement = $("#domkol");
+  
+  var domkolElement = new DomkolElement(domkolDivElement[0], 560, 560);
+  
+  var realPathUnderElement = domkolElement.addRealPathUnder();
+  
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
   var numZeroHandles = $('#handles').children(".zero").length;
@@ -82,7 +88,7 @@ $(document).ready(function(){
                                                polarGrid: $("#polar-grid"), 
                                                polarGridCoarse: $("#polar-grid-coarse"), 
                                                realPathElement: $("#real-path"), 
-                                               realPathUnderElement: $("#real-path-under"), 
+                                               realPathUnderElement: $(realPathUnderElement), 
                                                realPathShadowElement: $("#real-path-shadow"), 
                                                realPathShadow2Element: $("#real-path-shadow2"), 
                                                imaginaryPathElement: $("#imaginary-path"), 
@@ -121,24 +127,24 @@ $(document).ready(function(){
   
 });
 
-function DomkolDiv(div, width, height) {
+function DomkolElement(div, width, height) {
   this.div = div;
   this.width = width;
   this.height = height;
 }
 
-DomkolDiv.prototype = {
-  "addGraphUnder": function() {
-    var svgElement = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:0;", 
+DomkolElement.prototype = {
+  "addRealPathUnder": function() {
+    var svgElement = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:1;", 
                                               width: this.width, height: this.height, 
-                                              viewbox: "0 0 " + this.width " " + this.height});
+                                              viewbox: "0 0 " + this.width + " " + this.height});
     var circleGraphUnderElement = createSvgElement("g");
     var realPathUnderElement = createSvgElement("path", 
                                                 {d: "M0,0", fill: "none", stroke: "blue", 
                                                  "stroke-width": 5, "stroke-opacity": "1.0"});
-    this.div.append(svgElement);
-    svgElement.append(circleGraphUnderElement);
-    circleGraphUnderElement.append(realPathUnderElement):
+    this.div.appendChild(svgElement);
+    svgElement.appendChild(circleGraphUnderElement);
+    circleGraphUnderElement.appendChild(realPathUnderElement);
     return realPathUnderElement;
   }
 };

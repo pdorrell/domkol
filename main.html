@@ -40,13 +40,7 @@
 <div class="wideItem">
   <div style="position:relative;height:560px;">
     <div id="domkol" style="position:absolute;top:0;left:0;">
-      <svg style="position:absolute;top:0;left:0;z-index:0;"
-         width="560" height="560" viewbox="0 0 560 560">
-         <g id="circle-graph-under">
-           <path id="real-path-under" d="M0,0" fill="none" stroke="blue" stroke-width="5" stroke-opacity="1.0"/>
-         </g>
-      </svg>
-      <svg style="position:absolute;top:0;left:0;z-index:1;"
+      <svg style="position:absolute;top:0;left:0;z-index:3;"
          width="560" height="560" viewbox="0 0 560 560">
          <g id="coordinates">
            <g class="coordinates-group"></g>
@@ -69,19 +63,19 @@
          </g>
       </svg>
     
-      <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
+      <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:2;"
             width="560" height="560"></canvas>
     
       <div id="handles">
-         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:4;">
             <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
             <div class="zero-text">zero</div>
          </div>
-         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:4;">
             <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
             <div class="zero-text">zero</div>
          </div>
-         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:4;">
             <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
             <div class="zero-text">zero</div>
          </div>
@@ -89,14 +83,14 @@
   
     </div>
     
-    <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:3;width:300px">
+    <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:5;width:300px">
           <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
           but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. 
           To make the UI more responsive in a browser with slow bitmap drawing, uncheck
           the "Repaint domain colouring continuously" checkbox. 
     </div>
   
-    <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
+    <div style="position:absolute;top:130px;left:480px;z-index:4;width:30em" class="controls">
       <div class="window-top-bar"></div>
       <table >
         <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
