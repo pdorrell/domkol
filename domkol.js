@@ -46,7 +46,7 @@ $(document).ready(function(){
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
-  var numZeroHandles = $('#zero-handles').children(".zero").length;
+  var numZeroHandles = $('#handles').children(".zero").length;
   
   /* Create an array of repeated [0, 0] (i.e. 0+0i) */
   var zeroes = [];
@@ -69,7 +69,7 @@ $(document).ready(function(){
                                                          domainCircle: domainCircle });
   
   /* The view of the polynomial function (consisting of the draggable handles) */
-  var functionView = new PolynomialFunctionView({"zeroHandles": $('#zero-handles'), 
+  var functionView = new PolynomialFunctionView({"zeroHandles": $('#handles'), 
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
