@@ -131,6 +131,14 @@ function setSliderKeyboardShortcuts(slider) {
   });
 }
 
+function setCheckboxEnabled(checkbox, enabled) {
+  if (enabled) {
+    checkbox.removeAttr("disabled");
+  }
+  else {
+    checkbox.attr("disabled", true);
+  }
+}
 
 /* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
 function objectToString(object, maxValueLength) {
@@ -495,14 +503,11 @@ function DomainCircleView (attributes) {
   
   // check/uncheck checkbox to show/hide the domain circle view
   this.showCircleGraphCheckbox.on("change", function(event) {
-    if (this.checked) {
-      view.show3DGraphCheckbox.removeAttr("disabled");
-    }
-    else {
-      view.show3DGraphCheckbox.attr("disabled", true);
-    }
+    setCheckboxEnabled(view.show3DGraphCheckbox, this.checked);
+    var showCircleAndIn3D = this.checked && view.show3DGraphCheckbox[0].checked;
+    setCheckboxEnabled(view.wiggleCheckbox, showCircleAndIn3D);
     view.circleGraph.toggle(this.checked);
-    view.realPathUnderElement.toggle(this.checked && view.show3DGraphCheckbox[0].checked);
+    view.realPathUnderElement.toggle(this.checked && showCircleAndIn3D);
   });
   
   this.show3DGraphCheckbox.on("change", function(event) {
@@ -603,14 +608,7 @@ DomainCircleView.prototype = {
     this.realPathShadowElement.toggle(show3D);
     this.realPathShadow2Element.toggle(show3D);
     this.imaginaryPathElement.toggle(!show3D);
-    if (show3D) {
-      this.wiggleCheckbox.removeAttr("disabled");
-    }
-    else {
-      this.wiggleCheckbox.attr("disabled", true);
-      this.wiggleCheckbox.removeAttr("checked");
-      this.wiggling = false;
-    }
+    setCheckboxEnabled(this.wiggleCheckbox, show3D);
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
