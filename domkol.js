@@ -490,13 +490,13 @@ function DomainCircleView (attributes) {
     view.bigCircle.attr({cx: x, cy: y}); // Move the centre of the domain circle
     var edgePos = domainCircle.edgeHandlePosition;
     setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]); // Also move the edge handle
-    view.updateModel();
+    view.updateCirclePosition();
     view.drawFunctionOnCircle();
   });
   
   // drag the edge handle to change the radius of the domain circle
   this.edgeHandle.on('svgDrag', function(event, x, y) {
-    view.updateModel();
+    view.updateCirclePosition();
     view.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
     view.drawFunctionOnCircle();
   });
@@ -551,7 +551,7 @@ function DomainCircleView (attributes) {
   }, 80);
   
   // initial update of model for the initial state of the view
-  this.updateModel();
+  this.updateCirclePosition();
 }
 
 /** For numbers which are probably exact complex integers, but not quite due to rounding
@@ -585,8 +585,8 @@ DomainCircleView.prototype = {
     this.drawFunctionOnCircle();
   },    
   
-  /** Update the model from view changes. */
-  "updateModel": function() {
+  /** Update the circle position from view changes. */
+  "updateCirclePosition": function() {
     this.domainCircle.centreHandlePosition = getTranslation(this.centreHandle);
     this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
