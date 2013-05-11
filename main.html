@@ -38,107 +38,111 @@
 <!-- heading.wrapper.end.html -->
 
 <div class="wideItem">
-<div style="position:relative;height:560px;">
-  <svg style="position:absolute;top:0;left:0;z-index:0;"
-     width="560" height="560" viewbox="0 0 560 560">
-     <g id="circle-graph-under">
-       <path id="real-path-under" d="M0,0" fill="none" stroke="blue" stroke-width="5" stroke-opacity="1.0"/>
-     </g>
-  </svg>
-  <svg style="position:absolute;top:0;left:0;z-index:1;"
-     width="560" height="560" viewbox="0 0 560 560">
-     <g id="coordinates">
-       <g class="coordinates-group"></g>
-       <path id="axes" d="M0,0" stroke="#909090" stroke-width="0.6"/>
-       <path id="unit-coordinate-grid" d="M0,0" stroke="#909090" stroke-width="0.5"/>
-       <path id="fine-coordinate-grid" d="M0,0" stroke="#909090" stroke-width="0.2"/>
-     </g>
-     <g id="circle-graph">
-       <circle id="big-circle" cx="280" cy="280" r="150" stroke="white" stroke-width="7" fill="none"/>
-       <path id="polar-grid" d="M0,0" fill="none" stroke="white" stroke-width="0.2"/>
-       <path id="polar-grid-coarse" d="M0,0" fill="none" stroke="white" stroke-width="0.4"/>
-       <path id="real-path" d="M0,0" fill="none" stroke="blue" stroke-width="5"/>
-       <path id="real-path-shadow" d="M0,0" fill="none" stroke="#404040" stroke-width="5" stroke-opacity="0.08"/>
-       <path id="real-path-shadow2" d="M0,0" fill="none" stroke="#404040" stroke-width="5" stroke-opacity="0.05"/>
-       <path id="imaginary-path" d="M0,0" fill="none" stroke="#302010" stroke-width="5"/>
-       <circle id="centre-handle" transform="translate(280 280)" 
-               cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
-       <circle id="edge-handle" transform="translate(430 280)" 
-               cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
-     </g>
-  </svg>
-
-  <div id="handles">
-     <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
-        <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
-        <div class="zero-text">zero</div>
-     </div>
-     <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
-        <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
-        <div class="zero-text">zero</div>
-     </div>
-     <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
-        <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
-        <div class="zero-text">zero</div>
-     </div>
-  </div>
+  <div style="position:relative;height:560px;">
+    <div style="position:absolute;top:0;left:0;">
+      <svg style="position:absolute;top:0;left:0;z-index:0;"
+         width="560" height="560" viewbox="0 0 560 560">
+         <g id="circle-graph-under">
+           <path id="real-path-under" d="M0,0" fill="none" stroke="blue" stroke-width="5" stroke-opacity="1.0"/>
+         </g>
+      </svg>
+      <svg style="position:absolute;top:0;left:0;z-index:1;"
+         width="560" height="560" viewbox="0 0 560 560">
+         <g id="coordinates">
+           <g class="coordinates-group"></g>
+           <path id="axes" d="M0,0" stroke="#909090" stroke-width="0.6"/>
+           <path id="unit-coordinate-grid" d="M0,0" stroke="#909090" stroke-width="0.5"/>
+           <path id="fine-coordinate-grid" d="M0,0" stroke="#909090" stroke-width="0.2"/>
+         </g>
+         <g id="circle-graph">
+           <circle id="big-circle" cx="280" cy="280" r="150" stroke="white" stroke-width="7" fill="none"/>
+           <path id="polar-grid" d="M0,0" fill="none" stroke="white" stroke-width="0.2"/>
+           <path id="polar-grid-coarse" d="M0,0" fill="none" stroke="white" stroke-width="0.4"/>
+           <path id="real-path" d="M0,0" fill="none" stroke="blue" stroke-width="5"/>
+           <path id="real-path-shadow" d="M0,0" fill="none" stroke="#404040" stroke-width="5" stroke-opacity="0.08"/>
+           <path id="real-path-shadow2" d="M0,0" fill="none" stroke="#404040" stroke-width="5" stroke-opacity="0.05"/>
+           <path id="imaginary-path" d="M0,0" fill="none" stroke="#302010" stroke-width="5"/>
+           <circle id="centre-handle" transform="translate(280 280)" 
+                   cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
+           <circle id="edge-handle" transform="translate(430 280)" 
+                   cx="0" cy="0" r="7" stroke="white" stroke-width="2" fill="black"/>
+         </g>
+      </svg>
+    
+      <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
+            width="560" height="560"></canvas>
+    
+      <div id="handles">
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+            <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
+            <div class="zero-text">zero</div>
+         </div>
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+            <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
+            <div class="zero-text">zero</div>
+         </div>
+         <div class="zero" style="position:absolute;left:282px;top:257px;z-index:2;">
+            <div class="point-circle" style="position:absolute;left:-4px;top:21px"></div>
+            <div class="zero-text">zero</div>
+         </div>
+      </div>
   
-  <canvas id="domkol-canvas" style="position:absolute;top:0;left:0;z-index:0;"
-        width="560" height="560"></canvas>
-
-  <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:3;width:300px">
-        <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
-        but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. 
-        To make the UI more responsive in a browser with slow bitmap drawing, uncheck
-        the "Repaint domain colouring continuously" checkbox. 
-  </div>
-
-  <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
-    <div class="window-top-bar"></div>
-  <table >
-    <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
-    <tr><td colspan="3" class="instructions">Drag the small black circles to move and resize the large circle.</td></tr>
-    <tr><td colspan="3" class="instructions">Drag the blue numbers to change the zeroes of the cubic polynomial (initially
-they are all located on the origin).</td></tr>
-    <tr>
-      <td>Graph scale:</td>
-      <td>
-        <div id="scale-slider" style="width:240px;"></div>
-      </td>
-      <td id="scale-value" style="width:5em;text-align:right"></td>
-    </tr>
-    <tr>
-      <td>Colour scale:</td>
-      <td>
-        <div id="colour-scale-slider" style="width:240px;"></div>
-      </td>
-      <td id="colour-scale" style="width:5em;text-align:right"></td>
-    </tr>
-    <tr><td colspan="2">Show graph on circular domain in 3D:
-      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>
-     </tr>
-    <tr><td colspan="2">3D Wiggle animation:
-            <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>
-    </tr>
-    <tr>
-      <td>Rotate <b>f</b> values:</td>
-      <td>
-        <div id="rotate-graph-slider" style="width:240px;"></div>
-      </td>
-      <td id="graph-rotation" style="width:5em;text-align:right;font-size:0.8em"></td>
-    </tr>
-    <tr><td colspan="2">Show graph on circular domain:
-            <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked></input></td>
-    </tr>
-    <tr><td colspan="2">Show domain coordinate grid:
-            <input style="text-align:left" type="checkbox" id="show-coordinate-grid-checkbox" checked></input></td>
-    </tr>
-    <tr><td colspan="2">Repaint domain colouring continuously:
-            <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
-    </tr>
-    <tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.
-                                      <br/>Also you can move this control window around.)</td></tr>
-  </table>
+    </div>
+    
+    <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:3;width:300px">
+          <b>Domkol</b> works best on <b>Chrome/Chromium</b>. It can be used on other browsers,
+          but bitmap drawing is <i>so</i> much slower on any non-Chrome/Chromium browser. 
+          To make the UI more responsive in a browser with slow bitmap drawing, uncheck
+          the "Repaint domain colouring continuously" checkbox. 
+    </div>
+  
+    <div style="position:absolute;top:130px;left:480px;z-index:2;width:30em" class="controls">
+      <div class="window-top-bar"></div>
+      <table >
+        <tr><td>Function:</td><td colspan="2"><span id="formula"></span></td></tr>
+        <tr><td colspan="3" class="instructions">Drag the small black circles to move and resize the large circle.</td></tr>
+        <tr><td colspan="3" class="instructions">Drag the blue numbers to change the zeroes of the cubic polynomial
+                                                 (initially  they are all located on the origin).</td></tr>
+        <tr>
+          <td>Graph scale:</td>
+          <td>
+            <div id="scale-slider" style="width:240px;"></div>
+          </td>
+          <td id="scale-value" style="width:5em;text-align:right"></td>
+        </tr>
+        <tr>
+          <td>Colour scale:</td>
+          <td>
+            <div id="colour-scale-slider" style="width:240px;"></div>
+          </td>
+          <td id="colour-scale" style="width:5em;text-align:right"></td>
+        </tr>
+        <tr><td colspan="2">Show graph on circular domain in 3D:
+          <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>
+         </tr>
+        <tr><td colspan="2">3D Wiggle animation:
+                <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>
+        </tr>
+        <tr>
+          <td>Rotate <b>f</b> values:</td>
+          <td>
+            <div id="rotate-graph-slider" style="width:240px;"></div>
+          </td>
+          <td id="graph-rotation" style="width:5em;text-align:right;font-size:0.8em"></td>
+        </tr>
+        <tr><td colspan="2">Show graph on circular domain:
+                <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked></input></td>
+        </tr>
+        <tr><td colspan="2">Show domain coordinate grid:
+                <input style="text-align:left" type="checkbox" id="show-coordinate-grid-checkbox" checked></input></td>
+        </tr>
+        <tr><td colspan="2">Repaint domain colouring continuously:
+                <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked></input></td>
+        </tr>
+        <tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.
+                                          <br/>Also you can move this control window around.)</td></tr>
+      </table>
+    </div>
   </div>
 
 </div>
