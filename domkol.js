@@ -614,7 +614,7 @@ DomainCircleView.prototype = {
     this.realPathShadow2Element.toggle(this.show3D);
     this.imaginaryPathElement.toggle(!this.show3D);
     setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
-    setCheckboxEnabled(this.wiggleCheckbox, this.show3D);
+    setCheckboxEnabled(this.wiggleCheckbox, this.showCircleGraph && this.show3D);
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
