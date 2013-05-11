@@ -495,8 +495,14 @@ function DomainCircleView (attributes) {
   
   // check/uncheck checkbox to show/hide the domain circle view
   this.showCircleGraphCheckbox.on("change", function(event) {
+    if (this.checked) {
+      view.show3DGraphCheckbox.removeAttr("disabled");
+    }
+    else {
+      view.show3DGraphCheckbox.attr("disabled", true);
+    }
     view.circleGraph.toggle(this.checked);
-    view.realPathUnderElement.toggle(this.checked);
+    view.realPathUnderElement.toggle(this.checked && view.show3DGraphCheckbox[0].checked);
   });
   
   this.show3DGraphCheckbox.on("change", function(event) {
@@ -506,7 +512,7 @@ function DomainCircleView (attributes) {
     }      
     view.drawFunctionOnCircle();
   });
-  view.toggle3D(this.show3DGraphCheckbox[0].checked);
+  view.toggle3D(view.show3DGraphCheckbox[0].checked && view.showCircleGraphCheckbox[0].checked);
   
   function rotationChanged(event, ui) {
     view.rotationUpdated(ui.value);
