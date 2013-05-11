@@ -469,8 +469,8 @@ function DomainCircleView (attributes) {
                                           for negative imaginary value */
                  "realPathShadowElement", /** JQuery wrapper for SVG path representing shadow of real parts of f on the 
                                               domain circle for positive imaginary value */
-                 "realPathShadow2Element", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on the 
-                                              domain circle for positive imaginary value */
+                 "realPathShadow2Element", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on 
+                                               the domain circle for positive imaginary value */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
@@ -503,21 +503,23 @@ function DomainCircleView (attributes) {
   
   // check/uncheck checkbox to show/hide the domain circle view
   this.showCircleGraphCheckbox.on("change", function(event) {
-    setCheckboxEnabled(view.show3DGraphCheckbox, this.checked);
-    var showCircleAndIn3D = this.checked && view.show3DGraphCheckbox[0].checked;
-    setCheckboxEnabled(view.wiggleCheckbox, showCircleAndIn3D);
-    view.circleGraph.toggle(this.checked);
-    view.realPathUnderElement.toggle(this.checked && showCircleAndIn3D);
+    view.showCircleGraph = this.checked;
+    view.updateGraphVisibility();
   });
   
   this.show3DGraphCheckbox.on("change", function(event) {
-    view.toggle3D(this.checked);
+    view.show3D = this.checked;
+    view.updateGraphVisibility();
     if (!view.wiggling) {
       domainCircle.wiggleAngle = 0;
     }      
     view.drawFunctionOnCircle();
   });
-  view.toggle3D(view.show3DGraphCheckbox[0].checked && view.showCircleGraphCheckbox[0].checked);
+  
+  view.showCircleGraph = view.showCircleGraphCheckbox[0].checked;
+  view.show3D = view.show3DGraphCheckbox[0].checked;
+  
+  view.updateGraphVisibility();
   
   function rotationChanged(event, ui) {
     view.rotationUpdated(ui.value);
@@ -599,16 +601,20 @@ DomainCircleView.prototype = {
     this.graphRotationText.text(formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
   
-  "toggle3D": function(show3D) {
-    this.domainCircle.show3DGraph = show3D;
-    this.bigCircle.attr("stroke-width", show3D ? 7 : 2);
-    this.realPathElement.attr("stroke-width", show3D ? 5 : 2);
-    this.imaginaryPathElement.attr("stroke-width", show3D ? 5 : 2);
-    this.realPathUnderElement.toggle(show3D);
-    this.realPathShadowElement.toggle(show3D);
-    this.realPathShadow2Element.toggle(show3D);
-    this.imaginaryPathElement.toggle(!show3D);
-    setCheckboxEnabled(this.wiggleCheckbox, show3D);
+  // changes determined by "show circle" & "show 3D"
+  "updateGraphVisibility": function() {
+    this.circleGraph.toggle(this.showCircleGraph);
+    this.realPathUnderElement.toggle(this.showCircleGraph && this.show3D);
+    this.domainCircle.show3DGraph = this.show3D;
+    this.bigCircle.attr("stroke-width", this.show3D ? 7 : 2);
+    this.realPathElement.attr("stroke-width", this.show3D ? 5 : 2);
+    this.imaginaryPathElement.attr("stroke-width", this.show3D ? 5 : 2);
+    this.realPathUnderElement.toggle(this.showCircleGraph && this.show3D); // this DOM element not part of circleGraph
+    this.realPathShadowElement.toggle(this.show3D);
+    this.realPathShadow2Element.toggle(this.show3D);
+    this.imaginaryPathElement.toggle(!this.show3D);
+    setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
+    setCheckboxEnabled(this.wiggleCheckbox, this.show3D);
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
