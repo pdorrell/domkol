@@ -80,17 +80,17 @@ $(document).ready(function(){
   
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
-  var domainCircleView = new DomainCircleView({circleGraph: $('#circle-graph'), 
-                                               centreHandle: $('#centre-handle'), 
-                                               edgeHandle: $('#edge-handle'), 
-                                               bigCircle: $("#big-circle"), 
-                                               polarGrid: $("#polar-grid"), 
-                                               polarGridCoarse: $("#polar-grid-coarse"), 
-                                               realPathElement: $("#real-path"), 
-                                               realPathUnderElement: $(domkolElement.realPathUnderElement), 
-                                               realPathShadowElement: $("#real-path-shadow"), 
-                                               realPathShadow2Element: $("#real-path-shadow2"), 
-                                               imaginaryPathElement: $("#imaginary-path"), 
+  var domainCircleView = new DomainCircleView({circleGraph: $(domkolElement.circleGraph), 
+                                               centreHandle: $(domkolElement.centreHandle), 
+                                               edgeHandle: $(domkolElement.edgeHandle), 
+                                               bigCircle: $(domkolElement.bigCircle), 
+                                               polarGrid: $(domkolElement.polarGrid), 
+                                               polarGridCoarse: $(domkolElement.polarGridCoarse), 
+                                               realPathElement: $(domkolElement.realPath), 
+                                               realPathUnderElement: $(domkolElement.realPathUnder), 
+                                               realPathShadowElement: $(domkolElement.realPathShadow), 
+                                               realPathShadow2Element: $(domkolElement.realPathShadow2), 
+                                               imaginaryPathElement: $(domkolElement.imaginaryPath), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
@@ -101,10 +101,10 @@ $(document).ready(function(){
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
-  var coordinatesView = new CoordinatesView({coordinates: $('#coordinates'), 
-                                             axes: $('#axes'), 
-                                             unitGrid: $('#unit-coordinate-grid'), 
-                                             fineGrid: $('#fine-coordinate-grid'), 
+  var coordinatesView = new CoordinatesView({coordinates: $(domkolElement.coordinates), 
+                                             axes: $(domkolElement.axes), 
+                                             unitGrid: $(domkolElement.unitCoordinateGrid), 
+                                             fineGrid: $(domkolElement.fineCoordinateGrid), 
                                              showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
                                              explorerModel: explorerModel });
 
@@ -139,56 +139,61 @@ DomkolElement.prototype = {
     this.initializeAxesAndCircleGraph();
   }, 
   "initializeRealPathUnder": function() {
-    var svgElement = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:1;", 
-                                              width: this.width, height: this.height, 
-                                              viewbox: "0 0 " + this.width + " " + this.height});
-    var circleGraphUnderElement = createSvgElement("g");
-    this.realPathUnderElement = createSvgElement("path", 
-                                                 {d: "M0,0", fill: "none", stroke: "blue", 
-                                                  "stroke-width": 5, "stroke-opacity": "1.0"});
-    this.div.appendChild(svgElement);
-    svgElement.appendChild(circleGraphUnderElement);
-    circleGraphUnderElement.appendChild(this.realPathUnderElement);
+    var svg = createSvgElement(this.div, "svg", 
+                               {style: "position:absolute;top:0;left:0;z-index:1;", 
+                                width: this.width, height: this.height, 
+                                viewbox: "0 0 " + this.width + " " + this.height});
+    var circleGraphUnder = createSvgElement(svg, "g");
+    this.realPathUnder = createSvgElement(circleGraphUnder, "path", 
+                                          {d: "M0,0", fill: "none", stroke: "blue", 
+                                           "stroke-width": 5, "stroke-opacity": "1.0"});
   }, 
   "initializeAxesAndCircleGraph": function() {
-    this.initializeAxes();
-    this.initializeCircleGraph();
-    var svg = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:3;", 
-                                       width: this.width, height: this.height, 
-                                       viewbox: "0 0 " + this.width + " " + this.height});
-    svg.appendChild(this.coordinates);
-    svg.appendChild(this.circleGraph);
+    var svg = createSvgElement(this.div, "svg", 
+                               {style: "position:absolute;top:0;left:0;z-index:3;", 
+                                width: this.width, height: this.height, 
+                                viewbox: "0 0 " + this.width + " " + this.height});
+    this.initializeAxes(svg);
+    this.initializeCircleGraph(svg);
   }, 
-  "initializeAxes": function() {
-    this.coordinates = createSvgElement("g");
-    this.axes = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.6"});
-    this.unitCoordinateGrid = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.5"});
-    this.fineCoordinateGrid = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.2"});
-    this.coordinates.appendChild(this.axes);
-    this.coordinates.appendChild(this.unitCoordinateGrid);
-    this.coordinates.appendChild(this.fineCoordinateGrid);
+  "initializeAxes": function(svg) {
+    this.coordinates = createSvgElement(svg, "g");
+    this.axes = createSvgElement(this.coordinates, "path", 
+                                 {d: "M0,0", stroke: "#909090", "stroke-width": "0.6"});
+    this.unitCoordinateGrid = createSvgElement(this.coordinates, "path", 
+                                               {d: "M0,0", stroke: "#909090", "stroke-width": "0.5"});
+    this.fineCoordinateGrid = createSvgElement(this.coordinates, "path", 
+                                               {d: "M0,0", stroke: "#909090", "stroke-width": "0.2"});
   }, 
-  "initializeCircleGraph": function() {
-    this.circleGraph = createSvgElement("g");
-    this.bigCircle = createSvgElement("circle", {cx: this.width/2, cy: this.height/2, r: this.circleRadius, 
-                                                 stroke: "white", "stroke-width": 7, fill: "none"});
-    this.polarGrid = createSvgElement("path", {d: "M0,0" fill: "none", stroke: "white", "stroke-width": "0.2"});
-    this.polarGridCoarse = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.4"});
-    this.realPath = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "blue", "stroke-width": "5"});
-    this.realPathShadow = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#404040", 
-                                                    "stroke-width": "5", "stroke-opacity": "0.08"});
-    this.realPathShadow2 = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#404040", 
-                                                     "stroke-width": "5", "stroke-opacity": "0.05"});
-    this.imaginaryPath = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#302010", "stroke-width": "5"});
-    this.centreHandle = createSvgElement("circle", {transform: "translate(" + this.width/2 + " " + this.height/2 + ")", 
-                                                    cx: "0", cy: "0", r: "7", 
-                                                    stroke: "white", "stroke-width": "2", fill: "black"});
-    this.edgeHandle = createSvgElement("circle", {transform: ("translate(" + (this.width/2 + this.circleRadius) + 
-                                                              " " + this.height + ")"), 
-                                                  cx: "0", cy: "0", r: "7", 
-                                                  stroke: "white", "stroke-width": "2", fill: "black"});
-    this.circleGraph.appendChild(this.bigCircle);
-  }, 
+  "initializeCircleGraph": function(svg) {
+    this.circleGraph = createSvgElement(svg, "g");
+    this.bigCircle = createSvgElement(this.circleGraph, "circle", 
+                                      {cx: this.width/2, cy: this.height/2, r: this.circleRadius, 
+                                       stroke: "white", "stroke-width": 7, fill: "none"});
+    this.polarGrid = createSvgElement(this.circleGraph, "path", 
+                                      {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.2"});
+    this.polarGridCoarse = createSvgElement(this.circleGraph, "path", 
+                                            {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.4"});
+    this.realPath = createSvgElement(this.circleGraph, "path", 
+                                     {d: "M0,0", fill: "none", stroke: "blue", "stroke-width": "5"});
+    this.realPathShadow = createSvgElement(this.circleGraph, "path", 
+                                           {d: "M0,0", fill: "none", stroke: "#404040", 
+                                            "stroke-width": "5", "stroke-opacity": "0.08"});
+    this.realPathShadow2 = createSvgElement(this.circleGraph, "path", 
+                                            {d: "M0,0", fill: "none", stroke: "#404040", 
+                                             "stroke-width": "5", "stroke-opacity": "0.05"});
+    this.imaginaryPath = createSvgElement(this.circleGraph, "path", 
+                                          {d: "M0,0", fill: "none", stroke: "#302010", "stroke-width": "5"});
+    this.centreHandle = createSvgElement(this.circleGraph, "circle", 
+                                         {transform: "translate(" + this.width/2 + " " + this.height/2 + ")", 
+                                          cx: "0", cy: "0", r: "7", 
+                                          stroke: "white", "stroke-width": "2", fill: "black"});
+    this.edgeHandle = createSvgElement(this.circleGraph, "circle", 
+                                       {transform: ("translate(" + (this.width/2 + this.circleRadius) + 
+                                                    " " + this.height/2 + ")"), 
+                                        cx: "0", cy: "0", r: "7", 
+                                        stroke: "white", "stroke-width": "2", fill: "black"});
+  }
 };
 
 function setSliderKeyboardShortcuts(slider) {
@@ -965,10 +970,13 @@ function formatVariablePlusComplexNumber(variableName, x, y, precision) {
    the following function does the trick.
    Taken from http://stackoverflow.com/questions/7261318/svg-chart-generation-in-javascript#answer-15582018
  */
-function createSvgElement(tag, attributes) {
+function createSvgElement(parent, tag, attributes) {
   var svgElement= document.createElementNS('http://www.w3.org/2000/svg', tag);
   for (var key in attributes)
     svgElement.setAttribute(key, attributes[key].toString());
+  if (parent != null) {
+    parent.appendChild(svgElement);
+  }
   return svgElement;
 }
 
@@ -979,10 +987,10 @@ CoordinatesView.prototype = {
   
   /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = createSvgElement("text", {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
+    var textElement = createSvgElement(this.coordinatesGroup[0], "text", 
+                                       {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
-    this.coordinatesGroup.append(textElement);
   }, 
   
   /** Return SVG path component for a horizontal axis for y = im(z). */
