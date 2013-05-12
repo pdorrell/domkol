@@ -732,10 +732,10 @@ DomainCircleView.prototype = {
       this.realPathShadow2Element.attr("d", paths[3]);
     }
     else {
-      this.realPath = createPointsPath(pointArrays["real"]);
-      this.imaginaryPath = createPointsPath(pointArrays["imaginary"]);
-      this.realPathElement.attr("d", this.realPath);
-      this.imaginaryPathElement.attr("d", this.imaginaryPath);
+      var realPathD = createPointsPath(pointArrays["real"]);
+      var imaginaryPathD = createPointsPath(pointArrays["imaginary"]);
+      this.realPathElement.attr("d", realPathD);
+      this.imaginaryPathElement.attr("d", imaginaryPathD);
     }
     this.drawPolarGrid();
   }, 
