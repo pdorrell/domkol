@@ -95,8 +95,17 @@ $(document).ready(function(){
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
-                                               wiggleCheckbox: $("#wiggle-checkbox"), 
                                                domainCircle: explorerModel.domainCircle});
+
+  // wire wiggle checkbox
+  var wiggleCheckbox = $("#wiggle-checkbox");
+  wiggleCheckbox.on("change", function(event) {
+    domainCircleView.setWiggling(this.checked);
+  });
+  wiggleCheckbox.trigger("change"); // read initial value
+  $(domainCircleView).on("showing3DGraph", function(event, showing) {
+    setCheckboxEnabled(wiggleCheckbox, showing);
+  });
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
@@ -558,7 +567,6 @@ function DomainCircleView (attributes) {
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
-                 "wiggleCheckbox", /** Checkbox to turn wiggling mode on or off */
                  "domainCircle"]); /** An object of class DomainCircle, the model for this view */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -617,14 +625,6 @@ function DomainCircleView (attributes) {
   view.rotationUpdated(50);
   
   this.initialiseWiggleAngles();
-  
-  this.wiggleCheckbox.on("change", function(event) {
-    view.setWiggling(this.checked);
-  });
-  this.wiggleCheckbox.trigger("change"); // read initial value
-  $(this).on("showing3DGraph", function(event, showing) {
-    setCheckboxEnabled(view.wiggleCheckbox, showing);
-  });
   
   setInterval(function(){ 
     if (view.wiggling) { 
@@ -705,7 +705,6 @@ DomainCircleView.prototype = {
     this.realPathShadow2Element.toggle(this.show3D);
     this.imaginaryPathElement.toggle(!this.show3D);
     setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
-    // setCheckboxEnabled(this.wiggleCheckbox, showing3DGraph);
     $(this).trigger("showing3DGraph", [showing3DGraph]);
   }, 
   
