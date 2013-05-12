@@ -46,7 +46,7 @@ $(document).ready(function(){
   
   var domkolDivElement = $("#domkol");
   
-  var domkolElement = new DomkolElement(domkolDivElement[0], 560, 560);
+  var domkolElement = new DomkolElement(domkolDivElement[0], 560, 560, 150);
   domkolElement.initialize();
   
   /* From the view, calculate how many draggable function zeroes there are 
@@ -126,18 +126,17 @@ $(document).ready(function(){
   
 });
 
-function DomkolElement(div, width, height) {
+function DomkolElement(div, width, height, circleRadius) {
   this.div = div;
   this.width = width;
   this.height = height;
-  
-  // elements not yet created ...
-  this.realPathUnderElement = null;
+  this.circleRadius = circleRadius;
 }
 
 DomkolElement.prototype = {
   "initialize": function() {
     this.initializeRealPathUnder();
+    this.initializeAxesAndCircleGraph();
   }, 
   "initializeRealPathUnder": function() {
     var svgElement = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:1;", 
@@ -150,7 +149,46 @@ DomkolElement.prototype = {
     this.div.appendChild(svgElement);
     svgElement.appendChild(circleGraphUnderElement);
     circleGraphUnderElement.appendChild(this.realPathUnderElement);
-  }
+  }, 
+  "initializeAxesAndCircleGraph": function() {
+    this.initializeAxes();
+    this.initializeCircleGraph();
+    var svg = createSvgElement("svg", {style: "position:absolute;top:0;left:0;z-index:3;", 
+                                       width: this.width, height: this.height, 
+                                       viewbox: "0 0 " + this.width + " " + this.height});
+    svg.appendChild(this.coordinates);
+    svg.appendChild(this.circleGraph);
+  }, 
+  "initializeAxes": function() {
+    this.coordinates = createSvgElement("g");
+    this.axes = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.6"});
+    this.unitCoordinateGrid = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.5"});
+    this.fineCoordinateGrid = createSvgElement("path", {d: "M0,0", stroke: "#909090", stroke-width: "0.2"});
+    this.coordinates.appendChild(this.axes);
+    this.coordinates.appendChild(this.unitCoordinateGrid);
+    this.coordinates.appendChild(this.fineCoordinateGrid);
+  }, 
+  "initializeCircleGraph": function() {
+    this.circleGraph = createSvgElement("g");
+    this.bigCircle = createSvgElement("circle", {cx: this.width/2, cy: this.height/2, r: this.circleRadius, 
+                                                 stroke: "white", "stroke-width": 7, fill: "none"});
+    this.polarGrid = createSvgElement("path", {d: "M0,0" fill: "none", stroke: "white", "stroke-width": "0.2"});
+    this.polarGridCoarse = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.4"});
+    this.realPath = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "blue", "stroke-width": "5"});
+    this.realPathShadow = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#404040", 
+                                                    "stroke-width": "5", "stroke-opacity": "0.08"});
+    this.realPathShadow2 = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#404040", 
+                                                     "stroke-width": "5", "stroke-opacity": "0.05"});
+    this.imaginaryPath = createSvgElement("path", {d: "M0,0", fill: "none", stroke: "#302010", "stroke-width": "5"});
+    this.centreHandle = createSvgElement("circle", {transform: "translate(" + this.width/2 + " " + this.height/2 + ")", 
+                                                    cx: "0", cy: "0", r: "7", 
+                                                    stroke: "white", "stroke-width": "2", fill: "black"});
+    this.edgeHandle = createSvgElement("circle", {transform: ("translate(" + (this.width/2 + this.circleRadius) + 
+                                                              " " + this.height + ")"), 
+                                                  cx: "0", cy: "0", r: "7", 
+                                                  stroke: "white", "stroke-width": "2", fill: "black"});
+    this.circleGraph.appendChild(this.bigCircle);
+  }, 
 };
 
 function setSliderKeyboardShortcuts(slider) {
