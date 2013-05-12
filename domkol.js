@@ -89,11 +89,11 @@ $(document).ready(function(){
                                                bigCircle: $(domkolElement.bigCircle), 
                                                polarGrid: $(domkolElement.polarGrid), 
                                                polarGridCoarse: $(domkolElement.polarGridCoarse), 
-                                               realPathElement: $(domkolElement.realPath), 
-                                               realPathUnderElement: $(domkolElement.realPathUnder), 
-                                               realPathShadowElement: $(domkolElement.realPathShadow), 
-                                               realPathShadow2Element: $(domkolElement.realPathShadow2), 
-                                               imaginaryPathElement: $(domkolElement.imaginaryPath), 
+                                               realPath: $(domkolElement.realPath), 
+                                               realPathUnder: $(domkolElement.realPathUnder), 
+                                               realPathShadow: $(domkolElement.realPathShadow), 
+                                               realPathShadow2: $(domkolElement.realPathShadow2), 
+                                               imaginaryPath: $(domkolElement.imaginaryPath), 
                                                showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
@@ -564,14 +564,14 @@ function DomainCircleView (attributes) {
                  "polarGridCoarse", /** JQuery wrapper for SVG path representing 
                                         the "coarse" part of polar grid, inner&outer radial circles and 
                                         vert&horiz radial axes  */
-                 "realPathElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
-                 "imaginaryPathElement", /** JQuery wrapper for SVG path representing imaginary parts of f 
+                 "realPath", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
+                 "imaginaryPath", /** JQuery wrapper for SVG path representing imaginary parts of f 
                                              on the domain circle */
-                 "realPathUnderElement", /** JQuery wrapper for SVG path representing real parts of f on the domain circle 
+                 "realPathUnder", /** JQuery wrapper for SVG path representing real parts of f on the domain circle 
                                           for negative imaginary value */
-                 "realPathShadowElement", /** JQuery wrapper for SVG path representing shadow of real parts of f on the 
+                 "realPathShadow", /** JQuery wrapper for SVG path representing shadow of real parts of f on the 
                                               domain circle for positive imaginary value */
-                 "realPathShadow2Element", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on 
+                 "realPathShadow2", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on 
                                                the domain circle for positive imaginary value */
                  "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
@@ -706,15 +706,15 @@ DomainCircleView.prototype = {
   "updateGraphVisibility": function() {
     this.circleGraph.toggle(this.showCircleGraph);
     var showing3DGraph = this.showCircleGraph && this.show3D;
-    this.realPathUnderElement.toggle(showing3DGraph);
+    this.realPathUnder.toggle(showing3DGraph);
     this.domainCircle.show3DGraph = this.show3D;
     this.bigCircle.attr("stroke-width", this.show3D ? 7 : 2);
-    this.realPathElement.attr("stroke-width", this.show3D ? 5 : 2);
-    this.imaginaryPathElement.attr("stroke-width", this.show3D ? 5 : 2);
-    this.realPathUnderElement.toggle(this.showCircleGraph && this.show3D); // this DOM element not part of circleGraph
-    this.realPathShadowElement.toggle(this.show3D);
-    this.realPathShadow2Element.toggle(this.show3D);
-    this.imaginaryPathElement.toggle(!this.show3D);
+    this.realPath.attr("stroke-width", this.show3D ? 5 : 2);
+    this.imaginaryPath.attr("stroke-width", this.show3D ? 5 : 2);
+    this.realPathUnder.toggle(this.showCircleGraph && this.show3D); // this DOM element not part of circleGraph
+    this.realPathShadow.toggle(this.show3D);
+    this.realPathShadow2.toggle(this.show3D);
+    this.imaginaryPath.toggle(!this.show3D);
     setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
     $(this).trigger("showing3DGraph", [showing3DGraph]);
   }, 
@@ -726,16 +726,16 @@ DomainCircleView.prototype = {
     
     if (this.domainCircle.show3DGraph) {
       var paths = createOverUnderAndShadowPointPaths(pointArrays["real3D"]);
-      this.realPathElement.attr("d", paths[0]);
-      this.realPathUnderElement.attr("d", paths[1]);
-      this.realPathShadowElement.attr("d", paths[2]);
-      this.realPathShadow2Element.attr("d", paths[3]);
+      this.realPath.attr("d", paths[0]);
+      this.realPathUnder.attr("d", paths[1]);
+      this.realPathShadow.attr("d", paths[2]);
+      this.realPathShadow2.attr("d", paths[3]);
     }
     else {
       var realPathD = createPointsPath(pointArrays["real"]);
       var imaginaryPathD = createPointsPath(pointArrays["imaginary"]);
-      this.realPathElement.attr("d", realPathD);
-      this.imaginaryPathElement.attr("d", imaginaryPathD);
+      this.realPath.attr("d", realPathD);
+      this.imaginaryPath.attr("d", imaginaryPathD);
     }
     this.drawPolarGrid();
   }, 
