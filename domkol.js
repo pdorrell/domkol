@@ -102,7 +102,7 @@ $(document).ready(function(){
   wiggleCheckbox.on("change", function(event) {
     domainCircleView.setWiggling(this.checked);
   });
-  wiggleCheckbox.trigger("change"); // read initial value
+  setCheckboxChecked(wiggleCheckbox, domainCircleView.wiggling);
   $(domainCircleView).on("showing3DGraph", function(event, showing) {
     setCheckboxEnabled(wiggleCheckbox, showing);
   });
@@ -223,13 +223,21 @@ function setSliderKeyboardShortcuts(slider) {
   });
 }
 
-function setCheckboxEnabled(checkbox, enabled) {
-  if (enabled) {
-    checkbox.removeAttr("disabled");
+function setBooleanElementAttibute(element, attribute, value) {
+  if (value) {
+    element.attr(attribute, true);
   }
   else {
-    checkbox.attr("disabled", true);
+    element.removeAttr(attribute);
   }
+}
+
+function setCheckboxEnabled(checkbox, enabled) {
+  setBooleanElementAttibute(checkbox, "disabled", !enabled);
+}
+
+function setCheckboxChecked(checkbox, checked) {
+  setBooleanElementAttibute(checkbox, "checked", checked);
 }
 
 /* Function to display a Javascript object as a string (only goes to a depth of one) */ /* Useful for tracing code. */
@@ -575,6 +583,7 @@ function DomainCircleView (attributes) {
   /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
+  this.wiggling = true;
 
   // drag the centre handle to move the domain circle around
   this.centreHandle.on('svgDrag', function(event, x, y) {
