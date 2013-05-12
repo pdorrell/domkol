@@ -99,10 +99,10 @@ $(document).ready(function(){
 
   // wire wiggle checkbox
   var wiggleCheckbox = $("#wiggle-checkbox");
+  domainCircleView.wiggling = wiggleCheckbox[0].checked;
   wiggleCheckbox.on("change", function(event) {
     domainCircleView.setWiggling(this.checked);
   });
-  setCheckboxChecked(wiggleCheckbox, domainCircleView.wiggling);
   $(domainCircleView).on("showing3DGraph", function(event, showing) {
     setCheckboxEnabled(wiggleCheckbox, showing);
   });
