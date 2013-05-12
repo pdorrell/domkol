@@ -110,7 +110,7 @@ $(document).ready(function(){
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                                      canvas: $('#domkol-canvas')[0], 
+                                                      canvas: domkolElement.canvas, 
                                                       domainCircleView: domainCircleView, 
                                                       coordinatesView: coordinatesView, 
                                                       scaleSlider: $("#scale-slider"), 
@@ -135,8 +135,16 @@ function DomkolElement(div, width, height, circleRadius) {
 
 DomkolElement.prototype = {
   "initialize": function() {
+    this.initializeCanvas();
     this.initializeRealPathUnder();
     this.initializeAxesAndCircleGraph();
+  }, 
+  "initializeCanvas": function() {
+    var canvas = $("<canvas/>");
+    $(this.div).append(canvas);
+    canvas.attr("style", "position:absolute;top:0;left:0;z-index:2;");
+    canvas.attr("width", this.width.toString()).attr("height", this.height.toString());
+    this.canvas = canvas[0];
   }, 
   "initializeRealPathUnder": function() {
     var svg = createSvgElement(this.div, "svg", 
