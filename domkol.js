@@ -78,6 +78,9 @@ $(document).ready(function(){
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
+  var wiggleCheckbox = $("#wiggle-checkbox");
+  var wiggling = wiggleCheckbox[0].checked;
+
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView({circleGraph: $(domkolElement.circleGraph), 
@@ -95,11 +98,10 @@ $(document).ready(function(){
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
+                                               wiggling: wiggling, 
                                                domainCircle: explorerModel.domainCircle});
 
   // wire wiggle checkbox
-  var wiggleCheckbox = $("#wiggle-checkbox");
-  domainCircleView.wiggling = wiggleCheckbox[0].checked;
   wiggleCheckbox.on("change", function(event) {
     domainCircleView.setWiggling(this.checked);
   });
@@ -575,7 +577,8 @@ function DomainCircleView (attributes) {
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
-                 "domainCircle"]); /** An object of class DomainCircle, the model for this view */
+                 "domainCircle",  /** An object of class DomainCircle, the model for this view */
+                 "wiggling"]); /** Initial state of wiggling or not */
   
   svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
   svgDraggable(this.edgeHandle); // Make the edge handle (which is an SVG element) draggable
@@ -583,7 +586,6 @@ function DomainCircleView (attributes) {
   /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
-  this.wiggling = true;
 
   // drag the centre handle to move the domain circle around
   this.centreHandle.on('svgDrag', function(event, x, y) {
@@ -1165,7 +1167,7 @@ ComplexFunctionExplorerView.prototype = {
   }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
-      have finished changing. Update the displayed formular, optionally repaint the domain 
+      have finished changing. Update the displayed formula, optionally repaint the domain 
       colouring, and redraw the function graph on the domain circle.*/
   "functionChanged": function(changing) {
     this.formula.text(this.complexFunction.getFormula());
