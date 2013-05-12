@@ -622,6 +622,9 @@ function DomainCircleView (attributes) {
     view.setWiggling(this.checked);
   });
   this.wiggleCheckbox.trigger("change"); // read initial value
+  $(this).on("showing3DGraph", function(event, showing) {
+    setCheckboxEnabled(view.wiggleCheckbox, showing);
+  });
   
   setInterval(function(){ 
     if (view.wiggling) { 
@@ -691,7 +694,8 @@ DomainCircleView.prototype = {
   // changes determined by "show circle" & "show 3D"
   "updateGraphVisibility": function() {
     this.circleGraph.toggle(this.showCircleGraph);
-    this.realPathUnderElement.toggle(this.showCircleGraph && this.show3D);
+    var showing3DGraph = this.showCircleGraph && this.show3D;
+    this.realPathUnderElement.toggle(showing3DGraph);
     this.domainCircle.show3DGraph = this.show3D;
     this.bigCircle.attr("stroke-width", this.show3D ? 7 : 2);
     this.realPathElement.attr("stroke-width", this.show3D ? 5 : 2);
@@ -701,7 +705,8 @@ DomainCircleView.prototype = {
     this.realPathShadow2Element.toggle(this.show3D);
     this.imaginaryPathElement.toggle(!this.show3D);
     setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
-    setCheckboxEnabled(this.wiggleCheckbox, this.showCircleGraph && this.show3D);
+    // setCheckboxEnabled(this.wiggleCheckbox, showing3DGraph);
+    $(this).trigger("showing3DGraph", [showing3DGraph]);
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
