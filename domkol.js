@@ -619,13 +619,9 @@ function DomainCircleView (attributes) {
   this.initialiseWiggleAngles();
   
   this.wiggleCheckbox.on("change", function(event) {
-    view.wiggling = this.checked;
-    if (!view.wiggling) {
-      domainCircle.wiggleAngle = 0;
-      view.drawFunctionOnCircle();
-    }
+    view.setWiggling(this.checked);
   });
-  view.wiggling = this.wiggleCheckbox[0].checked;
+  this.wiggleCheckbox.trigger("change"); // read initial value
   
   setInterval(function(){ 
     if (view.wiggling) { 
@@ -649,6 +645,14 @@ function roundComponentsToIntegerIfClose(number, epsilon) {
 }
 
 DomainCircleView.prototype = {
+  
+  "setWiggling": function(wiggling) {
+    this.wiggling = wiggling;
+    if (!wiggling) {
+      this.domainCircle.wiggleAngle = 0;
+      this.drawFunctionOnCircle();
+    }
+  }, 
   
   "initialiseWiggleAngles" : function() {
     var maxWiggle = 0.3;
