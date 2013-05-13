@@ -152,11 +152,8 @@ $(document).ready(function(){
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
-  var coordinatesView = new CoordinatesView({coordinates: $(domkolElements.coordinates), 
-                                             axes: $(domkolElements.axes), 
-                                             unitGrid: $(domkolElements.unitCoordinateGrid), 
-                                             fineGrid: $(domkolElements.fineCoordinateGrid), 
-                                             showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
+  var coordinatesView = new CoordinatesView(domkolElements, 
+                                            {showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
                                              explorerModel: explorerModel });
 
   /* The main view of the application containing all its component views and associated models. */
@@ -221,6 +218,7 @@ DomkolElements.prototype = {
   }, 
   "initializeAxes": function(svg) {
     this.coordinates = createSvgElement(svg, "g");
+    this.coordinatesGroup = createSvgElement(this.coordinates, "g");
     this.axes = createSvgElement(this.coordinates, "path", 
                                  {d: "M0,0", stroke: "#909090", "stroke-width": "0.6"});
     this.unitCoordinateGrid = createSvgElement(this.coordinates, "path", 
@@ -956,32 +954,6 @@ PolynomialFunctionView.prototype = {
 };
     
 
-/** The view representing the coordinates in the complex plane as displayed within the complex viewport */
-function CoordinatesView(attributes) {
-  setAttributes(this, attributes, 
-                ["explorerModel", /** A reference to the main application model */
-                 "showCoordinateGridCheckbox", /** Checkbox controlling visibility of the coordinates */
-                 "coordinates", /** JQuery wrapper for the element containing all the coordinate elements */
-                 "axes", /** JQuery wrapper for the SVG path representing the real & imaginary axes */
-                 "unitGrid", /** JQuery wrapper for the SVG path representing the grid with spacing 1 complex unit */
-                 "fineGrid"]); /** JQuery wrapper for the SVG path representing the grid with spacing 0.1 complex units */
-  
-  /** Note: the SVG text elements for coordinate values are generated dynamically */
-  
-  this.coordinatesGroup = this.coordinates.children('[class="coordinates-group"]'); /* note: selector ".coordinates-group"
-                                                                                       doesn't work on SVG elements */
-  
-  // put view in local variable for access by event handlers
-  var view = this;
-  
-  /** Toggle the checkbox to show/hide the coordinates */
-  this.showCoordinateGridCheckbox.on("change", function(event) {
-      view.coordinates.toggle(this.checked);
-    });
-  
-  this.redraw();
-}
-
 /** Regex to parse the normal Javascript representation of a float value */
 var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)(e[-+]?[0-9]+|)$/
 
@@ -1058,6 +1030,33 @@ function createSvgElement(parent, tag, attributes) {
   return svgElement;
 }
 
+/** The view representing the coordinates in the complex plane as displayed within the complex viewport */
+function CoordinatesView(domkolElements, attributes) {
+  this.dom = {};
+  setJQueryWrappedAttributes(this.dom, domkolElements, 
+                             ["coordinates", /** element containing all the coordinate elements */
+                              "coordinatesGroup", /** element containing all the coordinate elements */
+                              "axes", /** SVG path representing the real & imaginary axes */
+                              "unitCoordinateGrid", /** SVG path representing the grid with spacing 1 complex unit */
+                              "fineCoordinateGrid"]); /** SVG path representing the grid with spacing 0.1 complex units */
+                               
+  setAttributes(this, attributes, 
+                ["explorerModel", /** A reference to the main application model */
+                 "showCoordinateGridCheckbox"]); /** Checkbox controlling visibility of the coordinates */
+  
+  /** Note: the SVG text elements for coordinate values are generated dynamically */
+  
+  // put view in local variable for access by event handlers
+  var view = this;
+  
+  /** Toggle the checkbox to show/hide the coordinates */
+  this.showCoordinateGridCheckbox.on("change", function(event) {
+      view.dom.coordinates.toggle(this.checked);
+    });
+  
+  this.redraw();
+}
+
 CoordinatesView.prototype = {
   
   "xCoordinateOffset": 3, // amount to offset (rightwards) the bottom left corner of coordinate value from actual location
@@ -1065,7 +1064,7 @@ CoordinatesView.prototype = {
   
   /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
   "addCoordinatesText" : function(text, x, y) {
-    var textElement = createSvgElement(this.coordinatesGroup[0], "text", 
+    var textElement = createSvgElement(this.dom.coordinatesGroup[0], "text", 
                                        {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
     textElement.appendChild(textNode);
@@ -1103,7 +1102,7 @@ CoordinatesView.prototype = {
     var xCoordinateOffset = this.xCoordinateOffset;
     var yCoordinateOffset = this.yCoordinateOffset;
     if (showCoordinateLabels) {
-      this.coordinatesGroup.empty();
+      this.dom.coordinatesGroup.empty();
     }
     var minYIndex = Math.ceil((origin[1]-dimension[1])/(pixelsPerUnit*spacing));
     var maxYIndex = Math.floor(origin[1]/(pixelsPerUnit*spacing));
@@ -1125,10 +1124,10 @@ CoordinatesView.prototype = {
   "redraw": function() {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
-    this.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
+    this.dom.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
     
-    this.drawGrid(this.unitGrid, 1.0, true);
-    this.drawGrid(this.fineGrid, 0.1, false);
+    this.drawGrid(this.dom.unitCoordinateGrid, 1.0, true);
+    this.drawGrid(this.dom.fineCoordinateGrid, 0.1, false);
   }
 };
   
