@@ -257,12 +257,12 @@ function DomkolElements(div, originPixelLocation, pixelsDimension, circleRadius)
 }
 
 DomkolElements.prototype = {
-  "initialize": function() {
+  initialize: function() {
     this.initializeCanvas();
     this.initializeRealPathUnder();
     this.initializeAxesAndCircleGraph();
   }, 
-  "initializeCanvas": function() {
+  initializeCanvas: function() {
     var canvas = $("<canvas/>");
     $(this.div).append(canvas);
     canvas.attr("style", "position:absolute;top:0;left:0;z-index:2;");
@@ -270,7 +270,8 @@ DomkolElements.prototype = {
     canvas.attr("height", this.height.toString());
     this.canvas = canvas[0];
   }, 
-  "initializeRealPathUnder": function() {
+  
+  initializeRealPathUnder: function() {
     var svg = createSvgElement(this.div, "svg", 
                                {style: "position:absolute;top:0;left:0;z-index:1;", 
                                 width: this.width, height: this.height, 
@@ -280,7 +281,7 @@ DomkolElements.prototype = {
                                           {d: "M0,0", fill: "none", stroke: "blue", 
                                            "stroke-width": 5, "stroke-opacity": "1.0"});
   }, 
-  "initializeAxesAndCircleGraph": function() {
+  initializeAxesAndCircleGraph: function() {
     var svg = createSvgElement(this.div, "svg", 
                                {style: "position:absolute;top:0;left:0;z-index:3;", 
                                 width: this.width, height: this.height, 
@@ -288,7 +289,7 @@ DomkolElements.prototype = {
     this.initializeAxes(svg);
     this.initializeCircleGraph(svg);
   }, 
-  "initializeAxes": function(svg) {
+  initializeAxes: function(svg) {
     this.coordinates = createSvgElement(svg, "g");
     this.coordinatesGroup = createSvgElement(this.coordinates, "g");
     this.axes = createSvgElement(this.coordinates, "path", 
@@ -298,7 +299,7 @@ DomkolElements.prototype = {
     this.fineCoordinateGrid = createSvgElement(this.coordinates, "path", 
                                                {d: "M0,0", stroke: "#909090", "stroke-width": "0.2"});
   }, 
-  "initializeCircleGraph": function(svg) {
+  initializeCircleGraph: function(svg) {
     this.circleGraph = createSvgElement(svg, "g");
     this.bigCircle = createSvgElement(this.circleGraph, "circle", 
                                       {cx: this.originX, cy: this.originY, r: this.circleRadius, 
@@ -563,14 +564,14 @@ function DomainCircle(attributes) {
 DomainCircle.prototype = {
 
   /** Calculate and store the radius value (in pixels) */
-  "calculateRadius": function() {
+  calculateRadius: function() {
     var edgeX = this.edgeHandlePosition[0];
     var edgeY = this.edgeHandlePosition[1];
     this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
   }, 
   
   /* Return real & imaginary of f on the domain circle as arrays of points (in pixel coordinates) */
-  "functionGraphPointArrays": function () {
+  functionGraphPointArrays: function () {
     var explorerModel = this.explorerModel;
     var unitsPerPixel = explorerModel.unitsPerPixel();
     var cx = this.centreHandlePosition[0]; // pixel X coordinate of circle centre
@@ -631,29 +632,29 @@ function ComplexFunctionExplorerModel(attributes) {
 
 ComplexFunctionExplorerModel.prototype = {
   /** minimum value of X = re(z) in complex viewport */
-  "minX": function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
+  minX: function() { return -(this.originPixelLocation[0]/this.pixelsPerUnit); }, 
   
   /** minimum value of Y = im(z) in complex viewport */
-  "minY": function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
+  minY: function() { return (this.originPixelLocation[1]-this.heightInPixels())/this.pixelsPerUnit; }, 
 
   /** How much the z value in complex units changes per pixel */
-  "unitsPerPixel": function() {return 1.0/this.pixelsPerUnit;}, 
+  unitsPerPixel: function() {return 1.0/this.pixelsPerUnit;}, 
     
   /** Width of complex viewport in pixels */
-  "widthInPixels": function() { return this.pixelsDimension[0]; },     
+  widthInPixels: function() { return this.pixelsDimension[0]; },     
   
   /** Height of complex viewport in pixels */
-  "heightInPixels": function() { return this.pixelsDimension[1]; }, 
+  heightInPixels: function() { return this.pixelsDimension[1]; }, 
   
   /** Convert pixel position to a complex number */
-  "positionToComplexNumber": function(x, y) {
+  positionToComplexNumber: function(x, y) {
     return [(x-this.originPixelLocation[0])/this.pixelsPerUnit, 
             (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
   }, 
   
   /** Compute f for every pixel and write the representative colour values
       to the "data" array in the format that can be directly written to HTML canvas element. */
-  "writeToCanvasData": function(data) {
+  writeToCanvasData: function(data) {
     var widthInPixels = this.widthInPixels();
     var heightInPixels = this.heightInPixels();
     var minX = this.minX();
@@ -765,12 +766,12 @@ function roundComponentsToIntegerIfClose(number, epsilon) {
 
 DomainCircleView.prototype = {
   
-  "setShowCircleGraph": function(showing) {
+  setShowCircleGraph: function(showing) {
     this.showCircleGraph = showing;
     this.updateGraphVisibility();
   },
   
-  "setShow3D": function(showing) {
+  setShow3D: function(showing) {
     this.show3D = showing;
     this.updateGraphVisibility();
     if (!this.wiggling) {
@@ -779,7 +780,7 @@ DomainCircleView.prototype = {
     this.drawFunctionOnCircle();
   }, 
   
-  "setWiggling": function(wiggling) {
+  setWiggling: function(wiggling) {
     this.wiggling = wiggling;
     if (!wiggling) {
       this.domainCircle.wiggleAngle = 0;
@@ -787,7 +788,7 @@ DomainCircleView.prototype = {
     }
   }, 
   
-  "initialiseWiggleAngles" : function() {
+  initialiseWiggleAngles: function() {
     var maxWiggle = 0.3;
     var numWiggles = 15;
     this.wiggleAngles = new Array(numWiggles);
@@ -799,33 +800,33 @@ DomainCircleView.prototype = {
     this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
   }, 
   
-  "wiggleOneStep" : function() {
+  wiggleOneStep: function() {
     this.wiggleIndex = (this.wiggleIndex+1) % this.wiggleAngles.length;
     this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
     this.drawFunctionOnCircle();
   },    
   
   /** Update the circle position from view changes. */
-  "updateCirclePosition": function() {
+  updateCirclePosition: function() {
     this.domainCircle.centreHandlePosition = getTranslation(this.dom.centreHandle);
     this.domainCircle.edgeHandlePosition = minus(getTranslation(this.dom.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
   }, 
   
-  "setGraphRotation": function(graphRotation) {
+  setGraphRotation: function(graphRotation) {
     this.domainCircle.graphRotation = graphRotation;
     this.notifyGraphRotationChanged();
     this.drawFunctionOnCircle();
   }, 
   
-  "notifyGraphRotationChanged": function() {
+  notifyGraphRotationChanged: function() {
     var graphRotation = this.domainCircle.graphRotation;
     $(this).trigger("graphRotationChanged", formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
   
   // changes determined by "show circle" & "show 3D"
-  "updateGraphVisibility": function() {
+  updateGraphVisibility: function() {
     this.dom.circleGraph.toggle(this.showCircleGraph);
     var showing3DGraph = this.showCircleGraph && this.show3D;
     this.dom.realPathUnder.toggle(showing3DGraph);
@@ -842,7 +843,7 @@ DomainCircleView.prototype = {
   }, 
   
   /** Calculate and draw the real & imaginary paths. Also draw the polar grid. */
-  "drawFunctionOnCircle": function() {
+  drawFunctionOnCircle: function() {
     var pointArrays = this.domainCircle.functionGraphPointArrays();
     var show3DGraph = this.domainCircle.show3DGraph;
     
@@ -868,7 +869,7 @@ DomainCircleView.prototype = {
       There are two paths, one "coarse" ("coarsePathComponents" showing the more important parts of the grid
       using thicker lines) and one "fine" ("pathComponents" for showing all the grid using thinner lines).
   */
-  "drawPolarGrid": function() {
+  drawPolarGrid: function() {
     var theta = 0;
     var numRadialLinesPerQuarter = 6;
     var numRadialLines = numRadialLinesPerQuarter*4;
@@ -929,7 +930,7 @@ function PolynomialFunction(attributes) {
 PolynomialFunction.prototype = {
     
   /** Retrieve the function f such that f(z) = f([re(z),im(z)]) is the value of the polynomial applied to z */
-  "getFunction": function() {
+  getFunction: function() {
     var zeroes = this.zeroes;
     return function(z) {
       var result = [1, 0];
@@ -941,7 +942,7 @@ PolynomialFunction.prototype = {
   }, 
   
   /** Get a displayable formula for the function (with roots displayed to 2DP) */
-  "getFormula": function() {
+  getFormula: function() {
     var formula = "";
     var zeroes = this.zeroes;
     for (var i=0; i<zeroes.length; i++) {
@@ -951,7 +952,7 @@ PolynomialFunction.prototype = {
     return formula;
   }, 
   
-  "notifyFormulaChanged": function() {
+  notifyFormulaChanged: function() {
     $(this).trigger("formulaChanged", [this.getFormula()]);
   }
     
@@ -990,14 +991,14 @@ function fromPx(pxExpression) {
 PolynomialFunctionView.prototype = {
   
   /** Set the number label on the draggable handle for the ith zero. */
-  "setNumberLabel" : function(i, handle) {
+  setNumberLabel: function(i, handle) {
     var z = this.functionModel.zeroes[i];
     var formattedZ = formatComplexNumber(z[0], z[1], 2);
     $(handle).children(".zero-text").text(formattedZ);
   },    
   
   /** Initialise the draggable handle for the ith zero. */
-  "setupHandle": function(i, handle) {
+  setupHandle: function(i, handle) {
     var index = i;
     var explorerModel = this.explorerModel;
     var functionModel = this.functionModel;
@@ -1131,16 +1132,16 @@ function CoordinatesView(domkolElements, attributes) {
 
 CoordinatesView.prototype = {
   
-  "xCoordinateOffset": 3, // amount to offset (rightwards) the bottom left corner of coordinate value from actual location
-  "yCoordinateOffset": 3, // amount to offset (upwards) the bottom left corner of coordinate value from actual location
+  xCoordinateOffset: 3, // amount to offset (rightwards) the bottom left corner of coordinate value from actual location
+  yCoordinateOffset: 3, // amount to offset (upwards) the bottom left corner of coordinate value from actual location
   
-  "setShowCoordinateGrid" : function(showing) {
+  setShowCoordinateGrid: function(showing) {
     this.showCoordinateGrid = showing;
     this.dom.coordinates.toggle(showing);
   }, 
   
   /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
-  "addCoordinatesText" : function(text, x, y) {
+  addCoordinatesText: function(text, x, y) {
     var textElement = createSvgElement(this.dom.coordinatesGroup[0], "text", 
                                        {class: "coordinates", x: x, y: y, fill: "#d0d0ff"})
     var textNode = document.createTextNode(text);
@@ -1148,21 +1149,21 @@ CoordinatesView.prototype = {
   }, 
   
   /** Return SVG path component for a horizontal axis for y = im(z). */
-  "horizontalPath": function (y) {
+  horizontalPath: function (y) {
     var maxX = this.explorerModel.pixelsDimension[0];
     var yPixels = this.explorerModel.originPixelLocation[1] + this.explorerModel.pixelsPerUnit * y;
     return "M0," + yPixels + " L" + maxX + "," + yPixels;
   }, 
   
   /** Return SVG path component for a vertical axis for x = re(z). */
-  "verticalPath": function (x) {
+  verticalPath: function (x) {
     var maxY = this.explorerModel.pixelsDimension[1];
     var xPixels = this.explorerModel.originPixelLocation[0] + this.explorerModel.pixelsPerUnit * x;
     return "M" + xPixels + ",0 L" + xPixels + "," + maxY;
   }, 
   
   /** Draw the coordinate grid with specified spacing (in complex units) into the SVG path component */
-  "drawGrid": function(gridPathElement, spacing, showCoordinateLabels) {
+  drawGrid: function(gridPathElement, spacing, showCoordinateLabels) {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     var pixelsPerUnit = this.explorerModel.pixelsPerUnit;
@@ -1198,7 +1199,7 @@ CoordinatesView.prototype = {
   }, 
   
   /** redraw the grid and coordinate labels into the relevant SVG elements */
-  "redraw": function() {
+  redraw: function() {
     var origin = this.explorerModel.originPixelLocation;
     var dimension = this.explorerModel.pixelsDimension;
     this.dom.axes.attr("d", this.horizontalPath(0) + " " + this.verticalPath(0));
@@ -1234,18 +1235,18 @@ ComplexFunctionExplorerView.prototype = {
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
       have finished changing. Update the displayed formula, optionally repaint the domain 
       colouring, and redraw the function graph on the domain circle.*/
-  "functionChanged": function(changing) {
+  functionChanged: function(changing) {
     this.complexFunction.notifyFormulaChanged();
     this.drawDomainColouring(changing);
     this.drawFunctionGraphs(changing);
   },    
   
   /** The function is changing, but has not yet finished changing. */
-  "functionChanging": function() {
+  functionChanging: function() {
     this.functionChanged(true);
   }, 
   
-  "setColourScale": function(scale, changing) {
+  setColourScale: function(scale, changing) {
     this.explorerModel.colourScale = scale;
     this.notifyColourScaleChanged();
     this.drawDomainColouring(changing);
@@ -1253,27 +1254,27 @@ ComplexFunctionExplorerView.prototype = {
   
   /** Set the function scale (for displaying the domain circle graph) in the model 
       after the user has changed in manually. */
-  "setFunctionScale": function(scale) {
+  setFunctionScale: function(scale) {
     this.explorerModel.scaleF = scale;
     this.notifyFunctionScaleChanged();
     this.drawFunctionGraphs();
   }, 
   
-  "notifyFunctionScaleChanged": function() {
+  notifyFunctionScaleChanged: function() {
     $(this).trigger("functionScaleChanged", [this.explorerModel.scaleF]);
   }, 
   
-  "notifyColourScaleChanged": function() {
+  notifyColourScaleChanged: function() {
     $(this).trigger("colourScaleChanged", [this.explorerModel.colourScale]);
   }, 
   
   /** Draw all function graphs (of which there is only one currently - the function graph on the domain circle) */
-  "drawFunctionGraphs": function() {
+  drawFunctionGraphs: function() {
     this.domainCircleView.drawFunctionOnCircle();
   }, 
   
   /** repaint the domain colouring into the canvas element */
-  "drawDomainColouring" : function(changing) {
+  drawDomainColouring: function(changing) {
     if (!changing || this.repaintContinuously) {
       var ctx = this.canvas.getContext("2d");
       var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
