@@ -47,14 +47,14 @@ $(document).ready(function(){
                                      showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
                                      show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
                                      rotateGraphSlider: $("#rotate-graph-slider"),
-                                     graphRotationText: $("#graph-rotation"),
+                                     graphRotationText: $("#graph-rotation-text"),
                                      showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"),
                                      functionScaleSlider: $("#function-scale-slider"),
                                      colourScaleSlider: $("#colour-scale-slider"),
                                      repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
-                                     formulaText: $("#formula"),
-                                     functionScaleText: $("#function-scale"),
-                                     colourScaleText: $("#colour-scale")}) 
+                                     formulaText: $("#formula-text"),
+                                     functionScaleText: $("#function-scale-text"),
+                                     colourScaleText: $("#colour-scale-text")}) 
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
@@ -133,7 +133,7 @@ $(document).ready(function(){
   });
   
   // write graph rotation text
-  var graphRotationText = $("#graph-rotation");
+  var graphRotationText = $("#graph-rotation-text");
   $(domainCircleView).on("graphRotationChanged", function(event, text) {
     graphRotationText.text(text);
   });
@@ -231,19 +231,19 @@ $(document).ready(function(){
     explorerView.setColourScale(scale, changing);
   });
   
-  var formulaText = $("#formula");
+  var formulaText = $("#formula-text");
   $(explorerView.complexFunction).on("formulaChanged", function(event, formula) {
     formulaText.text(formula);
   });
   explorerView.complexFunction.notifyFormulaChanged(); // to display initial value
   
-  var functionScaleText = $("#function-scale");
+  var functionScaleText = $("#function-scale-text");
   $(explorerView).on("functionScaleChanged", function(event, scale) {
     functionScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyFunctionScaleChanged(); // to display initial value
   
-  var colourScaleText = $("#colour-scale");
+  var colourScaleText = $("#colour-scale-text");
   $(explorerView).on("colourScaleChanged", function(event, scale) {
     colourScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
