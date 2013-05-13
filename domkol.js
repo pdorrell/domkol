@@ -66,7 +66,6 @@ $(document).ready(function(){
                                                          originPixelLocation: [280, 280], 
                                                          pixelsDimension: [560, 560], 
                                                          circleRadius: 150, 
-                                                         colourScale: 1.0,
                                                          domainCircle: domainCircle });
   
   var domkolDivElement = $("#domkol");
@@ -193,8 +192,8 @@ $(document).ready(function(){
   }
   colourScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
                               "orientation": "horizontal", 
-                              "slide": colourScaleChanged, 
-                              "change": colourScaleChanging
+                              "slide": colourScaleChanging, 
+                              "change": colourScaleChanged
                              });
   setSliderKeyboardShortcuts(colourScaleSlider);
   var colourScale = getColourScaleFromSliderValue(colourScaleSlider.slider("value"));
@@ -214,7 +213,8 @@ $(document).ready(function(){
     explorerView.setFunctionScale(scale);
   });
   
-  functionScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
+  colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
+    console.log("colourScaleChanged handler, scale = " + scale + ", changing = " + changing);
     explorerView.setColourScale(scale, changing);
   });
   
@@ -610,12 +610,11 @@ function ComplexFunctionExplorerModel(attributes) {
                  "originPixelLocation", /** What is the pixel location of the complex origin? */
                  "pixelsDimension", /** pixelsDimension = [width, height], width & height of complex viewport in pixels */
                  "circleRadius", /** Initial radius of the domain circle */
-                 "domainCircle", /** An object of class DomainCircle */
-                 "colourScale"]);/* multiply re(f) and im(f) values by colourScale to get values 
+                 "domainCircle"]);/* multiply re(f) and im(f) values by colourScale to get values 
                                     where values in range -1 to 1.0 are represented by 0 to 255
                                     in the specified RGB components. (currently hardcoded to real=>R, imaginary=>G)*/
   
-  // attributes set by view: scaleF
+  // attributes set by view: scaleF, colourScale
     
   this.domainCircle.explorerModel = this; // link to parent
 }
