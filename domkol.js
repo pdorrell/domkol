@@ -1056,6 +1056,8 @@ function CoordinatesView(domkolElements, attributes) {
   // put view in local variable for access by event handlers
   var view = this;
   
+  this.setShowCoordinateGrid(this.showCoordinateGrid);
+  
   this.redraw();
 }
 
@@ -1065,6 +1067,7 @@ CoordinatesView.prototype = {
   "yCoordinateOffset": 3, // amount to offset (upwards) the bottom left corner of coordinate value from actual location
   
   "setShowCoordinateGrid" : function(showing) {
+    this.showCoordinateGrid = showing;
     this.dom.coordinates.toggle(showing);
   }, 
   
