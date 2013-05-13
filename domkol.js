@@ -176,13 +176,13 @@ $(document).ready(function(){
   
   var scaleValueText = $("#scale-value");
   $(explorerView).on("functionScaleChanged", function(event, scale) {
-    scaleValueText.text(scale);
+    scaleValueText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyFunctionScaleChanged(); // to display initial value
   
   var colourScaleText = $("#colour-scale");
   $(explorerView).on("colourScaleChanged", function(event, scale) {
-    colourScaleText.text(scale);
+    colourScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyColourScaleChanged(); // to display initial value
   
@@ -1256,8 +1256,7 @@ ComplexFunctionExplorerView.prototype = {
   }, 
   
   "notifyFunctionScaleChanged": function() {
-    var roundedScaleValue = (Math.round(this.explorerModel.scaleF*100)/100.0).toString();
-    $(this).trigger("functionScaleChanged", [roundedScaleValue]);
+    $(this).trigger("functionScaleChanged", [this.explorerModel.scaleF]);
   }, 
   
   /** Set the colour scale (for displaying the domain circle graph) in the model 
@@ -1268,8 +1267,7 @@ ComplexFunctionExplorerView.prototype = {
   }, 
   
   "notifyColourScaleChanged": function() {
-    var roundedScaleValue = (Math.round(this.explorerModel.colourScale*100)/100.0).toString();
-    $(this).trigger("colourScaleChanged", [roundedScaleValue]);
+    $(this).trigger("colourScaleChanged", [this.explorerModel.colourScale]);
   }, 
 
   /** Draw all function graphs (of which there is only one currently - the function graph on the domain circle) */
