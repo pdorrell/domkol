@@ -214,7 +214,6 @@ $(document).ready(function(){
   });
   
   colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
-    console.log("colourScaleChanged handler, scale = " + scale + ", changing = " + changing);
     explorerView.setColourScale(scale, changing);
   });
   
