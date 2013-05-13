@@ -44,11 +44,6 @@
 
 $(document).ready(function(){
   
-  var domkolDivElement = $("#domkol");
-  
-  var domkolElements = new DomkolElements(domkolDivElement[0], 560, 560, 150);
-  domkolElements.initialize();
-  
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
   var numZeroHandles = $('#handles').children(".zero").length;
@@ -70,8 +65,14 @@ $(document).ready(function(){
                                                          pixelsPerUnit: 240, 
                                                          originPixelLocation: [280, 280], 
                                                          pixelsDimension: [560, 560], 
+                                                         circleRadius: 150, 
                                                          colourScale: 1.0,
                                                          domainCircle: domainCircle });
+  
+  var domkolDivElement = $("#domkol");
+  var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
+                                          explorerModel.pixelsDimension, explorerModel.circleRadius);
+  domkolElements.initialize();
   
   /* The view of the polynomial function (consisting of the draggable handles) */
   var functionView = new PolynomialFunctionView({"zeroHandles": $('#handles'), 
@@ -176,10 +177,14 @@ $(document).ready(function(){
   
 });
 
-function DomkolElements(div, width, height, circleRadius) {
+function DomkolElements(div, originPixelLocation, pixelsDimension, circleRadius) {
   this.div = div;
-  this.width = width;
-  this.height = height;
+  this.originPixelLocation = originPixelLocation;
+  this.pixelsDimension = pixelsDimension;
+  this.width = pixelsDimension[0];
+  this.height = pixelsDimension[1];
+  this.originX = originPixelLocation[0];
+  this.originY = originPixelLocation[1];
   this.circleRadius = circleRadius;
 }
 
@@ -226,7 +231,7 @@ DomkolElements.prototype = {
   "initializeCircleGraph": function(svg) {
     this.circleGraph = createSvgElement(svg, "g");
     this.bigCircle = createSvgElement(this.circleGraph, "circle", 
-                                      {cx: this.width/2, cy: this.height/2, r: this.circleRadius, 
+                                      {cx: this.originX, cy: this.originY, r: this.circleRadius, 
                                        stroke: "white", "stroke-width": 7, fill: "none"});
     this.polarGrid = createSvgElement(this.circleGraph, "path", 
                                       {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.2"});
@@ -243,12 +248,12 @@ DomkolElements.prototype = {
     this.imaginaryPath = createSvgElement(this.circleGraph, "path", 
                                           {d: "M0,0", fill: "none", stroke: "#302010", "stroke-width": "5"});
     this.centreHandle = createSvgElement(this.circleGraph, "circle", 
-                                         {transform: "translate(" + this.width/2 + " " + this.height/2 + ")", 
+                                         {transform: "translate(" + this.originX + " " + this.originY + ")", 
                                           cx: "0", cy: "0", r: "7", 
                                           stroke: "white", "stroke-width": "2", fill: "black"});
     this.edgeHandle = createSvgElement(this.circleGraph, "circle", 
-                                       {transform: ("translate(" + (this.width/2 + this.circleRadius) + 
-                                                    " " + this.height/2 + ")"), 
+                                       {transform: ("translate(" + (this.originX + this.circleRadius) + 
+                                                    " " + this.originY + ")"), 
                                         cx: "0", cy: "0", r: "7", 
                                         stroke: "white", "stroke-width": "2", fill: "black"});
   }
@@ -544,6 +549,7 @@ function ComplexFunctionExplorerModel(attributes) {
                  "pixelsPerUnit", /** How many pixels make one complex unit? */
                  "originPixelLocation", /** What is the pixel location of the complex origin? */
                  "pixelsDimension", /** pixelsDimension = [width, height], width & height of complex viewport in pixels */
+                 "circleRadius", /** Initial radius of the domain circle */
                  "domainCircle", /** An object of class DomainCircle */
                  "colourScale"]);/* multiply re(f) and im(f) values by colourScale to get values 
                                     where values in range -1 to 1.0 are represented by 0 to 255
