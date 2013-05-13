@@ -80,16 +80,35 @@ $(document).ready(function(){
   
   var wiggleCheckbox = $("#wiggle-checkbox");
   var wiggling = wiggleCheckbox[0].checked;
+  
+  var showCircleGraphCheckbox = $("#show-circle-graph-checkbox");
+  var showCircleGraph = showCircleGraphCheckbox[0].checked;
+  
+  var show3DGraphCheckbox = $("#show-3d-graph-checkbox");
+  var show3D = show3DGraphCheckbox[0].checked;
 
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView(domkolElements, 
-                                              {showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
-                                               show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
-                                               rotateGraphSlider: $("#rotate-graph-slider"), 
+                                              {rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
-                                               wiggling: wiggling, 
+                                               showCircleGraph: showCircleGraph, 
+                                               show3D: show3D, 
+                                               wiggling: wiggling,
                                                domainCircle: explorerModel.domainCircle});
+  
+  // wire show circle graph checkbox
+  showCircleGraphCheckbox.on("change", function(event) {
+    domainCircleView.setShowCircleGraph(this.checked);
+  });
+
+  // wire show 3D checkbox
+  show3DGraphCheckbox.on("change", function(event) {
+    domainCircleView.setShow3D(this.checked);
+  });
+  $(domainCircleView).on("showingCircleGraph", function(event, showing) {
+    setCheckboxEnabled(show3DGraphCheckbox, showing);
+  });
 
   // wire wiggle checkbox
   wiggleCheckbox.on("change", function(event) {
@@ -580,11 +599,11 @@ function DomainCircleView (domkolElements, attributes) {
                                                the domain circle for positive imaginary value */
                              
   setAttributes(this, attributes, 
-                ["showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
-                 "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
-                 "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
+                ["rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
                  "domainCircle",  /** An object of class DomainCircle, the model for this view */
+                 "showCircleGraph", /** Initial state of showing the circle graph */
+                 "show3D", /** Initial state of showing 3D graph (instead of 2D) */
                  "wiggling"]); /** Initial state of wiggling or not */
   
   svgDraggable(this.dom.centreHandle); // Make the centre handle (which is an SVG element) draggable
@@ -609,24 +628,6 @@ function DomainCircleView (domkolElements, attributes) {
     view.dom.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
     view.drawFunctionOnCircle();
   });
-  
-  // check/uncheck checkbox to show/hide the domain circle view
-  this.showCircleGraphCheckbox.on("change", function(event) {
-    view.showCircleGraph = this.checked;
-    view.updateGraphVisibility();
-  });
-  
-  this.show3DGraphCheckbox.on("change", function(event) {
-    view.show3D = this.checked;
-    view.updateGraphVisibility();
-    if (!view.wiggling) {
-      domainCircle.wiggleAngle = 0;
-    }      
-    view.drawFunctionOnCircle();
-  });
-  
-  view.showCircleGraph = view.showCircleGraphCheckbox[0].checked;
-  view.show3D = view.show3DGraphCheckbox[0].checked;
   
   view.updateGraphVisibility();
   
@@ -666,6 +667,20 @@ function roundComponentsToIntegerIfClose(number, epsilon) {
 }
 
 DomainCircleView.prototype = {
+  
+  "setShowCircleGraph": function(showing) {
+    this.showCircleGraph = showing;
+    this.updateGraphVisibility();
+  },
+  
+  "setShow3D": function(showing) {
+    this.show3D = showing;
+    this.updateGraphVisibility();
+    if (!this.wiggling) {
+      this.domainCircle.wiggleAngle = 0;
+    }      
+    this.drawFunctionOnCircle();
+  }, 
   
   "setWiggling": function(wiggling) {
     this.wiggling = wiggling;
@@ -722,7 +737,7 @@ DomainCircleView.prototype = {
     this.dom.realPathShadow.toggle(this.show3D);
     this.dom.realPathShadow2.toggle(this.show3D);
     this.dom.imaginaryPath.toggle(!this.show3D);
-    setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
+    $(this).trigger("showingCircleGraph", [this.showCircleGraph]);
     $(this).trigger("showing3DGraph", [showing3DGraph]);
   }, 
   
