@@ -28,8 +28,7 @@
     (One current exception: the complex function model has a reference to the main explorer view, 
     in order to propagate updates.)
     In effect the "view" is both the view and the controller.
-    
-    
+        
     Complex numbers are directly represented as arrays of two reals, i.e. [x,y] represents x+yi
     
     "Units" refers to complex units, like 1 and i
@@ -46,7 +45,7 @@ $(document).ready(function(){
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
-  var numZeroHandles = $('#handles').children(".zero").length;
+  var numZeroHandles = $("#handles").children(".zero").length;
   
   /* Create an array of repeated [0, 0] (i.e. 0+0i) */
   var zeroes = [];
@@ -74,7 +73,7 @@ $(document).ready(function(){
   domkolElements.initialize();
   
   /* The view of the polynomial function (consisting of the draggable handles) */
-  var functionView = new PolynomialFunctionView({zeroHandles: $('#handles'), 
+  var functionView = new PolynomialFunctionView({zeroHandles: $("#handles"), 
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
@@ -267,7 +266,8 @@ DomkolElements.prototype = {
     var canvas = $("<canvas/>");
     $(this.div).append(canvas);
     canvas.attr("style", "position:absolute;top:0;left:0;z-index:2;");
-    canvas.attr("width", this.width.toString()).attr("height", this.height.toString());
+    canvas.attr("width", this.width.toString());
+    canvas.attr("height", this.height.toString());
     this.canvas = canvas[0];
   }, 
   "initializeRealPathUnder": function() {
