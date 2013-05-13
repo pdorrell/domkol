@@ -170,17 +170,22 @@ $(document).ready(function(){
                                                       coordinatesView: coordinatesView, 
                                                       scaleSlider: $("#scale-slider"), 
                                                       colourScaleSlider: $("#colour-scale-slider"), 
-                                                      colourScaleText: $("#colour-scale"),
                                                       repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
   var scaleValueText = $("#scale-value");
-  
   $(explorerView).on("functionScaleChanged", function(event, scale) {
     scaleValueText.text(scale);
   });
   explorerView.notifyFunctionScaleChanged(); // to display initial value
+  
+  var colourScaleText = $("#colour-scale");
+  $(explorerView).on("colourScaleChanged", function(event, scale) {
+    colourScaleText.text(scale);
+  });
+  explorerView.notifyColourScaleChanged(); // to display initial value
+  
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
@@ -1156,7 +1161,6 @@ function ComplexFunctionExplorerView(attributes) {
                  "scaleSlider", /** JQuery wrapper for the slider that sets the function scale in the domain circle */
                  "colourScaleSlider", /** JQuery wrapper for the slider that sets the 
                                           colour scale (of the domain colouring) */
-                 "colourScaleText", /** JQuery wrapper for display of colour scale */
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
                                         being the model of the complex function being visualised*/
                  "formula", /** JQuery wrapper for display of the formula for the complex function */
@@ -1260,7 +1264,12 @@ ComplexFunctionExplorerView.prototype = {
       according to a logarithmic scale on the slider. Update the displayed scale value. */
   "setColourScaleFromView": function(value) {
     this.explorerModel.colourScale = 1.0 * Math.pow(1.2, value-50);
-    this.colourScaleText.text(Math.round(this.explorerModel.colourScale*100)/100.0);
+    this.notifyColourScaleChanged();
+  }, 
+  
+  "notifyColourScaleChanged": function() {
+    var roundedScaleValue = (Math.round(this.explorerModel.colourScale*100)/100.0).toString();
+    $(this).trigger("colourScaleChanged", [roundedScaleValue]);
   }, 
 
   /** Draw all function graphs (of which there is only one currently - the function graph on the domain circle) */
