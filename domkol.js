@@ -179,19 +179,43 @@ $(document).ready(function(){
   setSliderKeyboardShortcuts(functionScaleSlider);
   var functionScale = getFunctionScaleFromSliderValue(functionScaleSlider.slider("value"));
 
+  var colourScaleSlider = $("#colour-scale-slider");
+  function getColourScaleFromSliderValue(sliderValue) {
+    return 1.0 * Math.pow(1.2, sliderValue-50);
+  }
+  function colourScaleChanged(event, ui) {
+    var colourScale = getColourScaleFromSliderValue(ui.value);
+    colourScaleSlider.trigger("colourScaleChanged", [colourScale, false]);
+  }
+  function colourScaleChanging(event, ui) {
+    var colourScale = getColourScaleFromSliderValue(ui.value);
+    colourScaleSlider.trigger("colourScaleChanged", [colourScale, true]);
+  }
+  colourScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+                              "orientation": "horizontal", 
+                              "slide": colourScaleChanged, 
+                              "change": colourScaleChanging
+                             });
+  setSliderKeyboardShortcuts(colourScaleSlider);
+  var colourScale = getColourScaleFromSliderValue(colourScaleSlider.slider("value"));
+
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                                       canvas: domkolElements.canvas, 
                                                       domainCircleView: domainCircleView, 
                                                       coordinatesView: coordinatesView, 
                                                       functionScale: functionScale, 
-                                                      colourScaleSlider: $("#colour-scale-slider"), 
+                                                      colourScale: colourScale, 
                                                       repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
   functionScaleSlider.on("functionScaleChanged", function(event, scale) {
     explorerView.setFunctionScale(scale);
+  });
+  
+  functionScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
+    explorerView.setColourScale(scale, changing);
   });
   
   var functionScaleText = $("#function-scale");
@@ -1179,8 +1203,7 @@ function ComplexFunctionExplorerView(attributes) {
                  "domainCircleView", /** Object of class DomainCircleView, being the domain circle view*/
                  "coordinatesView", /** Object of class CoordinatesView, being the coordinates view */
                  "functionScale", /** Initial value for functionScale */
-                 "colourScaleSlider", /** JQuery wrapper for the slider that sets the 
-                                          colour scale (of the domain colouring) */
+                 "colourScale", /** the colour scale of the domain colouring */
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
                                         being the model of the complex function being visualised*/
                  "formula", /** JQuery wrapper for display of the formula for the complex function */
@@ -1189,26 +1212,7 @@ function ComplexFunctionExplorerView(attributes) {
   var view = this;
   
   this.explorerModel.scaleF = this.functionScale;
-  
-  /** The colour scale has changed */
-  function colourScaleChanged(event, ui) {
-    view.colourScaleUpdated(ui.value, false);
-  }
-  
-  /** The colour scale is changing (but hasn't finished changing, so maybe don't redraw the domain colouring yet) */
-  function colourScaleChanging(event, ui) {
-    view.colourScaleUpdated(ui.value, true);
-  }
-  
-  this.colourScaleSlider.slider({"min": 0, "max": 100, "value": 50,
-                                 "orientation": "horizontal", 
-                                 "slide": colourScaleChanging, 
-                                 "change": colourScaleChanged});
-  
-  setSliderKeyboardShortcuts(this.colourScaleSlider);
-  
-  /** set initial colour scale from slider */
-  this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
+  this.explorerModel.colourScale = this.colourScale;
   
   /** When "repaint continously" checkbox is checked, repaint continuously */
   this.repaintContinuouslyCheckbox.on("change", function(event) {
@@ -1220,13 +1224,6 @@ function ComplexFunctionExplorerView(attributes) {
 }
 
 ComplexFunctionExplorerView.prototype = {
-  
-  /** The colour scale has been updated (but may not have finished changing),
-      update the value in the model and optionally repaint the domain colouring. */
-  "colourScaleUpdated": function(value, changing) {
-    this.setColourScaleFromView(value);
-    this.drawDomainColouring(changing);
-  }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
       have finished changing. Update the displayed formula, optionally repaint the domain 
@@ -1242,6 +1239,12 @@ ComplexFunctionExplorerView.prototype = {
     this.functionChanged(true);
   }, 
   
+  "setColourScale": function(scale, changing) {
+    this.explorerModel.colourScale = scale;
+    this.notifyColourScaleChanged();
+    this.drawDomainColouring(changing);
+  }, 
+  
   /** Set the function scale (for displaying the domain circle graph) in the model 
       after the user has changed in manually. */
   "setFunctionScale": function(scale) {
@@ -1252,13 +1255,6 @@ ComplexFunctionExplorerView.prototype = {
   
   "notifyFunctionScaleChanged": function() {
     $(this).trigger("functionScaleChanged", [this.explorerModel.scaleF]);
-  }, 
-  
-  /** Set the colour scale (for displaying the domain circle graph) in the model 
-      according to a logarithmic scale on the slider. Update the displayed scale value. */
-  "setColourScaleFromView": function(value) {
-    this.explorerModel.colourScale = 1.0 * Math.pow(1.2, value-50);
-    this.notifyColourScaleChanged();
   }, 
   
   "notifyColourScaleChanged": function() {
