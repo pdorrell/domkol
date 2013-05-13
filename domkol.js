@@ -162,21 +162,41 @@ $(document).ready(function(){
   showCoordinateGridCheckbox.on("change", function(event) {
     coordinatesView.setShowCoordinateGrid(this.checked);
   });
+  
+  var functionScaleSlider = $("#function-scale-slider");
+  function getFunctionScaleFromSliderValue(sliderValue) {
+    return 0.5 * Math.pow(1.08, sliderValue-50);
+  }
+  function functionScaleChanged(event, ui) {
+    var functionScale = getFunctionScaleFromSliderValue(ui.value);
+    functionScaleSlider.trigger("functionScaleChanged", [functionScale]);
+  }
+  functionScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+                              "orientation": "horizontal", 
+                              "slide": functionScaleChanged, 
+                              "change": functionScaleChanged
+                             });
+  setSliderKeyboardShortcuts(functionScaleSlider);
+  var functionScale = getFunctionScaleFromSliderValue(functionScaleSlider.slider("value"));
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                                       canvas: domkolElements.canvas, 
                                                       domainCircleView: domainCircleView, 
                                                       coordinatesView: coordinatesView, 
-                                                      scaleSlider: $("#scale-slider"), 
+                                                      functionScale: functionScale, 
                                                       colourScaleSlider: $("#colour-scale-slider"), 
                                                       repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
-  var scaleValueText = $("#scale-value");
+  functionScaleSlider.on("functionScaleChanged", function(event, scale) {
+    explorerView.setFunctionScale(scale);
+  });
+  
+  var functionScaleText = $("#function-scale");
   $(explorerView).on("functionScaleChanged", function(event, scale) {
-    scaleValueText.text(reformatToPrecision(scale.toString(), 3));
+    functionScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyFunctionScaleChanged(); // to display initial value
   
@@ -1158,7 +1178,7 @@ function ComplexFunctionExplorerView(attributes) {
                  "canvas", /** JQuery wrapper for the canvas element, onto which the domain colouring is painted */
                  "domainCircleView", /** Object of class DomainCircleView, being the domain circle view*/
                  "coordinatesView", /** Object of class CoordinatesView, being the coordinates view */
-                 "scaleSlider", /** JQuery wrapper for the slider that sets the function scale in the domain circle */
+                 "functionScale", /** Initial value for functionScale */
                  "colourScaleSlider", /** JQuery wrapper for the slider that sets the 
                                           colour scale (of the domain colouring) */
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
@@ -1168,23 +1188,7 @@ function ComplexFunctionExplorerView(attributes) {
   this.complexFunction.explorerView = this;
   var view = this;
   
-  /** The scale for displaying f on the domain circle is changing (but hasn't finished changing) */
-  function scaleChanging(event, ui) {
-    view.fScaleUpdated(ui.value); // todo : maybe have option to update when it's changing ?
-  }
-  
-  /** The scale for displaying f on the domain circle has changed */
-  function scaleChanged(event, ui) {
-    view.fScaleUpdated(ui.value);
-  }
-  
-  this.scaleSlider.slider({"min": 0, "max": 100, "value": 50, 
-        "orientation": "horizontal", 
-                           "slide": scaleChanging, 
-                           "change": scaleChanged
-                          });
-  
-  setSliderKeyboardShortcuts(this.scaleSlider);
+  this.explorerModel.scaleF = this.functionScale;
   
   /** The colour scale has changed */
   function colourScaleChanged(event, ui) {
@@ -1203,9 +1207,6 @@ function ComplexFunctionExplorerView(attributes) {
   
   setSliderKeyboardShortcuts(this.colourScaleSlider);
   
-  /** set initial function scale from slider */
-  this.setScaleFFromView(this.scaleSlider.slider("value"));
-  
   /** set initial colour scale from slider */
   this.setColourScaleFromView(this.colourScaleSlider.slider("value"));
   
@@ -1219,13 +1220,6 @@ function ComplexFunctionExplorerView(attributes) {
 }
 
 ComplexFunctionExplorerView.prototype = {
-  
-  /** The function scale has been updated, so update the value in the model and 
-      redraw the function graph on the domain circle */
-  "fScaleUpdated": function(value) {
-    this.setScaleFFromView(value);
-    this.drawFunctionGraphs();
-  }, 
   
   /** The colour scale has been updated (but may not have finished changing),
       update the value in the model and optionally repaint the domain colouring. */
@@ -1249,10 +1243,11 @@ ComplexFunctionExplorerView.prototype = {
   }, 
   
   /** Set the function scale (for displaying the domain circle graph) in the model 
-      according to a logarithmic scale on the slider. Update the displayed scale value. */
-  "setScaleFFromView": function(value) {
-    this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
+      after the user has changed in manually. */
+  "setFunctionScale": function(scale) {
+    this.explorerModel.scaleF = scale;
     this.notifyFunctionScaleChanged();
+    this.drawFunctionGraphs();
   }, 
   
   "notifyFunctionScaleChanged": function() {
