@@ -197,6 +197,9 @@ $(document).ready(function(){
                              });
   setSliderKeyboardShortcuts(colourScaleSlider);
   var colourScale = getColourScaleFromSliderValue(colourScaleSlider.slider("value"));
+  
+  var repaintContinuouslyCheckbox = $("#repaint-continuously-checkbox");
+  var repaintContinuously = repaintContinuouslyCheckbox[0].checked;
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -205,7 +208,7 @@ $(document).ready(function(){
                                                       coordinatesView: coordinatesView, 
                                                       functionScale: functionScale, 
                                                       colourScale: colourScale, 
-                                                      repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
+                                                      repaintContinuously: repaintContinuously, 
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
@@ -229,6 +232,9 @@ $(document).ready(function(){
   });
   explorerView.notifyColourScaleChanged(); // to display initial value
   
+  repaintContinuouslyCheckbox.on("change", function(event) {
+    explorerView.repaintContinuously = this.checked;
+  });
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
@@ -1205,19 +1211,13 @@ function ComplexFunctionExplorerView(attributes) {
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
                                         being the model of the complex function being visualised*/
                  "formula", /** JQuery wrapper for display of the formula for the complex function */
-                 "repaintContinuouslyCheckbox"]); /** JQuery wrapper for checkbox that controls continuous repainting */
+                 "repaintContinuously"]); /** whether or not to continuously repaint */
   this.complexFunction.explorerView = this;
   var view = this;
   
   this.explorerModel.scaleF = this.functionScale;
   this.explorerModel.colourScale = this.colourScale;
   
-  /** When "repaint continously" checkbox is checked, repaint continuously */
-  this.repaintContinuouslyCheckbox.on("change", function(event) {
-    view.repaintContinuously = this.checked;
-  });
-  this.repaintContinuously = this.repaintContinuouslyCheckbox.is(":checked");
-
   this.functionChanged(false); // force initial repaint
 }
 
@@ -1258,7 +1258,7 @@ ComplexFunctionExplorerView.prototype = {
   "notifyColourScaleChanged": function() {
     $(this).trigger("colourScaleChanged", [this.explorerModel.colourScale]);
   }, 
-
+  
   /** Draw all function graphs (of which there is only one currently - the function graph on the domain circle) */
   "drawFunctionGraphs": function() {
     this.domainCircleView.drawFunctionOnCircle();
