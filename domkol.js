@@ -75,7 +75,7 @@ $(document).ready(function(){
   domkolElements.initialize();
   
   /* The view of the polynomial function (consisting of the draggable handles) */
-  var functionView = new PolynomialFunctionView({"zeroHandles": $('#handles'), 
+  var functionView = new PolynomialFunctionView({zeroHandles: $('#handles'), 
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
@@ -933,25 +933,23 @@ PolynomialFunctionView.prototype = {
     var pointCircle = handle.children(".point-circle");
     var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
     var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
+    
+    function changeZero(handle, ui, changing) {
+      var x = ui.position.left + pointXOffset;
+      var y = ui.position.top + pointYOffset;
+      var z = explorerModel.positionToComplexNumber(x, y);
+      functionModel.zeroes[index] = z;
+      view.setNumberLabel(index, handle[0]);
+      functionModel.explorerView.functionChanged(changing);
+    }
+    
     /** When dragged, update the corresponding zero in the function model, and tell the 
         explorer view to redraw & repaint everything that depends on the function. */
-    handle.draggable({drag: 
-                      function(event, ui) {
-                        var x = ui.position.left + pointXOffset;
-                        var y = ui.position.top + pointYOffset;
-                        var z = explorerModel.positionToComplexNumber(x, y);
-                        functionModel.zeroes[index] = z;
-                        view.setNumberLabel(index, this);
-                        functionModel.explorerView.functionChanging();
+    handle.draggable({drag: function(event, ui) {
+                        changeZero(handle, ui, true);
                       }, 
-                      stop: 
-                      function(event, ui) {
-                        var x = ui.position.left + pointXOffset;
-                        var y = ui.position.top + pointYOffset;
-                        var z = explorerModel.positionToComplexNumber(x, y);
-                        functionModel.zeroes[index] = z;
-                        view.setNumberLabel(index, this);
-                        functionModel.explorerView.functionChanged(false);
+                      stop: function(event, ui) {
+                        changeZero(handle, ui, false);
                       }})
       .css("cursor", "move");
   }
