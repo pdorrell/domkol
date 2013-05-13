@@ -169,12 +169,18 @@ $(document).ready(function(){
                                                       domainCircleView: domainCircleView, 
                                                       coordinatesView: coordinatesView, 
                                                       scaleSlider: $("#scale-slider"), 
-                                                      scaleValueText: $("#scale-value"), 
                                                       colourScaleSlider: $("#colour-scale-slider"), 
                                                       colourScaleText: $("#colour-scale"),
                                                       repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"), 
                                                       formula: $("#formula"), 
                                                       complexFunction: complexFunction});
+  
+  var scaleValueText = $("#scale-value");
+  
+  $(explorerView).on("functionScaleChanged", function(event, scale) {
+    scaleValueText.text(scale);
+  });
+  explorerView.notifyFunctionScaleChanged(); // to display initial value
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
@@ -1148,7 +1154,6 @@ function ComplexFunctionExplorerView(attributes) {
                  "domainCircleView", /** Object of class DomainCircleView, being the domain circle view*/
                  "coordinatesView", /** Object of class CoordinatesView, being the coordinates view */
                  "scaleSlider", /** JQuery wrapper for the slider that sets the function scale in the domain circle */
-                 "scaleValueText", /** JQuery wrapper for display of function scale value */
                  "colourScaleSlider", /** JQuery wrapper for the slider that sets the 
                                           colour scale (of the domain colouring) */
                  "colourScaleText", /** JQuery wrapper for display of colour scale */
@@ -1243,7 +1248,12 @@ ComplexFunctionExplorerView.prototype = {
       according to a logarithmic scale on the slider. Update the displayed scale value. */
   "setScaleFFromView": function(value) {
     this.explorerModel.scaleF = 0.5 * Math.pow(1.08, value-50);
-    this.scaleValueText.text(Math.round(this.explorerModel.scaleF*100)/100.0);
+    this.notifyFunctionScaleChanged();
+  }, 
+  
+  "notifyFunctionScaleChanged": function() {
+    var roundedScaleValue = (Math.round(this.explorerModel.scaleF*100)/100.0).toString();
+    $(this).trigger("functionScaleChanged", [roundedScaleValue]);
   }, 
   
   /** Set the colour scale (for displaying the domain circle graph) in the model 
