@@ -46,8 +46,8 @@ $(document).ready(function(){
   
   var domkolDivElement = $("#domkol");
   
-  var domkolElement = new DomkolElement(domkolDivElement[0], 560, 560, 150);
-  domkolElement.initialize();
+  var domkolElements = new DomkolElements(domkolDivElement[0], 560, 560, 150);
+  domkolElements.initialize();
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
@@ -83,7 +83,7 @@ $(document).ready(function(){
 
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
-  var domainCircleView = new DomainCircleView(domkolElement, 
+  var domainCircleView = new DomainCircleView(domkolElements, 
                                               {showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
@@ -102,16 +102,16 @@ $(document).ready(function(){
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
-  var coordinatesView = new CoordinatesView({coordinates: $(domkolElement.coordinates), 
-                                             axes: $(domkolElement.axes), 
-                                             unitGrid: $(domkolElement.unitCoordinateGrid), 
-                                             fineGrid: $(domkolElement.fineCoordinateGrid), 
+  var coordinatesView = new CoordinatesView({coordinates: $(domkolElements.coordinates), 
+                                             axes: $(domkolElements.axes), 
+                                             unitGrid: $(domkolElements.unitCoordinateGrid), 
+                                             fineGrid: $(domkolElements.fineCoordinateGrid), 
                                              showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
                                              explorerModel: explorerModel });
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                                      canvas: domkolElement.canvas, 
+                                                      canvas: domkolElements.canvas, 
                                                       domainCircleView: domainCircleView, 
                                                       coordinatesView: coordinatesView, 
                                                       scaleSlider: $("#scale-slider"), 
@@ -127,14 +127,14 @@ $(document).ready(function(){
   
 });
 
-function DomkolElement(div, width, height, circleRadius) {
+function DomkolElements(div, width, height, circleRadius) {
   this.div = div;
   this.width = width;
   this.height = height;
   this.circleRadius = circleRadius;
 }
 
-DomkolElement.prototype = {
+DomkolElements.prototype = {
   "initialize": function() {
     this.initializeCanvas();
     this.initializeRealPathUnder();
@@ -557,8 +557,8 @@ ComplexFunctionExplorerModel.prototype = {
   
 /** The view for the circular domain which displays values of f for points on the circle
     as two separate real and imaginary graphs.*/
-function DomainCircleView (domkolElement, attributes) {
-  setJQueryWrappedAttributes(this, domkolElement, 
+function DomainCircleView (domkolElements, attributes) {
+  setJQueryWrappedAttributes(this, domkolElements, 
                              ["circleGraph", /** element contain the whole view (for showing/hiding) */
                               "centreHandle", /** centre handle which is a SVG circle */
                               "edgeHandle", /** edge handle which is a SVG circle */
