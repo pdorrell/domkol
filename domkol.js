@@ -83,18 +83,8 @@ $(document).ready(function(){
 
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
-  var domainCircleView = new DomainCircleView({circleGraph: $(domkolElement.circleGraph), 
-                                               centreHandle: $(domkolElement.centreHandle), 
-                                               edgeHandle: $(domkolElement.edgeHandle), 
-                                               bigCircle: $(domkolElement.bigCircle), 
-                                               polarGrid: $(domkolElement.polarGrid), 
-                                               polarGridCoarse: $(domkolElement.polarGridCoarse), 
-                                               realPath: $(domkolElement.realPath), 
-                                               realPathUnder: $(domkolElement.realPathUnder), 
-                                               realPathShadow: $(domkolElement.realPathShadow), 
-                                               realPathShadow2: $(domkolElement.realPathShadow2), 
-                                               imaginaryPath: $(domkolElement.imaginaryPath), 
-                                               showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
+  var domainCircleView = new DomainCircleView(domkolElement, 
+                                              {showCircleGraphCheckbox: $("#show-circle-graph-checkbox"), 
                                                show3DGraphCheckbox: $("#show-3d-graph-checkbox"), 
                                                rotateGraphSlider: $("#rotate-graph-slider"), 
                                                graphRotationText: $("#graph-rotation"), 
@@ -421,6 +411,20 @@ function setAttributes(object, attributes, keys) {
   }
 }
 
+/* Set attributes on a Javascript object from an object literal and an array of keys, 
+   JQuery-wrapping each value. */
+function setJQueryWrappedAttributes(object, attributes, keys) {
+  for (var i=0; i<keys.length; i++) {
+    var key = keys[i];
+    if (attributes.hasOwnProperty(key)) {
+      object[key] = $(attributes[key]);
+    }
+    else {
+      throw "Attribute value " + key + " not supplied";
+    }
+  }
+}
+
 /* Model of the domain circle, i.e. a 1-D subset of the domain which is the circumference of 
    the circle, and for which the values of the function f will be displayed as two graphs of
    the real and imaginary values of f going around the circle. */
@@ -553,27 +557,29 @@ ComplexFunctionExplorerModel.prototype = {
   
 /** The view for the circular domain which displays values of f for points on the circle
     as two separate real and imaginary graphs.*/
-function DomainCircleView (attributes) {
-  setAttributes(this, attributes, 
-                ["circleGraph", /** JQuery wrapper for element contain the whole view (for showing/hiding) */
-                 "centreHandle", /** JQuery wrapper for centre handle which is a SVG circle */
-                 "edgeHandle", /** JQuery wrapper for edge handle which is a SVG circle */
-                 "bigCircle", /** JQuery wrapper for SVG circle element representing the subset of the domain*/
-                 "polarGrid", /** JQuery wrapper for SVG path representing 
-                                  the polar grid (circles & radial axes) */
-                 "polarGridCoarse", /** JQuery wrapper for SVG path representing 
-                                        the "coarse" part of polar grid, inner&outer radial circles and 
-                                        vert&horiz radial axes  */
-                 "realPath", /** JQuery wrapper for SVG path representing real parts of f on the domain circle */
-                 "imaginaryPath", /** JQuery wrapper for SVG path representing imaginary parts of f 
-                                             on the domain circle */
-                 "realPathUnder", /** JQuery wrapper for SVG path representing real parts of f on the domain circle 
-                                          for negative imaginary value */
-                 "realPathShadow", /** JQuery wrapper for SVG path representing shadow of real parts of f on the 
-                                              domain circle for positive imaginary value */
-                 "realPathShadow2", /** JQuery wrapper for SVG path representing 2nd shadow of real parts of f on 
+function DomainCircleView (domkolElement, attributes) {
+  setJQueryWrappedAttributes(this, domkolElement, 
+                             ["circleGraph", /** element contain the whole view (for showing/hiding) */
+                              "centreHandle", /** centre handle which is a SVG circle */
+                              "edgeHandle", /** edge handle which is a SVG circle */
+                              "bigCircle", /** SVG circle element representing the subset of the domain*/
+                              "polarGrid", /** SVG path representing 
+                                               the polar grid (circles & radial axes) */
+                              "polarGridCoarse", /** SVG path representing 
+                                                     the "coarse" part of polar grid, inner&outer radial circles and 
+                                                     vert&horiz radial axes  */
+                              "realPath", /** SVG path representing real parts of f on the domain circle */
+                              "imaginaryPath", /** SVG path representing imaginary parts of f 
+                                                   on the domain circle */
+                              "realPathUnder", /** SVG path representing real parts of f on the domain circle 
+                                                   for negative imaginary value */
+                              "realPathShadow", /** SVG path representing shadow of real parts of f on the 
+                                                    domain circle for positive imaginary value */
+                              "realPathShadow2"]); /** SVG path representing 2nd shadow of real parts of f on 
                                                the domain circle for positive imaginary value */
-                 "showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
+                             
+  setAttributes(this, attributes, 
+                ["showCircleGraphCheckbox", /** Checkbox to show or not show the circle domain graph */
                  "show3DGraphCheckbox", /** Checkbox to show graph on circle in 3D */
                  "rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
                  "graphRotationText", /** Text element to show current graph rotation */
