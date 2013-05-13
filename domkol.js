@@ -558,7 +558,8 @@ ComplexFunctionExplorerModel.prototype = {
 /** The view for the circular domain which displays values of f for points on the circle
     as two separate real and imaginary graphs.*/
 function DomainCircleView (domkolElements, attributes) {
-  setJQueryWrappedAttributes(this, domkolElements, 
+  this.dom = {};
+  setJQueryWrappedAttributes(this.dom, domkolElements, 
                              ["circleGraph", /** element contain the whole view (for showing/hiding) */
                               "centreHandle", /** centre handle which is a SVG circle */
                               "edgeHandle", /** edge handle which is a SVG circle */
@@ -586,26 +587,26 @@ function DomainCircleView (domkolElements, attributes) {
                  "domainCircle",  /** An object of class DomainCircle, the model for this view */
                  "wiggling"]); /** Initial state of wiggling or not */
   
-  svgDraggable(this.centreHandle); // Make the centre handle (which is an SVG element) draggable
-  svgDraggable(this.edgeHandle); // Make the edge handle (which is an SVG element) draggable
+  svgDraggable(this.dom.centreHandle); // Make the centre handle (which is an SVG element) draggable
+  svgDraggable(this.dom.edgeHandle); // Make the edge handle (which is an SVG element) draggable
   
   /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
 
   // drag the centre handle to move the domain circle around
-  this.centreHandle.on('svgDrag', function(event, x, y) {
-    view.bigCircle.attr({cx: x, cy: y}); // Move the centre of the domain circle
+  this.dom.centreHandle.on('svgDrag', function(event, x, y) {
+    view.dom.bigCircle.attr({cx: x, cy: y}); // Move the centre of the domain circle
     var edgePos = domainCircle.edgeHandlePosition;
-    setTranslation(view.edgeHandle, x + edgePos[0], y + edgePos[1]); // Also move the edge handle
+    setTranslation(view.dom.edgeHandle, x + edgePos[0], y + edgePos[1]); // Also move the edge handle
     view.updateCirclePosition();
     view.drawFunctionOnCircle();
   });
   
   // drag the edge handle to change the radius of the domain circle
-  this.edgeHandle.on('svgDrag', function(event, x, y) {
+  this.dom.edgeHandle.on('svgDrag', function(event, x, y) {
     view.updateCirclePosition();
-    view.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
+    view.dom.bigCircle.attr('r', domainCircle.radius); // Change the radius of the domain circle
     view.drawFunctionOnCircle();
   });
   
@@ -694,8 +695,8 @@ DomainCircleView.prototype = {
   
   /** Update the circle position from view changes. */
   "updateCirclePosition": function() {
-    this.domainCircle.centreHandlePosition = getTranslation(this.centreHandle);
-    this.domainCircle.edgeHandlePosition = minus(getTranslation(this.edgeHandle), 
+    this.domainCircle.centreHandlePosition = getTranslation(this.dom.centreHandle);
+    this.domainCircle.edgeHandlePosition = minus(getTranslation(this.dom.edgeHandle), 
                                                  this.domainCircle.centreHandlePosition);
     this.domainCircle.calculateRadius();
   }, 
@@ -710,17 +711,17 @@ DomainCircleView.prototype = {
   
   // changes determined by "show circle" & "show 3D"
   "updateGraphVisibility": function() {
-    this.circleGraph.toggle(this.showCircleGraph);
+    this.dom.circleGraph.toggle(this.showCircleGraph);
     var showing3DGraph = this.showCircleGraph && this.show3D;
-    this.realPathUnder.toggle(showing3DGraph);
+    this.dom.realPathUnder.toggle(showing3DGraph);
     this.domainCircle.show3DGraph = this.show3D;
-    this.bigCircle.attr("stroke-width", this.show3D ? 7 : 2);
-    this.realPath.attr("stroke-width", this.show3D ? 5 : 2);
-    this.imaginaryPath.attr("stroke-width", this.show3D ? 5 : 2);
-    this.realPathUnder.toggle(this.showCircleGraph && this.show3D); // this DOM element not part of circleGraph
-    this.realPathShadow.toggle(this.show3D);
-    this.realPathShadow2.toggle(this.show3D);
-    this.imaginaryPath.toggle(!this.show3D);
+    this.dom.bigCircle.attr("stroke-width", this.show3D ? 7 : 2);
+    this.dom.realPath.attr("stroke-width", this.show3D ? 5 : 2);
+    this.dom.imaginaryPath.attr("stroke-width", this.show3D ? 5 : 2);
+    this.dom.realPathUnder.toggle(this.showCircleGraph && this.show3D); // this DOM element not part of circleGraph
+    this.dom.realPathShadow.toggle(this.show3D);
+    this.dom.realPathShadow2.toggle(this.show3D);
+    this.dom.imaginaryPath.toggle(!this.show3D);
     setCheckboxEnabled(this.show3DGraphCheckbox, this.showCircleGraph);
     $(this).trigger("showing3DGraph", [showing3DGraph]);
   }, 
@@ -732,16 +733,16 @@ DomainCircleView.prototype = {
     
     if (this.domainCircle.show3DGraph) {
       var paths = createOverUnderAndShadowPointPaths(pointArrays["real3D"]);
-      this.realPath.attr("d", paths[0]);
-      this.realPathUnder.attr("d", paths[1]);
-      this.realPathShadow.attr("d", paths[2]);
-      this.realPathShadow2.attr("d", paths[3]);
+      this.dom.realPath.attr("d", paths[0]);
+      this.dom.realPathUnder.attr("d", paths[1]);
+      this.dom.realPathShadow.attr("d", paths[2]);
+      this.dom.realPathShadow2.attr("d", paths[3]);
     }
     else {
       var realPathD = createPointsPath(pointArrays["real"]);
       var imaginaryPathD = createPointsPath(pointArrays["imaginary"]);
-      this.realPath.attr("d", realPathD);
-      this.imaginaryPath.attr("d", imaginaryPathD);
+      this.dom.realPath.attr("d", realPathD);
+      this.dom.imaginaryPath.attr("d", imaginaryPathD);
     }
     this.drawPolarGrid();
   }, 
@@ -797,8 +798,8 @@ DomainCircleView.prototype = {
         }
       }
     }
-    this.polarGrid.attr("d", pathComponents.join(" "));
-    this.polarGridCoarse.attr("d", coarsePathComponents.join(" "));
+    this.dom.polarGrid.attr("d", pathComponents.join(" "));
+    this.dom.polarGridCoarse.attr("d", coarsePathComponents.join(" "));
   }
 
 };
