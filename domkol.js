@@ -43,6 +43,19 @@
 
 $(document).ready(function(){
   
+  var controlDialog = ControlDialog({wiggleCheckbox: $("#wiggle-checkbox"), 
+                                     showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
+                                     show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
+                                     rotateGraphSlider: $("#rotate-graph-slider"),
+                                     graphRotationText: $("#graph-rotation"),
+                                     showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"),
+                                     functionScaleSlider: $("#function-scale-slider"),
+                                     colourScaleSlider: $("#colour-scale-slider"),
+                                     repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
+                                     formulaText: $("#formula"),
+                                     functionScaleText: $("#function-scale"),
+                                     colourScaleText: $("#colour-scale")}) 
+  
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
   var numZeroHandles = $("#handles").children(".zero").length;
@@ -244,6 +257,23 @@ $(document).ready(function(){
   $(".controls").draggable({ handle: ".window-top-bar" });
   
 });
+
+function ControlDialog(attributes) {
+    setAttributes(this, attributes, 
+                  [ "wiggleCheckbox", 
+                    "showCircleGraphCheckbox", 
+                    "show3DGraphCheckbox", 
+                    "rotateGraphSlider", 
+                    "graphRotationText", 
+                    "showCoordinateGridCheckbox", 
+                    "functionScaleSlider", 
+                    "colourScaleSlider", 
+                    "repaintContinuouslyCheckbox", 
+                    "formulaText", 
+                    "functionScaleText", 
+                    "colourScaleText"
+                  ]);
+}
 
 function DomkolElements(div, originPixelLocation, pixelsDimension, circleRadius) {
   this.div = div;
