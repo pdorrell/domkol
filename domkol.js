@@ -43,18 +43,18 @@
 
 $(document).ready(function(){
   
-  var controlDialog = ControlDialog({wiggleCheckbox: $("#wiggle-checkbox"), 
-                                     showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
-                                     show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
-                                     rotateGraphSlider: $("#rotate-graph-slider"),
-                                     graphRotationText: $("#graph-rotation-text"),
-                                     showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"),
-                                     functionScaleSlider: $("#function-scale-slider"),
-                                     colourScaleSlider: $("#colour-scale-slider"),
-                                     repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
-                                     formulaText: $("#formula-text"),
-                                     functionScaleText: $("#function-scale-text"),
-                                     colourScaleText: $("#colour-scale-text")}) 
+  var controlDialog = new ControlDialog({wiggleCheckbox: $("#wiggle-checkbox"), 
+                                         showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
+                                         show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
+                                         rotateGraphSlider: $("#rotate-graph-slider"),
+                                         graphRotationText: $("#graph-rotation-text"),
+                                         showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"),
+                                         functionScaleSlider: $("#function-scale-slider"),
+                                         colourScaleSlider: $("#colour-scale-slider"),
+                                         repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
+                                         formulaText: $("#formula-text"),
+                                         functionScaleText: $("#function-scale-text"),
+                                         colourScaleText: $("#colour-scale-text")}) 
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
@@ -90,33 +90,29 @@ $(document).ready(function(){
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
-  var wiggleCheckbox = $("#wiggle-checkbox");
-  var wiggling = wiggleCheckbox[0].checked;
+  var wiggling = controlDialog.wiggleCheckbox[0].checked;
+  var showCircleGraph = controlDialog.showCircleGraphCheckbox[0].checked;
+  var show3D = controlDialog.show3DGraphCheckbox[0].checked;
   
-  var showCircleGraphCheckbox = $("#show-circle-graph-checkbox");
-  var showCircleGraph = showCircleGraphCheckbox[0].checked;
-  
-  var show3DGraphCheckbox = $("#show-3d-graph-checkbox");
-  var show3D = show3DGraphCheckbox[0].checked;
-  
-  var rotateGraphSlider = $("#rotate-graph-slider");
   function getGraphRotationFromSliderValue(sliderValue) {
     var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
     var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
     roundComponentsToIntegerIfClose(graphRotation, 0.0001);
     return graphRotation;
   }
+  
   function rotationChanged(event, ui) {
     var graphRotation = getGraphRotationFromSliderValue(ui.value);
-    rotateGraphSlider.trigger("graphRotationChanged", [graphRotation]);
+    controlDialog.rotateGraphSlider.trigger("graphRotationChanged", [graphRotation]);
   }
-  rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
+  
+  controlDialog.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
                             "orientation": "horizontal", 
                             "slide": rotationChanged, 
                             "change": rotationChanged});  
-  setSliderKeyboardShortcuts(rotateGraphSlider);
+  setSliderKeyboardShortcuts(controlDialog.rotateGraphSlider);
 
-  var graphRotation = getGraphRotationFromSliderValue(rotateGraphSlider.slider("value"));
+  var graphRotation = getGraphRotationFromSliderValue(controlDialog.rotateGraphSlider.slider("value"));
   
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
@@ -128,40 +124,38 @@ $(document).ready(function(){
                                                domainCircle: explorerModel.domainCircle});
   
   // wire graph rotation slider
-  rotateGraphSlider.on("graphRotationChanged", function(event, graphRotation) {
+  controlDialog.rotateGraphSlider.on("graphRotationChanged", function(event, graphRotation) {
     domainCircleView.setGraphRotation(graphRotation);
   });
   
   // write graph rotation text
-  var graphRotationText = $("#graph-rotation-text");
   $(domainCircleView).on("graphRotationChanged", function(event, text) {
-    graphRotationText.text(text);
+    controlDialog.graphRotationText.text(text);
   });
   domainCircleView.notifyGraphRotationChanged(); // to show initial value
 
   // wire show circle graph checkbox
-  showCircleGraphCheckbox.on("change", function(event) {
+  controlDialog.showCircleGraphCheckbox.on("change", function(event) {
     domainCircleView.setShowCircleGraph(this.checked);
   });
 
   // wire show 3D checkbox
-  show3DGraphCheckbox.on("change", function(event) {
+  controlDialog.show3DGraphCheckbox.on("change", function(event) {
     domainCircleView.setShow3D(this.checked);
   });
   $(domainCircleView).on("showingCircleGraph", function(event, showing) {
-    setCheckboxEnabled(show3DGraphCheckbox, showing);
+    setCheckboxEnabled(controlDialog.show3DGraphCheckbox, showing);
   });
 
   // wire wiggle checkbox
-  wiggleCheckbox.on("change", function(event) {
+  controlDialog.wiggleCheckbox.on("change", function(event) {
     domainCircleView.setWiggling(this.checked);
   });
   $(domainCircleView).on("showing3DGraph", function(event, showing) {
-    setCheckboxEnabled(wiggleCheckbox, showing);
+    setCheckboxEnabled(controlDialog.wiggleCheckbox, showing);
   });
   
-  var showCoordinateGridCheckbox = $("#show-coordinate-grid-checkbox");
-  var showCoordinateGrid = showCoordinateGridCheckbox[0].checked;
+  var showCoordinateGrid = controlDialog.showCoordinateGridCheckbox[0].checked;
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
@@ -170,48 +164,45 @@ $(document).ready(function(){
                                             {explorerModel: explorerModel, 
                                              showCoordinateGrid: showCoordinateGrid});
   
-  showCoordinateGridCheckbox.on("change", function(event) {
+  controlDialog.showCoordinateGridCheckbox.on("change", function(event) {
     coordinatesView.setShowCoordinateGrid(this.checked);
   });
   
-  var functionScaleSlider = $("#function-scale-slider");
   function getFunctionScaleFromSliderValue(sliderValue) {
     return 0.5 * Math.pow(1.08, sliderValue-50);
   }
   function functionScaleChanged(event, ui) {
     var functionScale = getFunctionScaleFromSliderValue(ui.value);
-    functionScaleSlider.trigger("functionScaleChanged", [functionScale]);
+    controlDialog.functionScaleSlider.trigger("functionScaleChanged", [functionScale]);
   }
-  functionScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+  controlDialog.functionScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
                               "orientation": "horizontal", 
                               "slide": functionScaleChanged, 
                               "change": functionScaleChanged
                              });
-  setSliderKeyboardShortcuts(functionScaleSlider);
-  var functionScale = getFunctionScaleFromSliderValue(functionScaleSlider.slider("value"));
+  setSliderKeyboardShortcuts(controlDialog.functionScaleSlider);
+  var functionScale = getFunctionScaleFromSliderValue(controlDialog.functionScaleSlider.slider("value"));
 
-  var colourScaleSlider = $("#colour-scale-slider");
   function getColourScaleFromSliderValue(sliderValue) {
     return 1.0 * Math.pow(1.2, sliderValue-50);
   }
   function colourScaleChanged(event, ui) {
     var colourScale = getColourScaleFromSliderValue(ui.value);
-    colourScaleSlider.trigger("colourScaleChanged", [colourScale, false]);
+    controlDialog.colourScaleSlider.trigger("colourScaleChanged", [colourScale, false]);
   }
   function colourScaleChanging(event, ui) {
     var colourScale = getColourScaleFromSliderValue(ui.value);
-    colourScaleSlider.trigger("colourScaleChanged", [colourScale, true]);
+    controlDialog.colourScaleSlider.trigger("colourScaleChanged", [colourScale, true]);
   }
-  colourScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
+  controlDialog.colourScaleSlider.slider({"min": 0, "max": 100, "value": 50, 
                               "orientation": "horizontal", 
                               "slide": colourScaleChanging, 
                               "change": colourScaleChanged
                              });
-  setSliderKeyboardShortcuts(colourScaleSlider);
-  var colourScale = getColourScaleFromSliderValue(colourScaleSlider.slider("value"));
+  setSliderKeyboardShortcuts(controlDialog.colourScaleSlider);
+  var colourScale = getColourScaleFromSliderValue(controlDialog.colourScaleSlider.slider("value"));
   
-  var repaintContinuouslyCheckbox = $("#repaint-continuously-checkbox");
-  var repaintContinuously = repaintContinuouslyCheckbox[0].checked;
+  var repaintContinuously = controlDialog.repaintContinuouslyCheckbox[0].checked;
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -223,33 +214,30 @@ $(document).ready(function(){
                                                       repaintContinuously: repaintContinuously, 
                                                       complexFunction: complexFunction});
   
-  functionScaleSlider.on("functionScaleChanged", function(event, scale) {
+  controlDialog.functionScaleSlider.on("functionScaleChanged", function(event, scale) {
     explorerView.setFunctionScale(scale);
   });
   
-  colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
+  controlDialog.colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
     explorerView.setColourScale(scale, changing);
   });
   
-  var formulaText = $("#formula-text");
   $(explorerView.complexFunction).on("formulaChanged", function(event, formula) {
-    formulaText.text(formula);
+    controlDialog.formulaText.text(formula);
   });
   explorerView.complexFunction.notifyFormulaChanged(); // to display initial value
   
-  var functionScaleText = $("#function-scale-text");
   $(explorerView).on("functionScaleChanged", function(event, scale) {
-    functionScaleText.text(reformatToPrecision(scale.toString(), 3));
+    controlDialog.functionScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyFunctionScaleChanged(); // to display initial value
   
-  var colourScaleText = $("#colour-scale-text");
   $(explorerView).on("colourScaleChanged", function(event, scale) {
-    colourScaleText.text(reformatToPrecision(scale.toString(), 3));
+    controlDialog.colourScaleText.text(reformatToPrecision(scale.toString(), 3));
   });
   explorerView.notifyColourScaleChanged(); // to display initial value
   
-  repaintContinuouslyCheckbox.on("change", function(event) {
+  controlDialog.repaintContinuouslyCheckbox.on("change", function(event) {
     explorerView.repaintContinuously = this.checked;
   });
   
