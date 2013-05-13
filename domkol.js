@@ -209,7 +209,6 @@ $(document).ready(function(){
                                                       functionScale: functionScale, 
                                                       colourScale: colourScale, 
                                                       repaintContinuously: repaintContinuously, 
-                                                      formula: $("#formula"), 
                                                       complexFunction: complexFunction});
   
   functionScaleSlider.on("functionScaleChanged", function(event, scale) {
@@ -219,6 +218,12 @@ $(document).ready(function(){
   colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
     explorerView.setColourScale(scale, changing);
   });
+  
+  var formulaText = $("#formula");
+  $(explorerView.complexFunction).on("formulaChanged", function(event, formula) {
+    formulaText.text(formula);
+  });
+  explorerView.complexFunction.notifyFormulaChanged(); // to display initial value
   
   var functionScaleText = $("#function-scale");
   $(explorerView).on("functionScaleChanged", function(event, scale) {
@@ -944,6 +949,10 @@ PolynomialFunction.prototype = {
       formula += ("(" + formatVariablePlusComplexNumber("z", -zero[0], -zero[1], 2) + ")");
     }
     return formula;
+  }, 
+  
+  "notifyFormulaChanged": function() {
+    $(this).trigger("formulaChanged", [this.getFormula()]);
   }
     
 };
@@ -1210,7 +1219,6 @@ function ComplexFunctionExplorerView(attributes) {
                  "colourScale", /** the colour scale of the domain colouring */
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
                                         being the model of the complex function being visualised*/
-                 "formula", /** JQuery wrapper for display of the formula for the complex function */
                  "repaintContinuously"]); /** whether or not to continuously repaint */
   this.complexFunction.explorerView = this;
   var view = this;
@@ -1227,7 +1235,7 @@ ComplexFunctionExplorerView.prototype = {
       have finished changing. Update the displayed formula, optionally repaint the domain 
       colouring, and redraw the function graph on the domain circle.*/
   "functionChanged": function(changing) {
-    this.formula.text(this.complexFunction.getFormula());
+    this.complexFunction.notifyFormulaChanged();
     this.drawDomainColouring(changing);
     this.drawFunctionGraphs(changing);
   },    
