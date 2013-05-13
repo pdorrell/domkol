@@ -148,13 +148,20 @@ $(document).ready(function(){
   $(domainCircleView).on("showing3DGraph", function(event, showing) {
     setCheckboxEnabled(wiggleCheckbox, showing);
   });
+  
+  var showCoordinateGridCheckbox = $("#show-coordinate-grid-checkbox");
+  var showCoordinateGrid = showCoordinateGridCheckbox[0].checked;
 
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
   var coordinatesView = new CoordinatesView(domkolElements, 
-                                            {showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"), 
-                                             explorerModel: explorerModel });
+                                            {explorerModel: explorerModel, 
+                                             showCoordinateGrid: showCoordinateGrid});
+  
+  showCoordinateGridCheckbox.on("change", function(event) {
+    coordinatesView.setShowCoordinateGrid(this.checked);
+  });
 
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -1042,17 +1049,12 @@ function CoordinatesView(domkolElements, attributes) {
                                
   setAttributes(this, attributes, 
                 ["explorerModel", /** A reference to the main application model */
-                 "showCoordinateGridCheckbox"]); /** Checkbox controlling visibility of the coordinates */
+                 "showCoordinateGrid"]); /** Initial visibility of the coordinates */
   
   /** Note: the SVG text elements for coordinate values are generated dynamically */
   
   // put view in local variable for access by event handlers
   var view = this;
-  
-  /** Toggle the checkbox to show/hide the coordinates */
-  this.showCoordinateGridCheckbox.on("change", function(event) {
-      view.dom.coordinates.toggle(this.checked);
-    });
   
   this.redraw();
 }
@@ -1061,6 +1063,10 @@ CoordinatesView.prototype = {
   
   "xCoordinateOffset": 3, // amount to offset (rightwards) the bottom left corner of coordinate value from actual location
   "yCoordinateOffset": 3, // amount to offset (upwards) the bottom left corner of coordinate value from actual location
+  
+  "setShowCoordinateGrid" : function(showing) {
+    this.dom.coordinates.toggle(showing);
+  }, 
   
   /** Add an SVG coordinate text element for a coordinate location with bottom left corner at pixel location x,y */
   "addCoordinatesText" : function(text, x, y) {
