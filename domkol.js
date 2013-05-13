@@ -86,17 +86,23 @@ $(document).ready(function(){
   
   var show3DGraphCheckbox = $("#show-3d-graph-checkbox");
   var show3D = show3DGraphCheckbox[0].checked;
-
+  
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView(domkolElements, 
                                               {rotateGraphSlider: $("#rotate-graph-slider"), 
-                                               graphRotationText: $("#graph-rotation"), 
                                                showCircleGraph: showCircleGraph, 
                                                show3D: show3D, 
                                                wiggling: wiggling,
                                                domainCircle: explorerModel.domainCircle});
   
+  // write graph rotation text
+  var graphRotationText = $("#graph-rotation");
+  $(domainCircleView).on("graphRotationChanged", function(event, text) {
+    graphRotationText.text(text);
+  });
+  domainCircleView.notifyGraphRotationChanged(); // to show initial value
+
   // wire show circle graph checkbox
   showCircleGraphCheckbox.on("change", function(event) {
     domainCircleView.setShowCircleGraph(this.checked);
@@ -600,7 +606,6 @@ function DomainCircleView (domkolElements, attributes) {
                              
   setAttributes(this, attributes, 
                 ["rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
-                 "graphRotationText", /** Text element to show current graph rotation */
                  "domainCircle",  /** An object of class DomainCircle, the model for this view */
                  "showCircleGraph", /** Initial state of showing the circle graph */
                  "show3D", /** Initial state of showing 3D graph (instead of 2D) */
@@ -721,7 +726,12 @@ DomainCircleView.prototype = {
     var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
     roundComponentsToIntegerIfClose(graphRotation, 0.0001);
     this.domainCircle.graphRotation = graphRotation;
-    this.graphRotationText.text(formatComplexNumber(graphRotation[0], graphRotation[1], 2));
+    this.notifyGraphRotationChanged();
+  }, 
+  
+  "notifyGraphRotationChanged": function() {
+    var graphRotation = this.domainCircle.graphRotation;
+    $(this).trigger("graphRotationChanged", formatComplexNumber(graphRotation[0], graphRotation[1], 2));
   }, 
   
   // changes determined by "show circle" & "show 3D"
