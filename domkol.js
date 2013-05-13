@@ -87,14 +87,38 @@ $(document).ready(function(){
   var show3DGraphCheckbox = $("#show-3d-graph-checkbox");
   var show3D = show3DGraphCheckbox[0].checked;
   
+  var rotateGraphSlider = $("#rotate-graph-slider");
+  function getGraphRotationFromSliderValue(sliderValue) {
+    var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
+    var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
+    roundComponentsToIntegerIfClose(graphRotation, 0.0001);
+    return graphRotation;
+  }
+  function rotationChanged(event, ui) {
+    var graphRotation = getGraphRotationFromSliderValue(ui.value);
+    rotateGraphSlider.trigger("graphRotationChanged", [graphRotation]);
+  }
+  rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
+                            "orientation": "horizontal", 
+                            "slide": rotationChanged, 
+                            "change": rotationChanged});  
+  setSliderKeyboardShortcuts(rotateGraphSlider);
+
+  var graphRotation = getGraphRotationFromSliderValue(rotateGraphSlider.slider("value"));
+  
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView(domkolElements, 
-                                              {rotateGraphSlider: $("#rotate-graph-slider"), 
-                                               showCircleGraph: showCircleGraph, 
+                                              {showCircleGraph: showCircleGraph, 
                                                show3D: show3D, 
                                                wiggling: wiggling,
+                                               graphRotation: graphRotation, 
                                                domainCircle: explorerModel.domainCircle});
+  
+  // wire graph rotation slider
+  rotateGraphSlider.on("graphRotationChanged", function(event, graphRotation) {
+    domainCircleView.setGraphRotation(graphRotation);
+  });
   
   // write graph rotation text
   var graphRotationText = $("#graph-rotation");
@@ -605,11 +629,11 @@ function DomainCircleView (domkolElements, attributes) {
                                                the domain circle for positive imaginary value */
                              
   setAttributes(this, attributes, 
-                ["rotateGraphSlider", /** Slider to rotate graph values in the complex plane */
-                 "domainCircle",  /** An object of class DomainCircle, the model for this view */
+                ["domainCircle",  /** An object of class DomainCircle, the model for this view */
                  "showCircleGraph", /** Initial state of showing the circle graph */
                  "show3D", /** Initial state of showing 3D graph (instead of 2D) */
-                 "wiggling"]); /** Initial state of wiggling or not */
+                 "wiggling",  /** Initial state of wiggling or not */
+                 "graphRotation"]); /** Initial graph rotation (usually 1.0) */
   
   svgDraggable(this.dom.centreHandle); // Make the centre handle (which is an SVG element) draggable
   svgDraggable(this.dom.edgeHandle); // Make the edge handle (which is an SVG element) draggable
@@ -617,6 +641,7 @@ function DomainCircleView (domkolElements, attributes) {
   /** Set local variable values for access inside inner functions */
   var view = this;
   var domainCircle = this.domainCircle;
+  domainCircle.graphRotation = this.graphRotation;
 
   // drag the centre handle to move the domain circle around
   this.dom.centreHandle.on('svgDrag', function(event, x, y) {
@@ -638,15 +663,7 @@ function DomainCircleView (domkolElements, attributes) {
   
   function rotationChanged(event, ui) {
     view.rotationUpdated(ui.value);
-    view.drawFunctionOnCircle();
   }
-  
-  this.rotateGraphSlider.slider({"min": 0, "max": 100, "value": 50,
-                                 "orientation": "horizontal", 
-                                 "slide": rotationChanged, 
-                                 "change": rotationChanged});  
-  setSliderKeyboardShortcuts(this.rotateGraphSlider);
-  view.rotationUpdated(50);
   
   this.initialiseWiggleAngles();
   
@@ -721,12 +738,10 @@ DomainCircleView.prototype = {
     this.domainCircle.calculateRadius();
   }, 
   
-  "rotationUpdated": function(sliderValue) {
-    var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
-    var graphRotation = [Math.cos(rotationAngle), Math.sin(rotationAngle)];
-    roundComponentsToIntegerIfClose(graphRotation, 0.0001);
+  "setGraphRotation": function(graphRotation) {
     this.domainCircle.graphRotation = graphRotation;
     this.notifyGraphRotationChanged();
+    this.drawFunctionOnCircle();
   }, 
   
   "notifyGraphRotationChanged": function() {
