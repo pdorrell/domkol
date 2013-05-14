@@ -46,13 +46,10 @@ $(document).ready(function(){
   var controlDialogElement = new ControlDialogElement($("#control-dialog"));
   
   var controlDialog = new ControlDialog(controlDialogElement);
-  
-  controlDialog.initialize();
-  initialValues = controlDialog.values;
-  
+
   var polynomialFunction = new PolynomialFunction([[0, 0], [0, 0], [0, 0]]);
 
-  var explorerView = createExplorerView(polynomialFunction, $("#domkol"), initialValues, 
+  var explorerView = createExplorerView($("#domkol"), polynomialFunction, controlDialog.values, 
                                         240, [280, 280], [560, 560], 150);
   
   var numZeroes = polynomialFunction.zeroes.length;
@@ -133,7 +130,7 @@ function ControlDialogElement(div) {
     '           <br/>Also you can move this control window around.)</td></tr>').appendTo(table);
 }
 
-function createExplorerView(complexFunction, domkolDivElement, initialValues, 
+function createExplorerView(domkolDivElement, complexFunction, initialValues, 
                             pixelsPerUnit, originPixelLocation, pixelsDimension, circleRadius) {
   
   /* The model of the circular subset of the complex plane */
@@ -195,6 +192,7 @@ function ControlDialog(attributes) {
                     "functionScaleText", 
                     "colourScaleText"
                   ]);
+  this.initialize();
 }
 
 ControlDialog.prototype = {
@@ -211,6 +209,26 @@ ControlDialog.prototype = {
 
     /* Make the controls window draggable by it's top bar. */
     $(this.div).draggable({handle: ".window-top-bar"});
+  }, 
+  
+  /** Connect this control dialog to an instance of ComplexFunctionExplorerView */
+  connect: function(explorerView) {
+    var domainCircleView = explorerView.domainCircleView;
+    var coordinatesView = explorerView.coordinatesView;
+    var complexFunction = explorerView.complexFunction;
+    
+    this.connectRotateGraphSlider(domainCircleView);
+    this.connectShowCircleGraphCheckbox(domainCircleView);
+    this.connectGraphRotationText(domainCircleView);
+    this.connectShow3DGraphCheckbox(domainCircleView);
+    this.connectWiggleCheckbox(domainCircleView);
+    this.connectShowCoordinateGridCheckbox(coordinatesView);
+    this.connectFunctionScaleSlider(explorerView);
+    this.connectColourScaleSlider(explorerView);
+    this.connectFormulaText(complexFunction);
+    this.connectFunctionScaleText(explorerView);
+    this.connectColourScaleText(explorerView);
+    this.connectRepaintContinuouslyCheckbox(explorerView);
   }, 
   
   initializeWiggleCheckbox: function() {
@@ -301,25 +319,6 @@ ControlDialog.prototype = {
       handler.apply($this, arguments);
     });
   },
-  
-  connect: function(explorerView) {
-    var domainCircleView = explorerView.domainCircleView;
-    var coordinatesView = explorerView.coordinatesView;
-    var complexFunction = explorerView.complexFunction;
-    
-    this.connectRotateGraphSlider(domainCircleView);
-    this.connectShowCircleGraphCheckbox(domainCircleView);
-    this.connectGraphRotationText(domainCircleView);
-    this.connectShow3DGraphCheckbox(domainCircleView);
-    this.connectWiggleCheckbox(domainCircleView);
-    this.connectShowCoordinateGridCheckbox(coordinatesView);
-    this.connectFunctionScaleSlider(explorerView);
-    this.connectColourScaleSlider(explorerView);
-    this.connectFormulaText(complexFunction);
-    this.connectFunctionScaleText(explorerView);
-    this.connectColourScaleText(explorerView);
-    this.connectRepaintContinuouslyCheckbox(explorerView);
-  }, 
   
   connectWiggleCheckbox: function(domainCircleView) {
     this.wiggleCheckbox.on("change", function(event) {
