@@ -43,22 +43,9 @@
 
 $(document).ready(function(){
   
-  var controlDialogInnerDiv = new ControlDialogInnerDiv();
-  $("#control-dialog").append(controlDialogInnerDiv.div);
+  var controlDialogElement = new ControlDialogElement($("#control-dialog"));
   
-  var controlDialog = new ControlDialog({div: $("#control-dialog"), 
-                                         wiggleCheckbox: $("#wiggle-checkbox"), 
-                                         showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
-                                         show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
-                                         rotateGraphSlider: $("#rotate-graph-slider"),
-                                         graphRotationText: $("#graph-rotation-text"),
-                                         showCoordinateGridCheckbox: $("#show-coordinate-grid-checkbox"),
-                                         functionScaleSlider: $("#function-scale-slider"),
-                                         colourScaleSlider: $("#colour-scale-slider"),
-                                         repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
-                                         formulaText: $("#formula-text"),
-                                         functionScaleText: $("#function-scale-text"),
-                                         colourScaleText: $("#colour-scale-text")});
+  var controlDialog = new ControlDialog(controlDialogElement);
   
   controlDialog.initialize();
   initialValues = controlDialog.values;
@@ -90,10 +77,11 @@ $(document).ready(function(){
   controlDialog.connect(explorerView);
 });
 
-function ControlDialogInnerDiv() {
-  this.div = $('<div>');
-  this.windowTopBar = $('<div class="window-top-bar"></div>').appendTo(this.div);
-  var table = $('<table/>').appendTo(this.div);
+function ControlDialogElement(div) {
+  this.div = div;
+  var innerDiv = $('<div>').appendTo(this.div);
+  this.windowTopBar = $('<div class="window-top-bar"></div>').appendTo(innerDiv);
+  var table = $('<table/>').appendTo(innerDiv);
   
   var tr = $('<tr/>').appendTo(table);
   this.formulaText = $('<span id="formula-text"></span>');
