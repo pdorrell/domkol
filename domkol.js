@@ -1348,6 +1348,7 @@ function NumberHandle(complexFunctionExplorerView, handlesDiv, index, position) 
   this.initializeHandleDiv(position);
   this.initializeDragHandler();
   this.number = this.positionToNumber(position);
+  this.setNumberLabel();
 }
 
 NumberHandle.prototype = {
