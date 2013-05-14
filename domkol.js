@@ -165,7 +165,7 @@ ControlDialog.prototype = {
   }, 
   
   initializeWiggleCheckbox: function() {
-    this.wiggling = this.wiggleCheckbox[0].checked;
+    this.values.wiggling = this.wiggleCheckbox[0].checked;
   }, 
   
   initializeShowCircleGraphCheckbox: function() {
