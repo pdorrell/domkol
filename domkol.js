@@ -60,11 +60,11 @@ $(document).ready(function(){
   controlDialog.initialize();
   initialValues = controlDialog.values;
   
-  var numZeroHandles = 3;
+  var numZeroes = 3;
   
   /* Create an array of repeated [0, 0] (i.e. 0+0i) */
   var zeroes = [];
-  for (var i=0; i<numZeroHandles; i++) {
+  for (var i=0; i<numZeroes; i++) {
     zeroes.push([0, 0]);
   }
   
@@ -76,8 +76,8 @@ $(document).ready(function(){
   var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues, 
                                         240, [280, 280], [560, 560], 150);
   
-  for (i=0; i<numZeroHandles; i++) {
-    var zeroHandle = explorerView.createNumberHandle((numZeroHandles-1)-i);
+  for (i=0; i<numZeroes; i++) {
+    var zeroHandle = explorerView.createNumberHandle((numZeroes-1)-i);
     $(zeroHandle).on("numberChanged", 
                      function(event, index, number, changing) {
                        complexFunction.updateZero(index, number, changing);
