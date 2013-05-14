@@ -50,27 +50,17 @@ $(document).ready(function(){
   controlDialog.initialize();
   initialValues = controlDialog.values;
   
-  var numZeroes = 3;
-  
-  /* Create an array of repeated [0, 0] (i.e. 0+0i) */
-  var zeroes = [];
-  for (var i=0; i<numZeroes; i++) {
-    zeroes.push([0, 0]);
-  }
-  
-  /* The model of the polynomial function */
-  var complexFunction = new PolynomialFunction({"zeroes": zeroes});
+  var polynomialFunction = new PolynomialFunction([[0, 0], [0, 0], [0, 0]]);
 
-  var domkolDivElement = $("#domkol");
-  
-  var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues, 
+  var explorerView = createExplorerView(polynomialFunction, $("#domkol"), initialValues, 
                                         240, [280, 280], [560, 560], 150);
   
+  var numZeroes = polynomialFunction.zeroes.length;
   for (i=0; i<numZeroes; i++) {
     var zeroHandle = explorerView.createNumberHandle((numZeroes-1)-i);
     $(zeroHandle).on("numberChanged", 
                      function(event, index, number, changing) {
-                       complexFunction.updateZero(index, number, changing);
+                       polynomialFunction.updateZero(index, number, changing);
                      });
   }
   
@@ -1098,9 +1088,8 @@ DomainCircleView.prototype = {
 
 /** The model for a polynomial function of type (z-a)(z-b)(z-c) with zeroes at a,b,c 
     (Of degree 3 in that example, but could be any degree.)*/
-function PolynomialFunction(attributes) {
-    setAttributes(this, attributes, 
-                  ["zeroes"]); /** The array of complex numbers which are the zeroes of the polynomial */
+function PolynomialFunction(zeroes) {
+  this.zeroes = zeroes;
 }
 
 PolynomialFunction.prototype = {
