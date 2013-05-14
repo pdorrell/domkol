@@ -43,7 +43,8 @@
 
 $(document).ready(function(){
   
-  var controlDialog = new ControlDialog({wiggleCheckbox: $("#wiggle-checkbox"), 
+  var controlDialog = new ControlDialog({div: $("#control-dialog"), 
+                                         wiggleCheckbox: $("#wiggle-checkbox"), 
                                          showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
                                          show3DGraphCheckbox: $("#show-3d-graph-checkbox"),
                                          rotateGraphSlider: $("#rotate-graph-slider"),
@@ -76,12 +77,7 @@ $(document).ready(function(){
   
   var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues, 
                                         240, [280, 280], [560, 560], 150);
-  
   controlDialog.connect(explorerView);
-  
-  /* Make the controls window draggable by it's top bar. */
-  $(".controls").draggable({ handle: ".window-top-bar" });
-  
 });
 
 function createExplorerView(complexFunction, domkolDivElement, initialValues, 
@@ -136,7 +132,8 @@ function createExplorerView(complexFunction, domkolDivElement, initialValues,
   
 function ControlDialog(attributes) {
     setAttributes(this, attributes, 
-                  [ "wiggleCheckbox", 
+                  [ "div", 
+                    "wiggleCheckbox", 
                     "showCircleGraphCheckbox", 
                     "show3DGraphCheckbox", 
                     "rotateGraphSlider", 
@@ -162,6 +159,9 @@ ControlDialog.prototype = {
     this.initializeFunctionScaleSlider();
     this.initializeColourScaleSlider();
     this.initializeRepaintContinuouslyCheckbox();
+
+    /* Make the controls window draggable by it's top bar. */
+    $(this.div).draggable({handle: ".window-top-bar"});
   }, 
   
   initializeWiggleCheckbox: function() {
