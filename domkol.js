@@ -77,10 +77,9 @@ $(document).ready(function(){
                                         240, [280, 280], [560, 560], 150);
   
   for (i=0; i<numZeroHandles; i++) {
-    var zeroHandle = explorerView.createNumberHandle();
-    var index = i;
+    var zeroHandle = explorerView.createNumberHandle(i);
     $(zeroHandle).on("numberChanged", 
-                     function(event, number, changing) {
+                     function(event, index, number, changing) {
                        complexFunction.updateZero(index, number, changing);
                      });
   }
@@ -1341,9 +1340,10 @@ CoordinatesView.prototype = {
   }
 };
 
-function NumberHandle(complexFunctionExplorerView, handlesDiv, position) {
+function NumberHandle(complexFunctionExplorerView, handlesDiv, index, position) {
   this.complexFunctionExplorerView = complexFunctionExplorerView;
   this.explorerModel = this.complexFunctionExplorerView.explorerModel;
+  this.index = index;
   this.position = position;
   this.handlesDiv = handlesDiv;
   this.initializeHandleDiv(position);
@@ -1391,7 +1391,7 @@ NumberHandle.prototype = {
       $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
       $this.number = $this.positionToNumber($this.position);
       $this.setNumberLabel();
-      $($this).trigger("numberChanged", [$this.number, changing]);
+      $($this).trigger("numberChanged", [$this.index, $this.number, changing]);
     }
     
     /** When dragged, update the corresponding zero in the function model, and tell the 
@@ -1430,8 +1430,8 @@ function ComplexFunctionExplorerView(attributes) {
 
 ComplexFunctionExplorerView.prototype = {
   
-  createNumberHandle: function() {
-    return new NumberHandle(this, this.handlesDiv, this.explorerModel.originPixelLocation);
+  createNumberHandle: function(index) {
+    return new NumberHandle(this, this.handlesDiv, index, this.explorerModel.originPixelLocation);
   }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
