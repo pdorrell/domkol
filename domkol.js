@@ -122,6 +122,7 @@ function createExplorerView(complexFunction, domkolDivElement, initialValues,
   /* The main view of the application containing all its component views and associated models. */
   return new ComplexFunctionExplorerView({explorerModel: explorerModel, 
                                           canvas: domkolElements.canvas, 
+                                          handlesDiv: domkolElements.handlesDiv, 
                                           domainCircleView: domainCircleView, 
                                           coordinatesView: coordinatesView, 
                                           functionScale: initialValues.functionScale, 
@@ -372,6 +373,12 @@ DomkolElements.prototype = {
     this.initializeCanvas();
     this.initializeRealPathUnder();
     this.initializeAxesAndCircleGraph();
+    this.initializeHandles();
+  }, 
+  initializeHandles: function() {
+    var handlesDivWrapper = $("<div/>");
+    $(this.div).append(handlesDivWrapper);
+    this.handlesDiv = handlesDivWrapper[0];
   }, 
   initializeCanvas: function() {
     var canvas = $("<canvas/>");
@@ -1325,6 +1332,7 @@ function ComplexFunctionExplorerView(attributes) {
   setAttributes(this, attributes, 
                 ["explorerModel", /** The model for this view */
                  "canvas", /** JQuery wrapper for the canvas element, onto which the domain colouring is painted */
+                 "handlesDiv", /** JQuery wrapper for div element containing any number handles */
                  "domainCircleView", /** Object of class DomainCircleView, being the domain circle view*/
                  "coordinatesView", /** Object of class CoordinatesView, being the coordinates view */
                  "functionScale", /** Initial value for functionScale */
