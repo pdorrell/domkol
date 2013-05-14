@@ -60,9 +60,7 @@ $(document).ready(function(){
   controlDialog.initialize();
   initialValues = controlDialog.values;
   
-  /* From the view, calculate how many draggable function zeroes there are 
-     (and therefore how many zeros the polynomial function */
-  var numZeroHandles = $("#handles").children(".zero").length;
+  var numZeroHandles = 3;
   
   /* Create an array of repeated [0, 0] (i.e. 0+0i) */
   var zeroes = [];
@@ -77,6 +75,16 @@ $(document).ready(function(){
   
   var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues, 
                                         240, [280, 280], [560, 560], 150);
+  
+  for (i=0; i<numZeroHandles; i++) {
+    var zeroHandle = explorerView.createNumberHandle();
+    var index = i;
+    $(zeroHandle).on("numberChanged", 
+                     function(event, number, changing) {
+                       complexFunction.updateZero(index, number, changing);
+                     });
+  }
+  
   controlDialog.connect(explorerView);
 });
 
@@ -97,11 +105,6 @@ function createExplorerView(complexFunction, domkolDivElement, initialValues,
   var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
                                           explorerModel.pixelsDimension, explorerModel.circleRadius);
   domkolElements.initialize();
-  
-  /* The view of the polynomial function (consisting of the draggable handles) */
-  var functionView = new PolynomialFunctionView({zeroHandles: $("#handles"), 
-                                                 functionModel: complexFunction, 
-                                                 explorerModel: explorerModel});
   
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
@@ -1070,8 +1073,19 @@ PolynomialFunction.prototype = {
     return formula;
   }, 
   
+  updateZero: function(index, number, changing) {
+    console.log("Setting zero[" + index + "] to " + number[0] + " " + number[1] + "i, changing = " + changing);
+    this.zeroes[index] = number;
+    this.notifyFormulaChanged();
+    this.notifyFunctionChanged(changing);
+  }, 
+  
   notifyFormulaChanged: function() {
     $(this).trigger("formulaChanged", [this.getFormula()]);
+  }, 
+  
+  notifyFunctionChanged: function(changing) {
+    $(this).trigger("functionChanged", [changing]);
   }
     
 };
@@ -1331,6 +1345,7 @@ function NumberHandle(complexFunctionExplorerView, handlesDiv, position) {
   this.complexFunctionExplorerView = complexFunctionExplorerView;
   this.explorerModel = this.complexFunctionExplorerView.explorerModel;
   this.position = position;
+  this.handlesDiv = handlesDiv;
   this.initializeHandleDiv(position);
   this.initializeDragHandler();
   this.number = this.positionToNumber(position);
@@ -1348,7 +1363,7 @@ NumberHandle.prototype = {
                         left: (position[0] + 2) + "px", 
                         top: (position[1]-23) + "px", 
                         "z-index": 4});
-    handlesDiv.append(this.handleDiv);
+    $(this.handlesDiv).append(this.handleDiv);
     this.pointCircle = $('<div/>');
     this.pointCircle.addClass("point-circle");
     this.pointCircle.css({position: "absolute", 
@@ -1371,17 +1386,18 @@ NumberHandle.prototype = {
     var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
     var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
     var $this = this;
-    function changeNumber(handle, ui, changing) {
+    
+    function changeNumber(ui, changing) {
       $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
-      $this.number = this.positionToNumber($this.position);
+      $this.number = $this.positionToNumber($this.position);
       $this.setNumberLabel();
       $($this).trigger("numberChanged", [$this.number, changing]);
     }
     
     /** When dragged, update the corresponding zero in the function model, and tell the 
         explorer view to redraw & repaint everything that depends on the function. */
-    this.handleDiv.draggable({drag: function(event, ui) { changeNumber(handle, ui, true); }, 
-                              stop: function(event, ui) { changeNumber(handle, ui, false); }});
+    this.handleDiv.draggable({drag: function(event, ui) { changeNumber(ui, true); }, 
+                              stop: function(event, ui) { changeNumber(ui, false); }});
     this.handleDiv.css("cursor", "move");
   }
 };
@@ -1399,26 +1415,29 @@ function ComplexFunctionExplorerView(attributes) {
                  "complexFunction", /** Object of class PolynomialClass (or other object with a similar interface), 
                                         being the model of the complex function being visualised*/
                  "repaintContinuously"]); /** whether or not to continuously repaint */
-  this.complexFunction.explorerView = this;
   var view = this;
   
   this.explorerModel.scaleF = this.functionScale;
   this.explorerModel.colourScale = this.colourScale;
-  
+
   this.functionChanged(false); // force initial repaint
+  
+  $(this.complexFunction).on("functionChanged", function(event, changing) {
+    console.log("complexFunction function changed ...");
+    view.functionChanged(changing);
+  });
 }
 
 ComplexFunctionExplorerView.prototype = {
   
   createNumberHandle: function() {
-    return new NumberHandle(this, handlesDiv, explorerModel.originPixelLocation);
+    return new NumberHandle(this, this.handlesDiv, this.explorerModel.originPixelLocation);
   }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
-      have finished changing. Update the displayed formula, optionally repaint the domain 
+      have finished changing. Optionally repaint the domain 
       colouring, and redraw the function graph on the domain circle.*/
   functionChanged: function(changing) {
-    this.complexFunction.notifyFormulaChanged();
     this.drawDomainColouring(changing);
     this.drawFunctionGraphs(changing);
   },    
