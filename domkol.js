@@ -66,31 +66,31 @@ $(document).ready(function(){
 
 function ControlDialogElement(div) {
   this.div = div;
-  var innerDiv = $('<div>').appendTo(this.div);
-  this.windowTopBar = $('<div class="window-top-bar"></div>').appendTo(innerDiv);
+  var innerDiv = $('<div/>').appendTo(this.div);
+  this.windowTopBar = $('<div class="window-top-bar"/>').appendTo(innerDiv);
   var table = $('<table/>').appendTo(innerDiv);
   
   var tr = $('<tr/>').appendTo(table);
-  this.formulaText = $('<span></span>');
-  tr.append($('<td>Function:</td>'), $('<td colspan="2">').append(this.formulaText));
+  this.formulaText = $('<span/>');
+  tr.append($('<td>Function:</td>'), $('<td colspan="2"/>').append(this.formulaText));
   
   tr = $('<tr><td colspan="3" class="instructions">Drag the small black circles to move and',
          '                                             resize the large circle.</td></tr>').appendTo(table);
 
   tr = $('<tr/>').appendTo(table);
-  this.functionInstructions = $('<td colspan="3"></td>');
+  this.functionInstructions = $('<td colspan="3"/>');
   tr.append(this.functionInstructions);
   
-  tr = $('<tr></tr>').appendTo(table);
-  this.functionScaleSlider = $('<div style="width:240px;"></div>');
-  this.functionScaleText = $('<td style="width:5em;text-align:right"></td>');
+  tr = $('<tr/>').appendTo(table);
+  this.functionScaleSlider = $('<div style="width:240px;"/>');
+  this.functionScaleText = $('<td style="width:5em;text-align:right"/>');
   tr.append($('<td>Graph scale:</td>'), 
             $('<td/>').append(this.functionScaleSlider), 
             this.functionScaleText);
   
   tr = $('<tr/>').appendTo(table);
-  this.colourScaleSlider = $('<div style="width:240px;"></div>');
-  this.colourScaleText = $('<td style="width:5em;text-align:right"></td>');
+  this.colourScaleSlider = $('<div style="width:240px;"/>');
+  this.colourScaleText = $('<td style="width:5em;text-align:right"/>');
   tr.append($('<td>Colour scale:</td>'), 
             $('<td/>').append(this.colourScaleSlider), 
             this.colourScaleText);
@@ -108,8 +108,8 @@ function ControlDialogElement(div) {
   tr.append($('<td colspan="2">3D Wiggle animation: </td>').append(this.wiggleCheckbox));
   
   tr = $('<tr/>').appendTo(table);
-  this.rotateGraphSlider = $('<div style="width:240px;"></div>');
-  this.graphRotationText = $('<td style="width:5em;text-align:right;font-size:0.8em"></td>');
+  this.rotateGraphSlider = $('<div style="width:240px;"/>');
+  this.graphRotationText = $('<td style="width:5em;text-align:right;font-size:0.8em"/>');
   tr.append($('<td>Rotate <b>f</b> values:</td>'), 
             $('<td/>').append(this.rotateGraphSlider), 
             this.graphRotationText);
