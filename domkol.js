@@ -74,7 +74,8 @@ $(document).ready(function(){
 
   var domkolDivElement = $("#domkol");
   
-  var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues);
+  var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues, 
+                                        240, [280, 280], [560, 560], 150);
   
   controlDialog.connect(explorerView);
   
@@ -83,17 +84,18 @@ $(document).ready(function(){
   
 });
 
-function createExplorerView(complexFunction, domkolDivElement, initialValues) {
+function createExplorerView(complexFunction, domkolDivElement, initialValues, 
+                            pixelsPerUnit, originPixelLocation, pixelsDimension, circleRadius) {
   
   /* The model of the circular subset of the complex plane */
   var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
   
   /* The main model of the application */
   var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
-                                                         pixelsPerUnit: 240, 
-                                                         originPixelLocation: [280, 280], 
-                                                         pixelsDimension: [560, 560], 
-                                                         circleRadius: 150, 
+                                                         pixelsPerUnit: pixelsPerUnit, 
+                                                         originPixelLocation: originPixelLocation, 
+                                                         pixelsDimension: pixelsDimension, 
+                                                         circleRadius: circleRadius, 
                                                          domainCircle: domainCircle });
   
   var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
