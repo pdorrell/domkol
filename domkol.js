@@ -54,7 +54,10 @@ $(document).ready(function(){
                                          repaintContinuouslyCheckbox: $("#repaint-continuously-checkbox"),
                                          formulaText: $("#formula-text"),
                                          functionScaleText: $("#function-scale-text"),
-                                         colourScaleText: $("#colour-scale-text")}) 
+                                         colourScaleText: $("#colour-scale-text")});
+  
+  controlDialog.initialize();
+  controlValues = controlDialog.values;
   
   /* From the view, calculate how many draggable function zeroes there are 
      (and therefore how many zeros the polynomial function */
@@ -90,8 +93,6 @@ $(document).ready(function(){
                                                  functionModel: complexFunction, 
                                                  explorerModel: explorerModel});
   
-  var wiggling = controlDialog.wiggleCheckbox[0].checked;
-  var showCircleGraph = controlDialog.showCircleGraphCheckbox[0].checked;
   var show3D = controlDialog.show3DGraphCheckbox[0].checked;
   
   function getGraphRotationFromSliderValue(sliderValue) {
@@ -117,9 +118,9 @@ $(document).ready(function(){
   /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
      a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
   var domainCircleView = new DomainCircleView(domkolElements, 
-                                              {showCircleGraph: showCircleGraph, 
+                                              {showCircleGraph: controlValues.showCircleGraph, 
                                                show3D: show3D, 
-                                               wiggling: wiggling,
+                                               wiggling: controlValues.wiggling,
                                                graphRotation: graphRotation, 
                                                domainCircle: explorerModel.domainCircle});
   
@@ -134,11 +135,8 @@ $(document).ready(function(){
   });
   domainCircleView.notifyGraphRotationChanged(); // to show initial value
 
-  // wire show circle graph checkbox
-  controlDialog.showCircleGraphCheckbox.on("change", function(event) {
-    domainCircleView.setShowCircleGraph(this.checked);
-  });
-
+  controlDialog.connectShowCircleGraphCheckbox(domainCircleView);
+  
   // wire show 3D checkbox
   controlDialog.show3DGraphCheckbox.on("change", function(event) {
     domainCircleView.setShow3D(this.checked);
@@ -147,13 +145,7 @@ $(document).ready(function(){
     setCheckboxEnabled(controlDialog.show3DGraphCheckbox, showing);
   });
 
-  // wire wiggle checkbox
-  controlDialog.wiggleCheckbox.on("change", function(event) {
-    domainCircleView.setWiggling(this.checked);
-  });
-  $(domainCircleView).on("showing3DGraph", function(event, showing) {
-    setCheckboxEnabled(controlDialog.wiggleCheckbox, showing);
-  });
+  controlDialog.connectWiggleCheckbox(domainCircleView);
   
   var showCoordinateGrid = controlDialog.showCoordinateGridCheckbox[0].checked;
 
@@ -263,6 +255,46 @@ function ControlDialog(attributes) {
                   ]);
 }
 
+ControlDialog.prototype = {
+  initialize: function() {
+    this.values = {};
+    this.initializeWiggleCheckbox();
+    this.initializeShowCircleGraphCheckbox();
+  }, 
+  
+  initializeWiggleCheckbox: function() {
+    this.wiggling = this.wiggleCheckbox[0].checked;
+  }, 
+  
+  initializeShowCircleGraphCheckbox: function() {
+    this.values.showCircleGraph = this.showCircleGraphCheckbox[0].checked;
+  }, 
+
+  onProxied: function(object, eventName, handler) {
+    var $this = this;
+    $(object).on(eventName, function() {
+      handler.apply($this, arguments);
+    });
+  }, 
+  
+  connectWiggleCheckbox: function(domainCircleView) {
+    this.wiggleCheckbox.on("change", function(event) {
+      domainCircleView.setWiggling(this.checked);
+    });
+    this.onProxied(domainCircleView, "showing3DGraph", 
+                   function(event, showing) { 
+                     setCheckboxEnabled(this.wiggleCheckbox, showing); });
+  }, 
+  
+  connectShowCircleGraphCheckbox: function(domainCircleView) {
+    this.showCircleGraphCheckbox.on("change", function(event) {
+      domainCircleView.setShowCircleGraph(this.checked);
+    });
+  }
+
+
+};
+  
 function DomkolElements(div, originPixelLocation, pixelsDimension, circleRadius) {
   this.div = div;
   this.originPixelLocation = originPixelLocation;
@@ -759,7 +791,7 @@ function DomainCircleView (domkolElements, attributes) {
     view.rotationUpdated(ui.value);
   }
   
-  this.initialiseWiggleAngles();
+  this.initializeWiggleAngles();
   
   setInterval(function(){ 
     if (view.wiggling) { 
@@ -806,7 +838,7 @@ DomainCircleView.prototype = {
     }
   }, 
   
-  initialiseWiggleAngles: function() {
+  initializeWiggleAngles: function() {
     var maxWiggle = 0.3;
     var numWiggles = 15;
     this.wiggleAngles = new Array(numWiggles);
@@ -1015,7 +1047,7 @@ PolynomialFunctionView.prototype = {
     $(handle).children(".zero-text").text(formattedZ);
   },    
   
-  /** Initialise the draggable handle for the ith zero. */
+  /** Initialize the draggable handle for the ith zero. */
   setupHandle: function(i, handle) {
     var index = i;
     var explorerModel = this.explorerModel;
