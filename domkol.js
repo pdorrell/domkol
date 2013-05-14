@@ -74,55 +74,6 @@ $(document).ready(function(){
 
   var domkolDivElement = $("#domkol");
   
-  function createExplorerView(complexFunction, domkolDivElement, initialValues) {
-  
-    /* The model of the circular subset of the complex plane */
-    var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
-    
-    /* The main model of the application */
-    var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
-                                                           pixelsPerUnit: 240, 
-                                                           originPixelLocation: [280, 280], 
-                                                           pixelsDimension: [560, 560], 
-                                                           circleRadius: 150, 
-                                                           domainCircle: domainCircle });
-  
-    var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
-                                            explorerModel.pixelsDimension, explorerModel.circleRadius);
-    domkolElements.initialize();
-  
-    /* The view of the polynomial function (consisting of the draggable handles) */
-    var functionView = new PolynomialFunctionView({zeroHandles: $("#handles"), 
-                                                   functionModel: complexFunction, 
-                                                   explorerModel: explorerModel});
-  
-    /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
-       a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
-    var domainCircleView = new DomainCircleView(domkolElements, 
-                                                {showCircleGraph: initialValues.showCircleGraph, 
-                                                 show3D: initialValues.show3D, 
-                                                 wiggling: initialValues.wiggling,
-                                                 graphRotation: initialValues.graphRotation, 
-                                                 domainCircle: explorerModel.domainCircle});
-  
-    /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
-       a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
-       a checkbox controlling visibility of the coordinate grid. */
-    var coordinatesView = new CoordinatesView(domkolElements, 
-                                              {explorerModel: explorerModel, 
-                                               showCoordinateGrid: initialValues.showCoordinateGrid});
-  
-    /* The main view of the application containing all its component views and associated models. */
-   return new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                           canvas: domkolElements.canvas, 
-                                           domainCircleView: domainCircleView, 
-                                           coordinatesView: coordinatesView, 
-                                           functionScale: initialValues.functionScale, 
-                                           colourScale: initialValues.colourScale, 
-                                           repaintContinuously: initialValues.repaintContinuously, 
-                                           complexFunction: complexFunction});
-  }
-  
   var explorerView = createExplorerView(complexFunction, domkolDivElement, initialValues);
   
   controlDialog.connect(explorerView);
@@ -132,6 +83,55 @@ $(document).ready(function(){
   
 });
 
+function createExplorerView(complexFunction, domkolDivElement, initialValues) {
+  
+  /* The model of the circular subset of the complex plane */
+  var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
+  
+  /* The main model of the application */
+  var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
+                                                         pixelsPerUnit: 240, 
+                                                         originPixelLocation: [280, 280], 
+                                                         pixelsDimension: [560, 560], 
+                                                         circleRadius: 150, 
+                                                         domainCircle: domainCircle });
+  
+  var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
+                                          explorerModel.pixelsDimension, explorerModel.circleRadius);
+  domkolElements.initialize();
+  
+  /* The view of the polynomial function (consisting of the draggable handles) */
+  var functionView = new PolynomialFunctionView({zeroHandles: $("#handles"), 
+                                                 functionModel: complexFunction, 
+                                                 explorerModel: explorerModel});
+  
+  /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
+     a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
+  var domainCircleView = new DomainCircleView(domkolElements, 
+                                              {showCircleGraph: initialValues.showCircleGraph, 
+                                               show3D: initialValues.show3D, 
+                                               wiggling: initialValues.wiggling,
+                                               graphRotation: initialValues.graphRotation, 
+                                               domainCircle: explorerModel.domainCircle});
+  
+  /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
+     a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
+     a checkbox controlling visibility of the coordinate grid. */
+  var coordinatesView = new CoordinatesView(domkolElements, 
+                                            {explorerModel: explorerModel, 
+                                             showCoordinateGrid: initialValues.showCoordinateGrid});
+  
+  /* The main view of the application containing all its component views and associated models. */
+  return new ComplexFunctionExplorerView({explorerModel: explorerModel, 
+                                          canvas: domkolElements.canvas, 
+                                          domainCircleView: domainCircleView, 
+                                          coordinatesView: coordinatesView, 
+                                          functionScale: initialValues.functionScale, 
+                                          colourScale: initialValues.colourScale, 
+                                          repaintContinuously: initialValues.repaintContinuously, 
+                                          complexFunction: complexFunction});
+}
+  
 function ControlDialog(attributes) {
     setAttributes(this, attributes, 
                   [ "wiggleCheckbox", 
