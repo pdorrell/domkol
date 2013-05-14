@@ -1088,24 +1088,6 @@ PolynomialFunction.prototype = {
     
 };
 
-/** The view for the polynomial function, consisting of draggable handles for changing the zeroes of
-    the polynomial, and a textual display of the formula for the function.*/
-function PolynomialFunctionView(attributes) {
-    setAttributes(this, attributes, 
-                  ["zeroHandles", /** JQuery wrapper for the HTML div that holds the zero handle elements */
-                   "functionModel", /** An object of class PolynomialFunction which is the model for this view */
-                   "explorerModel"]); /** Reference to the main model for the application */
-    var numZeroes = this.functionModel.zeroes.length;
-    var handles = this.zeroHandles.children(".zero");
-    if (handles.length != numZeroes) {
-        throw "Number of zero handles does not match number of zeroes";
-    }
-    for (var i=0; i<numZeroes; i++) {
-      var handle = handles.eq(numZeroes-1-i);
-      this.setupHandle(i, handle);
-    }
-}
-
 /** Regular expression to parse CSS pixel dimensions such as "35px" or "-45px" */
 var pxRegexp = /^([-0-9]+)px$/
   
@@ -1117,48 +1099,6 @@ function fromPx(pxExpression) {
   }
   return parseInt(pxMatch[1]);
 }
-
-PolynomialFunctionView.prototype = {
-  
-  /** Set the number label on the draggable handle for the ith zero. */
-  setNumberLabel: function(i, handle) {
-    var z = this.functionModel.zeroes[i];
-    var formattedZ = formatComplexNumber(z[0], z[1], 2);
-    $(handle).children(".zero-text").text(formattedZ);
-  },    
-  
-  /** Initialize the draggable handle for the ith zero. */
-  setupHandle: function(i, handle) {
-    var index = i;
-    var explorerModel = this.explorerModel;
-    var functionModel = this.functionModel;
-    var view = this;
-    this.setNumberLabel(index, handle[0]);
-    var pointCircle = handle.children(".point-circle");
-    var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
-    var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
-    
-    function changeZero(handle, ui, changing) {
-      var x = ui.position.left + pointXOffset;
-      var y = ui.position.top + pointYOffset;
-      var z = explorerModel.positionToComplexNumber(x, y);
-      functionModel.zeroes[index] = z;
-      view.setNumberLabel(index, handle[0]);
-      functionModel.explorerView.functionChanged(changing);
-    }
-    
-    /** When dragged, update the corresponding zero in the function model, and tell the 
-        explorer view to redraw & repaint everything that depends on the function. */
-    handle.draggable({drag: function(event, ui) {
-                        changeZero(handle, ui, true);
-                      }, 
-                      stop: function(event, ui) {
-                        changeZero(handle, ui, false);
-                      }})
-      .css("cursor", "move");
-  }
-};
-    
 
 /** Regex to parse the normal Javascript representation of a float value */
 var decimalNumberRegexp = /^(-|)([0-9]*|)([.][0-9]*|)(e[-+]?[0-9]+|)$/
