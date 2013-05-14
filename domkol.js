@@ -77,7 +77,7 @@ $(document).ready(function(){
                                         240, [280, 280], [560, 560], 150);
   
   for (i=0; i<numZeroHandles; i++) {
-    var zeroHandle = explorerView.createNumberHandle(i);
+    var zeroHandle = explorerView.createNumberHandle((numZeroHandles-1)-i);
     $(zeroHandle).on("numberChanged", 
                      function(event, index, number, changing) {
                        complexFunction.updateZero(index, number, changing);
@@ -1073,7 +1073,6 @@ PolynomialFunction.prototype = {
   }, 
   
   updateZero: function(index, number, changing) {
-    console.log("Setting zero[" + index + "] to " + number[0] + " " + number[1] + "i, changing = " + changing);
     this.zeroes[index] = number;
     this.notifyFormulaChanged();
     this.notifyFunctionChanged(changing);
@@ -1423,7 +1422,6 @@ function ComplexFunctionExplorerView(attributes) {
   this.functionChanged(false); // force initial repaint
   
   $(this.complexFunction).on("functionChanged", function(event, changing) {
-    console.log("complexFunction function changed ...");
     view.functionChanged(changing);
   });
 }
