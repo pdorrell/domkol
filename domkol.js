@@ -1326,6 +1326,65 @@ CoordinatesView.prototype = {
     this.drawGrid(this.dom.fineCoordinateGrid, 0.1, false);
   }
 };
+
+function NumberHandle(complexFunctionExplorerView, handlesDiv, position) {
+  this.complexFunctionExplorerView = complexFunctionExplorerView;
+  this.explorerModel = this.complexFunctionExplorerView.explorerModel;
+  this.position = position;
+  this.initializeHandleDiv(position);
+  this.initializeDragHandler();
+  this.number = this.positionToNumber(position);
+}
+
+NumberHandle.prototype = {
+  positionToNumber: function(position) {
+    return this.explorerModel.positionToComplexNumber(position[0], position[1]);
+  }, 
+  
+  initializeHandleDiv: function(position) {
+    this.handleDiv = $('<div/>');
+    this.handleDiv.addClass("zero");
+    this.handleDiv.css({position: "absolute", 
+                        left: (position[0] + 2) + "px", 
+                        top: (position[1]-23) + "px", 
+                        "z-index": 4});
+    handlesDiv.append(this.handleDiv);
+    this.pointCircle = $('<div/>');
+    this.pointCircle.addClass("point-circle");
+    this.pointCircle.css({position: "absolute", 
+                          left: "-4px", 
+                          top: "21px"})
+    this.handleDiv.append(this.pointCircle);
+    this.zeroText = $('<div/>');
+    this.zeroText.addClass("zero-text");
+    this.zeroText.text("zero");
+    this.handleDiv.append(this.zeroText);
+  }, 
+  
+  setNumberLabel: function() {
+    var formattedNumber = formatComplexNumber(this.number[0], this.number[1], 2);
+    this.zeroText.text(formattedNumber);
+  },    
+  
+  initializeDragHandler: function() {
+    var pointCircle = this.pointCircle;
+    var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
+    var pointYOffset = fromPx(pointCircle.css("top")) + fromPx(pointCircle.css("height"))/2;
+    var $this = this;
+    function changeNumber(handle, ui, changing) {
+      $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
+      $this.number = this.positionToNumber($this.position);
+      $this.setNumberLabel();
+      $($this).trigger("numberChanged", [$this.number, changing]);
+    }
+    
+    /** When dragged, update the corresponding zero in the function model, and tell the 
+        explorer view to redraw & repaint everything that depends on the function. */
+    this.handleDiv.draggable({drag: function(event, ui) { changeNumber(handle, ui, true); }, 
+                              stop: function(event, ui) { changeNumber(handle, ui, false); }});
+    this.handleDiv.css("cursor", "move");
+  }
+};
   
 /** The main view for the application */
 function ComplexFunctionExplorerView(attributes) {
@@ -1350,6 +1409,10 @@ function ComplexFunctionExplorerView(attributes) {
 }
 
 ComplexFunctionExplorerView.prototype = {
+  
+  createNumberHandle: function() {
+    return new NumberHandle(this, handlesDiv, explorerModel.originPixelLocation);
+  }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
       have finished changing. Update the displayed formula, optionally repaint the domain 
