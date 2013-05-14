@@ -103,24 +103,12 @@ $(document).ready(function(){
                                                graphRotation: initialValues.graphRotation, 
                                                domainCircle: explorerModel.domainCircle});
   
-  controlDialog.connectRotateGraphSlider(domainCircleView);
-  
-  controlDialog.connectShowCircleGraphCheckbox(domainCircleView);
-  
-  controlDialog.connectGraphRotationText(domainCircleView);
-  
-  controlDialog.connectShow3DGraphCheckbox(domainCircleView);
-
-  controlDialog.connectWiggleCheckbox(domainCircleView);
-  
   /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
      a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
      a checkbox controlling visibility of the coordinate grid. */
   var coordinatesView = new CoordinatesView(domkolElements, 
                                             {explorerModel: explorerModel, 
                                              showCoordinateGrid: initialValues.showCoordinateGrid});
-  
-  controlDialog.connectShowCoordinateGridCheckbox(coordinatesView);
   
   /* The main view of the application containing all its component views and associated models. */
   var explorerView = new ComplexFunctionExplorerView({explorerModel: explorerModel, 
@@ -132,12 +120,7 @@ $(document).ready(function(){
                                                       repaintContinuously: initialValues.repaintContinuously, 
                                                       complexFunction: complexFunction});
   
-  controlDialog.connectFunctionScaleSlider(explorerView);
-  controlDialog.connectColourScaleSlider(explorerView);
-  controlDialog.connectFormulaText(complexFunction);
-  controlDialog.connectFunctionScaleText(explorerView);
-  controlDialog.connectColourScaleText(explorerView);
-  controlDialog.connectRepaintContinuouslyCheckbox(explorerView);
+  controlDialog.connect(explorerView);
   
   /* Make the controls window draggable by it's top bar. */
   $(".controls").draggable({ handle: ".window-top-bar" });
@@ -261,6 +244,25 @@ ControlDialog.prototype = {
     $(object).on(eventName, function() {
       handler.apply($this, arguments);
     });
+  },
+  
+  connect: function(explorerView) {
+    var domainCircleView = explorerView.domainCircleView;
+    var coordinatesView = explorerView.coordinatesView;
+    var complexFunction = explorerView.complexFunction;
+    
+    this.connectRotateGraphSlider(domainCircleView);
+    this.connectShowCircleGraphCheckbox(domainCircleView);
+    this.connectGraphRotationText(domainCircleView);
+    this.connectShow3DGraphCheckbox(domainCircleView);
+    this.connectWiggleCheckbox(domainCircleView);
+    this.connectShowCoordinateGridCheckbox(coordinatesView);
+    this.connectFunctionScaleSlider(explorerView);
+    this.connectColourScaleSlider(explorerView);
+    this.connectFormulaText(complexFunction);
+    this.connectFunctionScaleText(explorerView);
+    this.connectColourScaleText(explorerView);
+    this.connectRepaintContinuouslyCheckbox(explorerView);
   }, 
   
   connectWiggleCheckbox: function(domainCircleView) {
