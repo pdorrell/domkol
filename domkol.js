@@ -43,6 +43,9 @@
 
 $(document).ready(function(){
   
+  var controlDialogInnerDiv = new ControlDialogInnerDiv();
+  $("#control-dialog").append(controlDialogInnerDiv.div);
+  
   var controlDialog = new ControlDialog({div: $("#control-dialog"), 
                                          wiggleCheckbox: $("#wiggle-checkbox"), 
                                          showCircleGraphCheckbox: $("#show-circle-graph-checkbox"),
@@ -87,72 +90,70 @@ $(document).ready(function(){
   controlDialog.connect(explorerView);
 });
 
-function ControlDialogElements() {
-
-  var html = ['<div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:4;width:30em" >',
-              '  <div class="window-top-bar"></div>',
-              '  <table >',
-              '    <tr><td>Function:</td><td colspan="2"><span id="formula-text"></span></td></tr>',
-              '    <tr><td colspan="3" class="instructions">Drag the small black circles to move and',
-              '                                             resize the large circle.</td></tr>',
-              '    <tr><td colspan="3" id="function-instructions"></td></tr>',
-              '    <tr>',
-              '      <td>Graph scale:</td>',
-              '      <td>',
-              '        <div id="function-scale-slider" style="width:240px;"></div>',
-              '      </td>',
-              '      <td id="function-scale-text" style="width:5em;text-align:right"></td>',
-              '    </tr>',
-              '    <tr>',
-              '      <td>Colour scale:</td>',
-              '      <td>',
-              '        <div id="colour-scale-slider" style="width:240px;"></div>',
-              '      </td>',
-              '      <td id="colour-scale-text" style="width:5em;text-align:right"></td>',
-              '    </tr>',
-              '    <tr><td colspan="2">Show graph on circular domain:',
-              '            <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked>', 
-              '            </input></td>',
-              '    </tr>',
-              '    <tr><td colspan="2">Show graph on circular domain in 3D:',
-              '      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>',
-              '     </tr>',
-              '    <tr><td colspan="2">3D Wiggle animation:',
-              '            <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>',
-              '    </tr>',
-              '    <tr>',
-              '      <td>Rotate <b>f</b> values:</td>',
-              '      <td>',
-              '        <div id="rotate-graph-slider" style="width:240px;"></div>',
-              '      </td>',
-              '      <td id="graph-rotation-text" style="width:5em;text-align:right;font-size:0.8em"></td>',
-              '    </tr>',
-              '    <tr><td colspan="2">Show domain coordinate grid:',
-              '            <input style="text-align:left" type="checkbox" id="show-coordinate-grid-checkbox" checked>', 
-              '            </input></td>',
-              '    </tr>',
-              '    <tr><td colspan="2">Repaint domain colouring continuously:',
-              '            <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked>', 
-              '            </input></td>',
-              '    </tr>',
-              '    <tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.',
-              '                                      <br/>Also you can move this control window around.)</td></tr>',
-              '  </table>',
-              '</div>'].join();
+function ControlDialogInnerDiv() {
+  this.div = $('<div>');
+  this.windowTopBar = $('<div class="window-top-bar"></div>').appendTo(this.div);
+  var table = $('<table/>').appendTo(this.div);
   
-  this.dialogDiv = $('<div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:4;width:30em">');
-  this.windowTopBar = $('<div class="window-top-bar"></div>');
-  this.dialogDiv.append(this.windowTopBar);
-  var table = $('<table/>');
-  table.appendChild($('<tr/>'));
-}
+  var tr = $('<tr/>').appendTo(table);
+  this.formulaText = $('<span id="formula-text"></span>');
+  tr.append($('<td>Function:</td>'), $('<td colspan="2">').append(this.formulaText));
+  
+  tr = $('<tr><td colspan="3" class="instructions">Drag the small black circles to move and',
+         '                                             resize the large circle.</td></tr>').appendTo(table);
 
-ControlDialogElements.prototype = {
-  "namedElement": function(name, element) {
-    this[name] = element;
-    return element;
-  }
-};
+  tr = $('<tr/>').appendTo(table);
+  this.functionInstructions = $('<td colspan="3" id="function-instructions"></td>');
+  tr.append(this.functionInstructions);
+  
+  tr = $('<tr></tr>').appendTo(table);
+  this.functionScaleSlider = $('<div id="function-scale-slider" style="width:240px;"></div>');
+  this.functionScaleText = $('<td id="function-scale-text" style="width:5em;text-align:right"></td>');
+  tr.append($('<td>Graph scale:</td>'), 
+            $('<td/>').append(this.functionScaleSlider), 
+            this.functionScaleText);
+  
+  tr = $('<tr/>').appendTo(table);
+  this.colourScaleSlider = $('<div id="colour-scale-slider" style="width:240px;"></div>');
+  this.colourScaleText = $('<td id="colour-scale-text" style="width:5em;text-align:right"></td>');
+  tr.append($('<td>Colour scale:</td>'), 
+            $('<td/>').append(this.colourScaleSlider), 
+            this.colourScaleText);
+  
+  tr = $('<tr/>').appendTo(table);
+  this.showCircleGraphCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
+                                   'id="show-circle-graph-checkbox" checked/>');
+  tr.append($('<td colspan="2">Show graph on circular domain: </td>').append(this.showCircleGraphCheckbox));
+  
+  tr = $('<tr/>').appendTo(table);
+  this.show3DGraphCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
+                               'id="show-3d-graph-checkbox" checked/>');
+  tr.append($('<td colspan="2">Show graph on circular domain in 3D: </td>').append(this.show3DGraphCheckbox));
+  
+  tr = $('<tr/>').appendTo(table);
+  this.wiggleCheckbox = $('<input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked/>');
+  tr.append($('<td colspan="2">3D Wiggle animation: </td>').append(this.wiggleCheckbox));
+  
+  tr = $('<tr/>').appendTo(table);
+  this.rotateGraphSlider = $('<div id="rotate-graph-slider" style="width:240px;"></div>');
+  this.graphRotationText = $('<td id="graph-rotation-text" style="width:5em;text-align:right;font-size:0.8em"></td>');
+  tr.append($('<td>Rotate <b>f</b> values:</td>'), 
+            $('<td/>').append(this.rotateGraphSlider), 
+            this.graphRotationText);
+  
+  tr = $('<tr/>').appendTo(table);
+  this.showCoordinateGridCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
+                                      'id="show-coordinate-grid-checkbox" checked/>');
+  tr.append($('<td colspan="2">Show domain coordinate grid: </td>').append(this.showCoordinateGridCheckbox));
+  
+  tr = $('<tr/>').appendTo(table);
+  this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
+                                       'id="repaint-continuously-checkbox" checked/>');
+  tr.append($('<td colspan="2">Repaint domain colouring continuously: </td>').append(this.repaintContinuouslyCheckbox));
+  
+  $('<tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.',
+    '           <br/>Also you can move this control window around.)</td></tr>').appendTo(table);
+}
 
 function createExplorerView(complexFunction, domkolDivElement, initialValues, 
                             pixelsPerUnit, originPixelLocation, pixelsDimension, circleRadius) {
@@ -1228,9 +1229,6 @@ function formatVariablePlusComplexNumber(variableName, x, y, precision) {
     return variableName + (showPlus ? "+" : "") + formatComplexNumber(x, y, precision);
   }
 }
-  
-  
-function createHtmlTree(namedElements, 
 
 /* JQuery cannot construct SVG elements the same way as it does HTML elements, but
    the following function does the trick.
