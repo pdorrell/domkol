@@ -87,6 +87,73 @@ $(document).ready(function(){
   controlDialog.connect(explorerView);
 });
 
+function ControlDialogElements() {
+
+  var html = ['<div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:4;width:30em" >',
+              '  <div class="window-top-bar"></div>',
+              '  <table >',
+              '    <tr><td>Function:</td><td colspan="2"><span id="formula-text"></span></td></tr>',
+              '    <tr><td colspan="3" class="instructions">Drag the small black circles to move and',
+              '                                             resize the large circle.</td></tr>',
+              '    <tr><td colspan="3" id="function-instructions"></td></tr>',
+              '    <tr>',
+              '      <td>Graph scale:</td>',
+              '      <td>',
+              '        <div id="function-scale-slider" style="width:240px;"></div>',
+              '      </td>',
+              '      <td id="function-scale-text" style="width:5em;text-align:right"></td>',
+              '    </tr>',
+              '    <tr>',
+              '      <td>Colour scale:</td>',
+              '      <td>',
+              '        <div id="colour-scale-slider" style="width:240px;"></div>',
+              '      </td>',
+              '      <td id="colour-scale-text" style="width:5em;text-align:right"></td>',
+              '    </tr>',
+              '    <tr><td colspan="2">Show graph on circular domain:',
+              '            <input style="text-align:left" type="checkbox" id="show-circle-graph-checkbox" checked>', 
+              '            </input></td>',
+              '    </tr>',
+              '    <tr><td colspan="2">Show graph on circular domain in 3D:',
+              '      <input style="text-align:left" type="checkbox" id="show-3d-graph-checkbox" checked></input></td>',
+              '     </tr>',
+              '    <tr><td colspan="2">3D Wiggle animation:',
+              '            <input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked></input></td>',
+              '    </tr>',
+              '    <tr>',
+              '      <td>Rotate <b>f</b> values:</td>',
+              '      <td>',
+              '        <div id="rotate-graph-slider" style="width:240px;"></div>',
+              '      </td>',
+              '      <td id="graph-rotation-text" style="width:5em;text-align:right;font-size:0.8em"></td>',
+              '    </tr>',
+              '    <tr><td colspan="2">Show domain coordinate grid:',
+              '            <input style="text-align:left" type="checkbox" id="show-coordinate-grid-checkbox" checked>', 
+              '            </input></td>',
+              '    </tr>',
+              '    <tr><td colspan="2">Repaint domain colouring continuously:',
+              '            <input style="text-align:left" type="checkbox" id="repaint-continuously-checkbox" checked>', 
+              '            </input></td>',
+              '    </tr>',
+              '    <tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.',
+              '                                      <br/>Also you can move this control window around.)</td></tr>',
+              '  </table>',
+              '</div>'].join();
+  
+  this.dialogDiv = $('<div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:4;width:30em">');
+  this.windowTopBar = $('<div class="window-top-bar"></div>');
+  this.dialogDiv.append(this.windowTopBar);
+  var table = $('<table/>');
+  table.appendChild($('<tr/>'));
+}
+
+ControlDialogElements.prototype = {
+  "namedElement": function(name, element) {
+    this[name] = element;
+    return element;
+  }
+};
+
 function createExplorerView(complexFunction, domkolDivElement, initialValues, 
                             pixelsPerUnit, originPixelLocation, pixelsDimension, circleRadius) {
   
@@ -1161,6 +1228,9 @@ function formatVariablePlusComplexNumber(variableName, x, y, precision) {
     return variableName + (showPlus ? "+" : "") + formatComplexNumber(x, y, precision);
   }
 }
+  
+  
+function createHtmlTree(namedElements, 
 
 /* JQuery cannot construct SVG elements the same way as it does HTML elements, but
    the following function does the trick.
