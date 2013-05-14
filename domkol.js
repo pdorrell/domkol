@@ -71,59 +71,55 @@ function ControlDialogElement(div) {
   var table = $('<table/>').appendTo(innerDiv);
   
   var tr = $('<tr/>').appendTo(table);
-  this.formulaText = $('<span id="formula-text"></span>');
+  this.formulaText = $('<span></span>');
   tr.append($('<td>Function:</td>'), $('<td colspan="2">').append(this.formulaText));
   
   tr = $('<tr><td colspan="3" class="instructions">Drag the small black circles to move and',
          '                                             resize the large circle.</td></tr>').appendTo(table);
 
   tr = $('<tr/>').appendTo(table);
-  this.functionInstructions = $('<td colspan="3" id="function-instructions"></td>');
+  this.functionInstructions = $('<td colspan="3"></td>');
   tr.append(this.functionInstructions);
   
   tr = $('<tr></tr>').appendTo(table);
-  this.functionScaleSlider = $('<div id="function-scale-slider" style="width:240px;"></div>');
-  this.functionScaleText = $('<td id="function-scale-text" style="width:5em;text-align:right"></td>');
+  this.functionScaleSlider = $('<div style="width:240px;"></div>');
+  this.functionScaleText = $('<td style="width:5em;text-align:right"></td>');
   tr.append($('<td>Graph scale:</td>'), 
             $('<td/>').append(this.functionScaleSlider), 
             this.functionScaleText);
   
   tr = $('<tr/>').appendTo(table);
-  this.colourScaleSlider = $('<div id="colour-scale-slider" style="width:240px;"></div>');
-  this.colourScaleText = $('<td id="colour-scale-text" style="width:5em;text-align:right"></td>');
+  this.colourScaleSlider = $('<div style="width:240px;"></div>');
+  this.colourScaleText = $('<td style="width:5em;text-align:right"></td>');
   tr.append($('<td>Colour scale:</td>'), 
             $('<td/>').append(this.colourScaleSlider), 
             this.colourScaleText);
   
   tr = $('<tr/>').appendTo(table);
-  this.showCircleGraphCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
-                                   'id="show-circle-graph-checkbox" checked/>');
+  this.showCircleGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
   tr.append($('<td colspan="2">Show graph on circular domain: </td>').append(this.showCircleGraphCheckbox));
   
   tr = $('<tr/>').appendTo(table);
-  this.show3DGraphCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
-                               'id="show-3d-graph-checkbox" checked/>');
+  this.show3DGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
   tr.append($('<td colspan="2">Show graph on circular domain in 3D: </td>').append(this.show3DGraphCheckbox));
   
   tr = $('<tr/>').appendTo(table);
-  this.wiggleCheckbox = $('<input style="text-align:left" type="checkbox" id="wiggle-checkbox" checked/>');
+  this.wiggleCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
   tr.append($('<td colspan="2">3D Wiggle animation: </td>').append(this.wiggleCheckbox));
   
   tr = $('<tr/>').appendTo(table);
-  this.rotateGraphSlider = $('<div id="rotate-graph-slider" style="width:240px;"></div>');
-  this.graphRotationText = $('<td id="graph-rotation-text" style="width:5em;text-align:right;font-size:0.8em"></td>');
+  this.rotateGraphSlider = $('<div style="width:240px;"></div>');
+  this.graphRotationText = $('<td style="width:5em;text-align:right;font-size:0.8em"></td>');
   tr.append($('<td>Rotate <b>f</b> values:</td>'), 
             $('<td/>').append(this.rotateGraphSlider), 
             this.graphRotationText);
   
   tr = $('<tr/>').appendTo(table);
-  this.showCoordinateGridCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
-                                      'id="show-coordinate-grid-checkbox" checked/>');
+  this.showCoordinateGridCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
   tr.append($('<td colspan="2">Show domain coordinate grid: </td>').append(this.showCoordinateGridCheckbox));
   
   tr = $('<tr/>').appendTo(table);
-  this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" ' + 
-                                       'id="repaint-continuously-checkbox" checked/>');
+  this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
   tr.append($('<td colspan="2">Repaint domain colouring continuously: </td>').append(this.repaintContinuouslyCheckbox));
   
   $('<tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.',
