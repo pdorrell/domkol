@@ -50,7 +50,7 @@ $(document).ready(function(){
   controlDialog.addFunctionInstructions("Drag the blue numbers to change the zeroes of the cubic polynomial " + 
                                         "(initially they are all located on the origin).");
 
-  var zeroes = [[0, 0], [0, 0], [0, 0]];
+  var zeroes = [[0, 0], [0.3, 0.5], [0.4, -0.6]];
   var polynomialFunction = new PolynomialFunction(zeroes);
 
   var explorerView = createExplorerView($("#domkol"), polynomialFunction, controlDialog.values, 
