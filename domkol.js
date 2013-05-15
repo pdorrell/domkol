@@ -46,6 +46,9 @@ $(document).ready(function(){
   var controlDialogElement = new ControlDialogElement($("#control-dialog"));
   
   var controlDialog = new ControlDialog(controlDialogElement);
+  
+  controlDialog.addFunctionInstructions("Drag the blue numbers to change the zeroes of the cubic polynomial " + 
+                                        "(initially they are all located on the origin).");
 
   var polynomialFunction = new PolynomialFunction([[0, 0], [0, 0], [0, 0]]);
 
@@ -78,8 +81,8 @@ function ControlDialogElement(div) {
          '                                             resize the large circle.</td></tr>').appendTo(table);
 
   tr = $('<tr/>').appendTo(table);
-  this.functionInstructions = $('<td colspan="3"/>');
-  tr.append(this.functionInstructions);
+  this.functionInstructionsText = $('<td colspan="3" class="instructions"/>');
+  tr.append(this.functionInstructionsText);
   
   tr = $('<tr/>').appendTo(table);
   this.functionScaleSlider = $('<div style="width:240px;"/>');
@@ -175,6 +178,7 @@ function createExplorerView(domkolDivElement, complexFunction, initialValues,
 function ControlDialog(attributes) {
     setAttributes(this, attributes, 
                   [ "div", 
+                    "functionInstructionsText", 
                     "wiggleCheckbox", 
                     "showCircleGraphCheckbox", 
                     "show3DGraphCheckbox", 
@@ -225,6 +229,10 @@ ControlDialog.prototype = {
     this.connectFunctionScaleText(explorerView);
     this.connectColourScaleText(explorerView);
     this.connectRepaintContinuouslyCheckbox(explorerView);
+  }, 
+  
+  addFunctionInstructions: function(text) {
+    this.functionInstructionsText.text(text);
   }, 
   
   initializeWiggleCheckbox: function() {
