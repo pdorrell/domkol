@@ -630,23 +630,33 @@ var DOMKOL = {};
         }
       }
     }
+    for (var j=0; j<4; j++) {
+      if(pointStrings[j].length == 0) {
+        pointStrings[j][0] = "M0,0";  // add at least one element to an empty path to ensure valid SVG
+      }
+    }
     return [pointStrings[0].join(" "), pointStrings[1].join(" "), 
             pointStrings[2].join(" "), pointStrings[3].join(" ")];
   }
 
   /* Create SVG path attribute for an array of points */
   function createPointsPath(points) {
-    var pointStrings = new Array();
-    for (var i=0; i<points.length; i++) {
-      /* Reduce point values to 3dp to help reduce path string size
-         (sometimes (0.001*x)*1000 is not 3dp due to rounding errors, but that doesn't matter) */
-      pointStrings[i] = (0.001*Math.round(points[i][0]*1000) + "," + 
-                         0.001*Math.round(points[i][1]*1000));
+    if (points.length == 0) {
+      return "M0,0";
     }
-    pointStrings[0] = "M" + pointStrings[0];
-    pointStrings[1] = "L" + pointStrings[1];
-    var pathString = pointStrings.join(" ");
-    return pathString;
+    else {
+      var pointStrings = new Array();
+      for (var i=0; i<points.length; i++) {
+        /* Reduce point values to 3dp to help reduce path string size
+           (sometimes (0.001*x)*1000 is not 3dp due to rounding errors, but that doesn't matter) */
+        pointStrings[i] = (0.001*Math.round(points[i][0]*1000) + "," + 
+                           0.001*Math.round(points[i][1]*1000));
+      }
+      pointStrings[0] = "M" + pointStrings[0];
+      pointStrings[1] = "L" + pointStrings[1];
+      var pathString = pointStrings.join(" ");
+      return pathString;
+    }
   }
 
   /* Create an SVG path element to draw a circle */
