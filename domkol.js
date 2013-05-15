@@ -1357,7 +1357,7 @@ NumberHandle.prototype = {
   
   initializeHandleDiv: function(position) {
     this.handleDiv = $('<div/>');
-    this.handleDiv.addClass("zero");
+    this.handleDiv.addClass("number-handle");
     this.handleDiv.css({position: "absolute", 
                         left: (position[0] + 2) + "px", 
                         top: (position[1]-23) + "px", 
@@ -1370,8 +1370,7 @@ NumberHandle.prototype = {
                           top: "21px"})
     this.handleDiv.append(this.pointCircle);
     this.zeroText = $('<div/>');
-    this.zeroText.addClass("zero-text");
-    this.zeroText.text("zero");
+    this.zeroText.addClass("number-text");
     this.handleDiv.append(this.zeroText);
   }, 
   
@@ -1388,7 +1387,6 @@ NumberHandle.prototype = {
     
     function changeNumber(ui, changing) {
       $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
-      console.log("changeNumber, $this.position = [" + $this.position.join(",") + "]");
       $this.number = $this.positionToNumber($this.position);
       $this.setNumberLabel();
       $($this).trigger("numberChanged", [$this.index, $this.number, changing]);
