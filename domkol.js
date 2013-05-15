@@ -50,14 +50,15 @@ $(document).ready(function(){
   controlDialog.addFunctionInstructions("Drag the blue numbers to change the zeroes of the cubic polynomial " + 
                                         "(initially they are all located on the origin).");
 
-  var polynomialFunction = new PolynomialFunction([[0, 0], [0, 0], [0, 0]]);
+  var zeroes = [[0, 0], [0, 0], [0, 0]];
+  var polynomialFunction = new PolynomialFunction(zeroes);
 
   var explorerView = createExplorerView($("#domkol"), polynomialFunction, controlDialog.values, 
                                         240, [280, 280], [560, 560], 150);
   
-  var numZeroes = polynomialFunction.zeroes.length;
-  for (i=0; i<numZeroes; i++) {
-    var zeroHandle = explorerView.createNumberHandle((numZeroes-1)-i);
+  var numZeroes = zeroes.length;
+  for (i=numZeroes-1; i >= 0; i--) { // create in reverse order, because last one created is first one to be dragged
+    var zeroHandle = explorerView.createNumberHandle(i, zeroes[i]);
     $(zeroHandle).on("numberChanged", 
                      function(event, index, number, changing) {
                        polynomialFunction.updateZero(index, number, changing);
@@ -821,6 +822,12 @@ ComplexFunctionExplorerModel.prototype = {
             (this.originPixelLocation[1]-y)/this.pixelsPerUnit];
   }, 
   
+  /** Convert complex number to pixel position (opposite of positionToComplexNumber) */
+  complexNumberToPosition: function(z) {
+    return [this.originPixelLocation[0] + (z[0] * this.pixelsPerUnit), 
+            this.originPixelLocation[1] - (z[1] * this.pixelsPerUnit)];
+  }, 
+  
   /** Compute f for every pixel and write the representative colour values
       to the "data" array in the format that can be directly written to HTML canvas element. */
   writeToCanvasData: function(data) {
@@ -1327,21 +1334,25 @@ CoordinatesView.prototype = {
   }
 };
 
-function NumberHandle(complexFunctionExplorerView, handlesDiv, index, position) {
+function NumberHandle(complexFunctionExplorerView, handlesDiv, index, number) {
   this.complexFunctionExplorerView = complexFunctionExplorerView;
   this.explorerModel = this.complexFunctionExplorerView.explorerModel;
   this.index = index;
-  this.position = position;
+  this.number = number;
+  this.position = this.numberToPosition(number);
   this.handlesDiv = handlesDiv;
-  this.initializeHandleDiv(position);
+  this.initializeHandleDiv(this.position);
   this.initializeDragHandler();
-  this.number = this.positionToNumber(position);
   this.setNumberLabel();
 }
 
 NumberHandle.prototype = {
   positionToNumber: function(position) {
     return this.explorerModel.positionToComplexNumber(position[0], position[1]);
+  }, 
+  
+  numberToPosition: function(number) {
+    return this.explorerModel.complexNumberToPosition(number);
   }, 
   
   initializeHandleDiv: function(position) {
@@ -1377,6 +1388,7 @@ NumberHandle.prototype = {
     
     function changeNumber(ui, changing) {
       $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
+      console.log("changeNumber, $this.position = [" + $this.position.join(",") + "]");
       $this.number = $this.positionToNumber($this.position);
       $this.setNumberLabel();
       $($this).trigger("numberChanged", [$this.index, $this.number, changing]);
@@ -1417,8 +1429,8 @@ function ComplexFunctionExplorerView(attributes) {
 
 ComplexFunctionExplorerView.prototype = {
   
-  createNumberHandle: function(index) {
-    return new NumberHandle(this, this.handlesDiv, index, this.explorerModel.originPixelLocation);
+  createNumberHandle: function(index, number) {
+    return new NumberHandle(this, this.handlesDiv, index, number);
   }, 
   
   /** The function has changed (e.g. from dragging the zeroes around), and may or may not
