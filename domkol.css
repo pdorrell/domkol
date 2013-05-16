@@ -98,3 +98,36 @@ h1 {
   line-height: 0.9em;
 }
 
+.function-links {
+  font-family: Tahoma,Helvetica,sans-serif;
+  font-size: 0.8em;
+  border: 1px solid #e0c0c0;
+  padding: 0.3em 0.2em;
+  margin: 0.5em 2em;
+  background-color: #fafafa;
+
+}
+
+.function-links a, .function-links .non-link {
+  font-weight: bold;
+  margin: 0 0.5em;
+  padding: 0 0.1em;
+  text-decoration: none;
+  background-color: #f0f0f0;
+  border: 1px solid #a0a0a0;
+}
+
+.function-links .non-link {
+  background-color: #d0e0ff;
+}
+
+.function-links a:hover {
+  background-color: #f0f050;
+ }
+
+h1 a {
+  text-decoration: none;
+}
+
+
+
