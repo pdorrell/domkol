@@ -1085,14 +1085,28 @@ var DOMKOL = {};
     }
 
   };
+  
+  function ComplexFunction() {
+  }
+
+  ComplexFunction.prototype = {
+    notifyFormulaChanged: function() {
+      $(this).trigger("formulaChanged", [this.getFormula()]);
+    }, 
+    
+    notifyFunctionChanged: function(changing) {
+      $(this).trigger("functionChanged", [changing]);
+    }
+    
+  };
 
   /** The model for a polynomial function of type (z-a)(z-b)(z-c) with zeroes at a,b,c 
       (Of degree 3 in that example, but could be any degree.)*/
   function PolynomialFunction(zeroes) {
     this.zeroes = zeroes;
   }
-
-  PolynomialFunction.prototype = {
+  
+  PolynomialFunction.prototype = $.extend({}, ComplexFunction.prototype, {
     
     /** Retrieve the function f such that f(z) = f([re(z),im(z)]) is the value of the polynomial applied to z */
     getFunction: function() {
@@ -1123,15 +1137,7 @@ var DOMKOL = {};
       this.notifyFunctionChanged(changing);
     }, 
     
-    notifyFormulaChanged: function() {
-      $(this).trigger("formulaChanged", [this.getFormula()]);
-    }, 
-    
-    notifyFunctionChanged: function(changing) {
-      $(this).trigger("functionChanged", [changing]);
-    }
-    
-  };
+  });
 
   /** Regular expression to parse CSS pixel dimensions such as "35px" or "-45px" */
   var pxRegexp = /^([-0-9]+)px$/
