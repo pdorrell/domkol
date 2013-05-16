@@ -42,20 +42,22 @@ end
 # This task updates the main.html to match the style of the website it is being inserted into
 # (without having to include that data into this project source)
 task :substituteMainHtml do
-  mainHtmlFile = File.join(DOMKOL_WEB_DIR, "main.html")
-  puts "Doing substitutions in #{mainHtmlFile} ..."
+  for htmlFile in ["main.html", "quinticPolynomial.html", "exponentialFunction.html"] do
+    htmlFileName = File.join(DOMKOL_WEB_DIR, htmlFile)
+    puts "Doing substitutions in #{htmlFile} ..."
   
-  mainHtmlFileContents = File.read(mainHtmlFile)
+    htmlFileContents = File.read(htmlFile)
   
-  for entry in Dir.entries(DOMKOL_WEB_TEMPLATE_DIR) do
-    if entry.end_with?(".html")
-      puts " doing substitution for #{entry} ..."
-      mainHtmlFileContents = substituteCommentLine(entry, mainHtmlFileContents)
+    for entry in Dir.entries(DOMKOL_WEB_TEMPLATE_DIR) do
+      if entry.end_with?(".html")
+        puts " doing substitution for #{entry} ..."
+        htmlFileContents = substituteCommentLine(entry, htmlFileContents)
+      end
     end
-  end
   
-  File.open(mainHtmlFile, "w") do |f|
-    f.write(mainHtmlFileContents)
+    File.open(htmlFileName, "w") do |f|
+      f.write(htmlFileContents)
+    end
   end
 end
 
