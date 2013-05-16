@@ -56,7 +56,7 @@ var DOMKOL = {};
     
     var tr = $('<tr/>').appendTo(table);
     this.formulaText = $('<span/>');
-    tr.append($('<td>Function:</td>'), $('<td colspan="2"/>').append(this.formulaText));
+    tr.append($('<td>Function:</td>'), $('<td colspan="2" class ="formula"/>').append(this.formulaText));
     
     tr = $('<tr><td colspan="3" class="instructions">Drag the small black circles to move and' +
            '                                             resize the large circle.</td></tr>').appendTo(table);
