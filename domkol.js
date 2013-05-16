@@ -1086,10 +1086,20 @@ var DOMKOL = {};
 
   };
   
-  function ComplexFunction() {
+  function ComplexFunction(f, formula) {
+    this.f = f;
+    this.formula = formula;
   }
 
   ComplexFunction.prototype = {
+    getFunction: function() {
+      return this.f;
+    }, 
+    
+    getFormula: function() {
+      return this.formula;
+    }, 
+    
     notifyFormulaChanged: function() {
       $(this).trigger("formulaChanged", [this.getFormula()]);
     }, 
@@ -1105,6 +1115,8 @@ var DOMKOL = {};
   function PolynomialFunction(zeroes) {
     this.zeroes = zeroes;
   }
+  
+  
   
   PolynomialFunction.prototype = $.extend({}, ComplexFunction.prototype, {
     
@@ -1486,6 +1498,7 @@ var DOMKOL = {};
   lib.ControlDialogElement = ControlDialogElement;
   lib.ControlDialog = ControlDialog;
   lib.PolynomialFunction = PolynomialFunction;
+  lib.ComplexFunction = ComplexFunction;
   lib.createExplorerView = createExplorerView;
   
   // additional classes
