@@ -46,12 +46,14 @@
 </div>
 
 <div class="wideItem">
+  <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
   <div style="position:relative;height:800px;">
 
+    <!-- The complex plane view will be inserted into this div -->
     <div id="domkol" style="position:absolute;top:0;left:0;"></div>
     
-    <div id="control-dialog" style="position:absolute;top:20px;left:650px;z-index:6;width:30em">
-    </div>
+    <!-- The control dialog will be inserted into this div -->
+    <div id="control-dialog" style="position:absolute;top:20px;left:650px;z-index:6;width:30em"></div>
   </div>
 
 </div>
@@ -66,10 +68,9 @@ the <a href="quinticPolynomial.html">quintic polynomial example</a>, except:
  <li>The canvas is larger than in either of the polynomial examples.</li>
  <li>The pixels per complex unit is <i>less</i>, so more of the complex plane is shown.</li>
  <li>The exponential function does not have any zeroes, so there isn't any position where the 3D
-graph winds around the white circle. (Note however, that in the positive real part of the plane,
+graph winds around the white circle. (Note that in the positive real part of the plane,
 the exponential function outstrips the ability of the "graph scale" slider to reduce the 
-graph scale enough to avoid confusion caused by the radial component of the graph position being
-too negative.)</li>
+graph scale enough to prevent the radial component of the graph position becoming too negative.)</li>
 </ul>
 
 <div class="updated">Last updated: 16 May 2013</div>

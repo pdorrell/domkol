@@ -46,8 +46,10 @@
 </div>
 
 <div class="wideItem">
+  <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
   <div style="position:relative;height:560px;">
 
+    <!-- The complex plane view will be inserted into this div -->
     <div id="domkol" style="position:absolute;top:0;left:0;"></div>
     
     <div class="worksBest" style="position:absolute;top:10px;left:600px;z-index:5;width:300px;">
@@ -57,8 +59,8 @@
           the "Repaint domain colouring continuously" checkbox. 
     </div>
   
-    <div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:6;width:30em">
-    </div>
+    <!-- The control dialog will be inserted into this div -->
+    <div id="control-dialog" style="position:absolute;top:130px;left:480px;z-index:6;width:30em"></div>
   </div>
 
 </div>

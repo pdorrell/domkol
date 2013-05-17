@@ -58,12 +58,14 @@
 </div>
 
 <div class="wideItem">
+  <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
   <div style="position:relative;height:700px;">
 
+    <!-- The complex plane view will be inserted into this div -->
     <div id="domkol" style="position:absolute;top:0;left:0;"></div>
     
-    <div id="control-dialog" style="position:absolute;top:15px;left:635px;z-index:6;width:35em">
-    </div>
+    <!-- The control dialog will be inserted into this div -->
+    <div id="control-dialog" style="position:absolute;top:15px;left:635px;z-index:6;width:35em"></div>
   </div>
 
 </div>
