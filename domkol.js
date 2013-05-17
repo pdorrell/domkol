@@ -1468,6 +1468,10 @@ var DOMKOL = {};
     }
   };
 
+  /** An object representing a "number handle", which is a number displayed
+      on the complex plane which the user can drag around with the mouse, which displays
+      it's current numerical value, and which pinpoints its actual location on the plane
+      with a small circle. */
   function NumberHandle(complexFunctionExplorerView, handlesDiv, index, number) {
     this.complexFunctionExplorerView = complexFunctionExplorerView;
     this.explorerModel = this.complexFunctionExplorerView.explorerModel;
@@ -1481,38 +1485,45 @@ var DOMKOL = {};
   }
 
   NumberHandle.prototype = {
+    /** Convert a pixel position in the form [x,y] to a complex number in the form [x,y] */
     positionToNumber: function(position) {
       return this.explorerModel.positionToComplexNumber(position[0], position[1]);
     }, 
     
+    /** Convert a complex number in the form [x,y] to a pixel position in the form [x,y] */
     numberToPosition: function(number) {
       return this.explorerModel.complexNumberToPosition(number);
     }, 
     
+    /** Create the HTML elements */
     initializeHandleDiv: function(position) {
-      this.handleDiv = $('<div/>');
+      // top-level containing div for the handle, which will be the actual "draggable"
+      this.handleDiv = $('<div/>').appendTo($(this.handlesDiv))
       this.handleDiv.addClass("number-handle");
       this.handleDiv.css({position: "absolute", 
                           left: (position[0] + 2) + "px", 
                           top: (position[1]-23) + "px", 
                           "z-index": 4});
-      $(this.handlesDiv).append(this.handleDiv);
-      this.pointCircle = $('<div/>');
+      
+      // the point circle that identifies the precise position of the complex number in the complex plane
+      this.pointCircle = $('<div/>').appendTo(this.handleDiv);
       this.pointCircle.addClass("point-circle");
       this.pointCircle.css({position: "absolute", 
                             left: "-4px", 
                             top: "21px"})
-      this.handleDiv.append(this.pointCircle);
-      this.zeroText = $('<div/>');
-      this.zeroText.addClass("number-text");
-      this.handleDiv.append(this.zeroText);
+      
+      // The text which displays the value of the complex number
+      this.numberText = $('<div/>').appendTo(this.handleDiv);
+      this.numberText.addClass("number-text");
     }, 
     
+    /** Update the text displaying the complex number (rounded to 2D precision) */
     setNumberLabel: function() {
       var formattedNumber = formatComplexNumber(this.number[0], this.number[1], 2);
-      this.zeroText.text(formattedNumber);
+      this.numberText.text(formattedNumber);
     },    
     
+    /** initialise the handle's div as a draggable, so that it triggers "numberChanged" events */
     initializeDragHandler: function() {
       var pointCircle = this.pointCircle;
       var pointXOffset = fromPx(pointCircle.css("left")) + fromPx(pointCircle.css("width"))/2;
@@ -1523,7 +1534,9 @@ var DOMKOL = {};
         $this.position = [ui.position.left + pointXOffset, ui.position.top + pointYOffset];
         $this.number = $this.positionToNumber($this.position);
         $this.setNumberLabel();
-        $($this).trigger("numberChanged", [$this.index, $this.number, changing]);
+        $($this).trigger("numberChanged", [$this.index, // each number handle to be identified by a unique index
+                                           $this.number, // the new value of the complex number
+                                           changing]); // if the user interaction is still ongoing (and not yet finished)
       }
       
       /** When dragged, update the corresponding zero in the function model, and tell the 
