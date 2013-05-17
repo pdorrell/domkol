@@ -48,13 +48,19 @@ var DOMKOL = {};
 
 (function(lib) {
 
+  /** Object which constructs the DOM tree of the Control Dialog, and which holds references to
+   the active components in the dialog (i.e. those elements which are used to control the main
+   explorer view and those which echo the status of the explorer view)*/
   function ControlDialogElement(div) {
+    // The top level div which will be inserted into the supplied containing div
     this.div = div;
     var innerDiv = $('<div/>').appendTo(this.div);
+    // windowTopBar - the bar that can be used to drag the dialog around
     this.windowTopBar = $('<div class="window-top-bar"/>').appendTo(innerDiv);
     var table = $('<table/>').appendTo(innerDiv);
     
     var tr = $('<tr/>').appendTo(table);
+    // formulaText - where the function's formula is displayed
     this.formulaText = $('<span/>');
     tr.append($('<td>Function:</td>'), $('<td colspan="2" class ="formula"/>').append(this.formulaText));
     
@@ -62,47 +68,59 @@ var DOMKOL = {};
            '                                             resize the large circle.</td></tr>').appendTo(table);
 
     tr = $('<tr/>').appendTo(table);
+    // functionInstructionsText - text to display optional instructions about how to manipulate the function
     this.functionInstructionsText = $('<td colspan="3" class="instructions"/>');
     tr.append(this.functionInstructionsText);
     
     tr = $('<tr/>').appendTo(table);
+    // functionScaleSlider - the div that will become the slider that controls the function scale
     this.functionScaleSlider = $('<div style="width:240px;"/>');
+    // functionScaleText - the text to display the current function scale
     this.functionScaleText = $('<td style="width:5em;text-align:right"/>');
     tr.append($('<td>Graph scale:</td>'), 
               $('<td/>').append(this.functionScaleSlider), 
               this.functionScaleText);
     
     tr = $('<tr/>').appendTo(table);
+    // colourScaleSlider - the div that will become the slider that controls the colour scale
     this.colourScaleSlider = $('<div style="width:240px;"/>');
+    // colourScaleText - the text to display the current colour scale
     this.colourScaleText = $('<td style="width:5em;text-align:right"/>');
     tr.append($('<td>Colour scale:</td>'), 
               $('<td/>').append(this.colourScaleSlider), 
               this.colourScaleText);
     
     tr = $('<tr/>').appendTo(table);
+    // showCircleGraphCheckbox - checkbox to control if the circle graph is displayed or not
     this.showCircleGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<td colspan="2">Show graph on circular domain: </td>').append(this.showCircleGraphCheckbox));
     
     tr = $('<tr/>').appendTo(table);
+    // show3DGraphCheckbox - checkbox to control if the circle graph is shown in 3D (otherwise 2D)
     this.show3DGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<td colspan="2">Show graph on circular domain in 3D: </td>').append(this.show3DGraphCheckbox));
     
     tr = $('<tr/>').appendTo(table);
+    // wiggleCheckbox - checkbox to control if the 3D circle graph "wiggles" side to side
     this.wiggleCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<td colspan="2">3D Wiggle animation: </td>').append(this.wiggleCheckbox));
     
     tr = $('<tr/>').appendTo(table);
+    // rotateGraphSlider - the div that will become the slider that controls the rotation of the function value
     this.rotateGraphSlider = $('<div style="width:240px;"/>');
+    // graphRotationText - the text to display the current rotation of the function value
     this.graphRotationText = $('<td style="width:5em;text-align:right;font-size:0.8em"/>');
     tr.append($('<td>Rotate <b>f</b> values:</td>'), 
               $('<td/>').append(this.rotateGraphSlider), 
               this.graphRotationText);
     
     tr = $('<tr/>').appendTo(table);
+    // showCoordinateGridCheckbox - checkbox to control if the complex plane coordinates are displayed
     this.showCoordinateGridCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<td colspan="2">Show domain coordinate grid: </td>').append(this.showCoordinateGridCheckbox));
     
     tr = $('<tr/>').appendTo(table);
+    // repaintContinuouslyCheckbox - checkbox to control if repainting should be continuous
     this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<td colspan="2">Repaint domain colouring continuously: </td>').append(this.repaintContinuouslyCheckbox));
     
@@ -110,13 +128,20 @@ var DOMKOL = {};
       '           <br/>Also you can move this control window around.)</td></tr>').appendTo(table);
   }
 
-  function createExplorerView(domkolDivElement, complexFunction, initialValues, 
-                              pixelsPerUnit, originPixelLocation, pixelsDimension, circleRadius) {
+  /** Top-level function to create the ComplexFunctionExplorerModel object */
+  function createExplorerView(domkolDivElement, // object representing the complex plane DOM tree
+                              complexFunction, // object representing the complex function being "explored"
+                              initialValues, // initial values (for settings controlled by the control dialog)
+                              pixelsPerUnit, // How many pixels per complex unit (i.e. to represent either 1 or i)?
+                              originPixelLocation, // Pixel location of complex origin, in form [x, y]
+                              pixelsDimension, // Dimension in pixels of complex plane, in form [width, height]
+                              circleRadius) { // Initial radius in pixels of the circle
     
     /* The model of the circular subset of the complex plane */
     var domainCircle = new DomainCircle({circumferenceIncrementInPixels: 1});
     
-    /* The main model of the application */
+    /* The main model of the view of the function on the complex plane, including domain colouring,
+       complex plane cooordinates, and the circle graph.*/
     var explorerModel = new ComplexFunctionExplorerModel({ f: complexFunction.getFunction(), 
                                                            pixelsPerUnit: pixelsPerUnit, 
                                                            originPixelLocation: originPixelLocation, 
@@ -124,6 +149,7 @@ var DOMKOL = {};
                                                            circleRadius: circleRadius, 
                                                            domainCircle: domainCircle });
     
+    // object representing DOM tree of the complex plane view
     var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
                                             explorerModel.pixelsDimension, explorerModel.circleRadius);
     domkolElements.initialize();
@@ -156,27 +182,33 @@ var DOMKOL = {};
                                             complexFunction: complexFunction});
   }
   
+  /** Object representing the Control Dialog, constructed from JQuery wrappers of the relevant DOM elements */
   function ControlDialog(attributes) {
     setAttributes(this, attributes, 
-                  [ "div", 
-                    "functionInstructionsText", 
-                    "wiggleCheckbox", 
-                    "showCircleGraphCheckbox", 
-                    "show3DGraphCheckbox", 
-                    "rotateGraphSlider", 
-                    "graphRotationText", 
-                    "showCoordinateGridCheckbox", 
-                    "functionScaleSlider", 
-                    "colourScaleSlider", 
-                    "repaintContinuouslyCheckbox", 
-                    "formulaText", 
-                    "functionScaleText", 
-                    "colourScaleText"
+                  [ "div", // top-level div (required to configure draggability)
+                    "functionInstructionsText", // text to display (optional) function instructions
+                    "wiggleCheckbox", // checkbox to control "wiggle"
+                    "showCircleGraphCheckbox", // checkbox to control if circle graph is shown
+                    "show3DGraphCheckbox", // checkbox to control if circle graph is shown in 3D
+                    "rotateGraphSlider", // slider to control rotation of function values (on circle graph)
+                    "graphRotationText", // text to display graph rotation
+                    "showCoordinateGridCheckbox", // checkbox to control display of coordinate grid
+                    "functionScaleSlider", // slider to control function scale (on circle graph)
+                    "colourScaleSlider", // slider to control colour scale (of domain colouring)
+                    "repaintContinuouslyCheckbox", // checkbox to control continuous repainting
+                    "formulaText", // text to display function formula
+                    "functionScaleText", // text to display function scale
+                    "colourScaleText" // text to display colour scale
                   ]);
     this.initialize();
   }
 
   ControlDialog.prototype = {
+    /** Initialise all the control elements. This will be called prior
+        to creating the ComplexFunctionExplorerView object. It populates initial control values into
+        this.values, which can then be provided to the constructor
+        of the ComplexFunctionExplorerView object (so that the control dialog and the settings it controls
+        are initially in sync). */
     initialize: function() {
       this.values = {};
       this.initializeWiggleCheckbox();
@@ -192,7 +224,12 @@ var DOMKOL = {};
       $(this.div).draggable({handle: ".window-top-bar"});
     }, 
     
-    /** Connect this control dialog to an instance of ComplexFunctionExplorerView */
+    /** Connect this control dialog to an instance of ComplexFunctionExplorerView.
+        This configures all the event handlers that allow the control dialog to control
+        the state of the ComplexFunctionExplorerView, and also those which display current
+        state of the ComplexFunctionExplorerView (i.e. the function formula, function scale, 
+        colour scale, function value rotation).
+     */
     connect: function(explorerView) {
       var domainCircleView = explorerView.domainCircleView;
       var coordinatesView = explorerView.coordinatesView;
@@ -212,22 +249,30 @@ var DOMKOL = {};
       this.connectRepaintContinuouslyCheckbox(explorerView);
     }, 
     
+    /** Method to be called to add (optional) instructions to the user about how to manipulate the function
+        (if such an option is made available to the user) */
     addFunctionInstructions: function(text) {
       this.functionInstructionsText.text(text);
     }, 
     
+    /** Initialise the "wiggle" checkbox and record the initial wiggling state from the checkbox. */
     initializeWiggleCheckbox: function() {
       this.values.wiggling = this.wiggleCheckbox[0].checked;
     }, 
     
+    /** Initialise the "show circle graph" checkbox and record the initial state from the checkbox. */
     initializeShowCircleGraphCheckbox: function() {
       this.values.showCircleGraph = this.showCircleGraphCheckbox[0].checked;
     }, 
     
+    /** Initialise the "show 3D graph" checkbox and record the initial state from the checkbox. */
     initializeShow3DGraphCheckbox: function (){
       this.values.show3D = this.show3DGraphCheckbox[0].checked;
     }, 
 
+    /** Create the rotate graph slider, and configure it to trigger "graphRotationChanged" events.
+        Record the initial rotation value.
+     */
     initializeRotateGraphSlider: function (){
       function getGraphRotationFromSliderValue(sliderValue) {
         var rotationAngle = ((sliderValue-50)/50.0)*Math.PI;
@@ -249,11 +294,15 @@ var DOMKOL = {};
 
       this.values.graphRotation = getGraphRotationFromSliderValue(rotateGraphSlider.slider("value"));
     }, 
-
+    
+    /** Initialise the "show coordinate grid" checkbox and record the initial state from the checkbox. */
     initializeShowCoordinateGridCheckbox: function (){
       this.values.showCoordinateGrid = this.showCoordinateGridCheckbox[0].checked;
     }, 
 
+    /** Create the rotate graph slider, and configure it to trigger "functionScaleChanged" events.
+        Record the initial function scale value.
+     */
     initializeFunctionScaleSlider: function (){
       function getFunctionScaleFromSliderValue (sliderValue) {
         return 0.5 * Math.pow(1.08, sliderValue-50);
@@ -272,6 +321,9 @@ var DOMKOL = {};
       this.values.functionScale = getFunctionScaleFromSliderValue(functionScaleSlider.slider("value"));
     }, 
 
+    /** Create the colour graph slider, and configure it to trigger "colourScaleChanged" events.
+        Record the initial function scale value.
+     */
     initializeColourScaleSlider: function (){
       function getColourScaleFromSliderValue (sliderValue) {
         return 1.0 * Math.pow(1.2, sliderValue-50);
@@ -294,10 +346,13 @@ var DOMKOL = {};
       this.values.colourScale = getColourScaleFromSliderValue(colourScaleSlider.slider("value"));
     }, 
 
+    /** Initialise the "repaint continuously" checkbox and record the initial state from the checkbox. */
     initializeRepaintContinuouslyCheckbox: function (){
       this.values.repaintContinuously = this.repaintContinuouslyCheckbox[0].checked;
     }, 
 
+    /** Convenience method to define event handlers on other objects in which "this" will be "this"
+        (and not the object that the event was triggered on). */
     onProxied: function(object, eventName, handler) {
       var $this = this;
       $(object).on(eventName, function() {
@@ -1501,8 +1556,7 @@ var DOMKOL = {};
   lib.ComplexFunction = ComplexFunction;
   lib.createExplorerView = createExplorerView;
   
-  // additional classes
-  
+  // additional classes (useful if you wish to write your own alternative to createExplorerView)
   lib.DomainCircle = DomainCircle;
   lib.ComplexFunctionExplorerModel = ComplexFunctionExplorerModel;
   lib.DomkolElements = DomkolElements;
