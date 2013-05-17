@@ -489,7 +489,7 @@ var DOMKOL = {};
       this.initializeAxesAndCircleGraph();
       this.initializeHandles();
     }, 
-    /** Create the "handles" div element which will hold any number handles that get created. */
+    /** Create the "handles" div element which will hold any complex number handles that get created. */
     initializeHandles: function() {
       var handlesDivWrapper = $("<div/>");
       $(this.div).append(handlesDivWrapper);
@@ -1468,11 +1468,12 @@ var DOMKOL = {};
     }
   };
 
-  /** An object representing a "number handle", which is a number displayed
+  /** An object representing a "complex number handle", which is a number displayed
       on the complex plane which the user can drag around with the mouse, which displays
       it's current numerical value, and which pinpoints its actual location on the plane
-      with a small circle. */
-  function NumberHandle(complexFunctionExplorerView, handlesDiv, index, number) {
+      with a small circle. 
+      To connect another object to the a handle, subscribe to the "numberChanged" event. */
+  function ComplexNumberHandle(complexFunctionExplorerView, handlesDiv, index, number) {
     this.complexFunctionExplorerView = complexFunctionExplorerView;
     this.explorerModel = this.complexFunctionExplorerView.explorerModel;
     this.index = index;
@@ -1484,7 +1485,7 @@ var DOMKOL = {};
     this.setNumberLabel();
   }
 
-  NumberHandle.prototype = {
+  ComplexNumberHandle.prototype = {
     /** Convert a pixel position in the form [x,y] to a complex number in the form [x,y] */
     positionToNumber: function(position) {
       return this.explorerModel.positionToComplexNumber(position[0], position[1]);
@@ -1574,8 +1575,8 @@ var DOMKOL = {};
 
   ComplexFunctionExplorerView.prototype = {
     
-    createNumberHandle: function(index, number) {
-      return new NumberHandle(this, this.handlesDiv, index, number);
+    createComplexNumberHandle: function(index, number) {
+      return new ComplexNumberHandle(this, this.handlesDiv, index, number);
     }, 
     
     /** The function has changed (e.g. from dragging the zeroes around), and may or may not
@@ -1646,7 +1647,7 @@ var DOMKOL = {};
   lib.DomkolElements = DomkolElements;
   lib.DomainCircleView = DomainCircleView;
   lib.CoordinatesView = CoordinatesView;
-  lib.NumberHandle = NumberHandle;
+  lib.ComplexNumberHandle = ComplexNumberHandle;
   
 })(DOMKOL);
 

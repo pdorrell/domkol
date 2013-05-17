@@ -28,7 +28,7 @@ $(document).ready(function(){
   /** Create draggable "number handles" to control values of the zeroes of the polynomial */
   var numZeroes = zeroes.length;
   for (i=numZeroes-1; i >= 0; i--) { // create in reverse order, because last one created is first one to be dragged
-    var zeroHandle = explorerView.createNumberHandle(i, zeroes[i]);
+    var zeroHandle = explorerView.createComplexNumberHandle(i, zeroes[i]);
     // When the dragged number changes, update the corresponding zero in the polynomial
     $(zeroHandle).on("numberChanged", 
                      function(event, index, number, changing) {
