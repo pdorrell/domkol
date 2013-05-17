@@ -360,6 +360,8 @@ var DOMKOL = {};
       });
     },
     
+    /** Connect "wiggle" check to domain circle view to control the "wiggling", 
+        and set its enablement as a function of whether the graph is being shown in 3D */
     connectWiggleCheckbox: function(domainCircleView) {
       this.wiggleCheckbox.on("change", function(event) {
         domainCircleView.setWiggling(this.checked);
@@ -369,12 +371,16 @@ var DOMKOL = {};
                        setCheckboxEnabled(this.wiggleCheckbox, showing); });
     }, 
     
+    /** Connect "show circle graph" checkbox to domain circle view to control 
+        if the circle graph is to be shown */
     connectShowCircleGraphCheckbox: function(domainCircleView) {
       this.showCircleGraphCheckbox.on("change", function(event) {
         domainCircleView.setShowCircleGraph(this.checked);
       });
     }, 
 
+    /** Connect "show 3D graph" checkbox to domain circle view to control if the circle graph
+     is shown in 3D (and not 2D), and set its enablement as a function of whether the graph is being shown */
     connectShow3DGraphCheckbox: function(domainCircleView) {
       this.show3DGraphCheckbox.on("change", function(event) {
         domainCircleView.setShow3D(this.checked);
@@ -384,12 +390,14 @@ var DOMKOL = {};
       });
     }, 
 
+    /** Connect the "rotate graph" slider to domain circle view to control the graph rotation */
     connectRotateGraphSlider: function(domainCircleView) {
       this.rotateGraphSlider.on("graphRotationChanged", function(event, graphRotation) {
         domainCircleView.setGraphRotation(graphRotation);
       });
     }, 
 
+    /** Connect the "graph rotation" text to the domain circle view to display current graph rotation. */
     connectGraphRotationText: function(domainCircleView) {
       this.onProxied(domainCircleView, "graphRotationChanged", function(event, text) {
         this.graphRotationText.text(text);
@@ -397,30 +405,39 @@ var DOMKOL = {};
       domainCircleView.notifyGraphRotationChanged(); // to show initial value
     }, 
 
+    /** Connect the "show coordinate grid" checkbox to the coordinates view to control if
+        the coordinates are displayed. */
     connectShowCoordinateGridCheckbox: function(coordinatesView) {
       this.showCoordinateGridCheckbox.on("change", function(event) {
         coordinatesView.setShowCoordinateGrid(this.checked);
       });
     }, 
 
+    /** Connect the "function scale" slider to the explorer view to control the function scale */
     connectFunctionScaleSlider: function(explorerView) {
       this.functionScaleSlider.on("functionScaleChanged", function(event, scale) {
         explorerView.setFunctionScale(scale);
       });
     }, 
 
+    /** Connect the "colour scale" slider to the explorer view to control the colour scale */
     connectColourScaleSlider: function(explorerView) {
       this.colourScaleSlider.on("colourScaleChanged", function(event, scale, changing) {
         explorerView.setColourScale(scale, changing);
       });
     }, 
 
+    /** Connect the "repaint continuously" checkbox to the explorer view to control if
+        the domain colouring is continously repainted (when the user is doing something to
+        change it). */
     connectRepaintContinuouslyCheckbox: function(explorerView) {
       this.repaintContinuouslyCheckbox.on("change", function(event) {
         explorerView.repaintContinuously = this.checked;
       });
     }, 
 
+    /** Connect the formula text to the complex function to display the current function formula
+        (relevant when the user can change the function itself somehow)*/
     connectFormulaText: function(complexFunction) {
       this.onProxied(complexFunction, "formulaChanged", function(event, formula) {
         this.formulaText.text(formula);
@@ -428,6 +445,8 @@ var DOMKOL = {};
       complexFunction.notifyFormulaChanged(); // to display initial value
     }, 
 
+    /** Connect the "function scale" text to the explorer view to display 
+        the current value of the function scale. */
     connectFunctionScaleText: function(explorerView) {
       this.onProxied(explorerView, "functionScaleChanged", function(event, scale) {
         this.functionScaleText.text(reformatToPrecision(scale.toString(), 3));
@@ -435,6 +454,8 @@ var DOMKOL = {};
       explorerView.notifyFunctionScaleChanged(); // to display initial value
     }, 
 
+    /** Connect the "colour scale" text to the explorer view to display 
+        the current value of the colour scale. */
     connectColourScaleText: function(explorerView) {
       this.onProxied(explorerView, "colourScaleChanged", function(event, scale) {
         this.colourScaleText.text(reformatToPrecision(scale.toString(), 3));
@@ -444,7 +465,12 @@ var DOMKOL = {};
 
   };
   
-  function DomkolElements(div, originPixelLocation, pixelsDimension, circleRadius) {
+  /** Object which creates and holds the DOM tree for the complex plane view, the coordinate grid, 
+      the circle graph and the "handles" div element to hold any number handles that might (later on) be created.*/
+  function DomkolElements(div, // The containing div into which the DOM elements will be inserted
+                          originPixelLocation, // pixel location of complex origin in form [x, y]
+                          pixelsDimension, // pixel dimension of the complex plane canvas object, in form [width, height]
+                          circleRadius) { // initial radius of the circle in pixels
     this.div = div;
     this.originPixelLocation = originPixelLocation;
     this.pixelsDimension = pixelsDimension;
@@ -456,17 +482,20 @@ var DOMKOL = {};
   }
 
   DomkolElements.prototype = {
+    /** Create and initialise all the DOM components */
     initialize: function() {
       this.initializeCanvas();
       this.initializeRealPathUnder();
       this.initializeAxesAndCircleGraph();
       this.initializeHandles();
     }, 
+    /** Create the "handles" div element which will hold any number handles that get created. */
     initializeHandles: function() {
       var handlesDivWrapper = $("<div/>");
       $(this.div).append(handlesDivWrapper);
       this.handlesDiv = handlesDivWrapper[0];
     }, 
+    /** Create the canvas element which the domain colouring is painted on. */
     initializeCanvas: function() {
       var canvas = $("<canvas/>");
       $(this.div).append(canvas);
@@ -476,6 +505,8 @@ var DOMKOL = {};
       this.canvas = canvas[0];
     }, 
     
+    /** Create the SVG path representing that part of the 3D graph which is under the
+        (somewhat transparent) domain colouring canvas. */
     initializeRealPathUnder: function() {
       var svg = createSvgElement(this.div, "svg", 
                                  {style: "position:absolute;top:0;left:0;z-index:1;", 
@@ -486,6 +517,7 @@ var DOMKOL = {};
                                             {d: "M0,0", fill: "none", stroke: "blue", 
                                              "stroke-width": 5, "stroke-opacity": "1.0"});
     }, 
+    /** Create the SVG paths for the all the components of the circle graph */
     initializeAxesAndCircleGraph: function() {
       var svg = createSvgElement(this.div, "svg", 
                                  {style: "position:absolute;top:0;left:0;z-index:3;", 
@@ -494,6 +526,7 @@ var DOMKOL = {};
       this.initializeAxes(svg);
       this.initializeCircleGraph(svg);
     }, 
+    /** Create the (initially empty) SVG paths for the coordinate axes */
     initializeAxes: function(svg) {
       this.coordinates = createSvgElement(svg, "g");
       this.coordinatesGroup = createSvgElement(this.coordinates, "g");
@@ -504,29 +537,47 @@ var DOMKOL = {};
       this.fineCoordinateGrid = createSvgElement(this.coordinates, "path", 
                                                  {d: "M0,0", stroke: "#909090", "stroke-width": "0.2"});
     }, 
+    /** Create all SVG components of the circle graph other than the "under" part of the 3D graph. 
+        That is, all parts of the circle graph that appear "over" the domain colouring canvas. */
     initializeCircleGraph: function(svg) {
+      /** The div that contains all the "over" circle graph components */
       this.circleGraph = createSvgElement(svg, "g");
+      
+      /** The big circle */
       this.bigCircle = createSvgElement(this.circleGraph, "circle", 
                                         {cx: this.originX, cy: this.originY, r: this.circleRadius, 
                                          stroke: "white", "stroke-width": 7, fill: "none"});
+      /** The fine detail of the polar coordinates grid */
       this.polarGrid = createSvgElement(this.circleGraph, "path", 
                                         {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.2"});
+      
+      /** The thicker parts of the polar coordinate grid */
       this.polarGridCoarse = createSvgElement(this.circleGraph, "path", 
                                               {d: "M0,0", fill: "none", stroke: "white", "stroke-width": "0.4"});
+      
+      /** The "real" path - either the "over" part of the real path in 3D mode, or the whole real path in "2D" mode */
       this.realPath = createSvgElement(this.circleGraph, "path", 
                                        {d: "M0,0", fill: "none", stroke: "blue", "stroke-width": "5"});
+      
+      /** Two shadow paths for the "over" part of the real part of the graph in 3D mode. */
       this.realPathShadow = createSvgElement(this.circleGraph, "path", 
                                              {d: "M0,0", fill: "none", stroke: "#404040", 
                                               "stroke-width": "5", "stroke-opacity": "0.08"});
       this.realPathShadow2 = createSvgElement(this.circleGraph, "path", 
                                               {d: "M0,0", fill: "none", stroke: "#404040", 
                                                "stroke-width": "5", "stroke-opacity": "0.05"});
+      
+      /** The "imaginary" path - the imaginary part of the graph in 2D mode. */
       this.imaginaryPath = createSvgElement(this.circleGraph, "path", 
                                             {d: "M0,0", fill: "none", stroke: "#302010", "stroke-width": "5"});
+      
+      /** The circular handle for moving the centre of the circle (and with it the rest of the circle graph). */
       this.centreHandle = createSvgElement(this.circleGraph, "circle", 
                                            {transform: "translate(" + this.originX + " " + this.originY + ")", 
                                             cx: "0", cy: "0", r: "7", 
                                             stroke: "white", "stroke-width": "2", fill: "black"});
+      
+      /** The circular handle for resizing the radius of the circle. */
       this.edgeHandle = createSvgElement(this.circleGraph, "circle", 
                                          {transform: ("translate(" + (this.originX + this.circleRadius) + 
                                                       " " + this.originY + ")"), 
@@ -535,6 +586,8 @@ var DOMKOL = {};
     }
   };
 
+  /** Function to add "c" as a keyboard shortcut to reset the initial value of a JQuery UI slider.
+      (Called "centre", because I assume that all sliders are initialise to a central value.) */
   function setSliderKeyboardShortcuts(slider) {
     var initialValue = slider.slider("value");
     slider.keypress(function(e) { 
@@ -545,6 +598,7 @@ var DOMKOL = {};
     });
   }
 
+  /** Convenience function to set a boolean "is-it-there-or-is-it-not-there" HTML attribute */
   function setBooleanElementAttibute(element, attribute, value) {
     if (value) {
       element.attr(attribute, true);
@@ -554,10 +608,12 @@ var DOMKOL = {};
     }
   }
 
+  /** Convenience function to enable/disable an HTML checkbox */
   function setCheckboxEnabled(checkbox, enabled) {
     setBooleanElementAttibute(checkbox, "disabled", !enabled);
   }
 
+  /** Convenience function to check/uncheck an HTML checkbox */
   function setCheckboxChecked(checkbox, checked) {
     setBooleanElementAttibute(checkbox, "checked", checked);
   }
@@ -646,7 +702,6 @@ var DOMKOL = {};
   /* Create 3 SVG path attributes for an array of 3D points -
      3rd value of point determines which path it belongs to
      for over, under and "shadow" */
-
   function createOverUnderAndShadowPointPaths(points) {
     var pointStrings = [new Array(), new Array(), new Array(), new Array()];
     var currentPath = -1; // initially neither 0 or 1
@@ -911,7 +966,7 @@ var DOMKOL = {};
                                 "edgeHandle", /** edge handle which is a SVG circle */
                                 "bigCircle", /** SVG circle element representing the subset of the domain*/
                                 "polarGrid", /** SVG path representing 
-                                                 the polar grid (circles & radial axes) */
+                                                 the polar coordinate grid (circles & radial axes) */
                                 "polarGridCoarse", /** SVG path representing 
                                                        the "coarse" part of polar grid, inner&outer radial circles and 
                                                        vert&horiz radial axes  */
@@ -986,12 +1041,14 @@ var DOMKOL = {};
   }
 
   DomainCircleView.prototype = {
-    
+
+    /** Called when a user control sets the circle graph to show or don't show */
     setShowCircleGraph: function(showing) {
       this.showCircleGraph = showing;
       this.updateGraphVisibility();
     },
     
+    /** Called when a user control sets the graph mode to 3D or 2D */
     setShow3D: function(showing) {
       this.show3D = showing;
       this.updateGraphVisibility();
@@ -1001,6 +1058,7 @@ var DOMKOL = {};
       this.drawFunctionOnCircle();
     }, 
     
+    /** Called when a user control sets the 3D graph to wiggling or not wiggling. */
     setWiggling: function(wiggling) {
       this.wiggling = wiggling;
       if (!wiggling) {
@@ -1009,6 +1067,7 @@ var DOMKOL = {};
       }
     }, 
     
+    /** Initialise the wiggle angles (calculated so as to provide a smooth back and forth effect) */
     initializeWiggleAngles: function() {
       var maxWiggle = 0.3;
       var numWiggles = 15;
@@ -1021,13 +1080,15 @@ var DOMKOL = {};
       this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
     }, 
     
+    /** Update the wiggle angle one step */
     wiggleOneStep: function() {
       this.wiggleIndex = (this.wiggleIndex+1) % this.wiggleAngles.length;
       this.domainCircle.wiggleAngle = this.wiggleAngles[this.wiggleIndex];
       this.drawFunctionOnCircle();
     },    
     
-    /** Update the circle position from view changes. */
+    /** Update the circle position from view changes (either moving the whole circle
+     or changing its radius) */
     updateCirclePosition: function() {
       this.domainCircle.centreHandlePosition = getTranslation(this.dom.centreHandle);
       this.domainCircle.edgeHandlePosition = minus(getTranslation(this.dom.edgeHandle), 
@@ -1035,18 +1096,20 @@ var DOMKOL = {};
       this.domainCircle.calculateRadius();
     }, 
     
+    /** Called when a user control changes the graph rotation */
     setGraphRotation: function(graphRotation) {
       this.domainCircle.graphRotation = graphRotation;
       this.notifyGraphRotationChanged();
       this.drawFunctionOnCircle();
     }, 
     
+    /** Trigger event to update additional observers of current graph rotation */
     notifyGraphRotationChanged: function() {
       var graphRotation = this.domainCircle.graphRotation;
       $(this).trigger("graphRotationChanged", formatComplexNumber(graphRotation[0], graphRotation[1], 2));
     }, 
     
-    // changes determined by "show circle" & "show 3D"
+    /** Update visibility of graph components (initially, or as a function of user changes) */
     updateGraphVisibility: function() {
       this.dom.circleGraph.toggle(this.showCircleGraph);
       var showing3DGraph = this.showCircleGraph && this.show3D;
@@ -1140,25 +1203,32 @@ var DOMKOL = {};
     }
 
   };
-  
-  function ComplexFunction(f, formula) {
+
+  /** An object representing a complex function to be visualized, with a fixed function
+      and a fixed plain text formula to display it to the user.*/
+  function ComplexFunction(f, // a function that maps from z = [x,y] to the result (also in the form x+yi = [x, y])
+                           formula) { // the (plain text) formula for this function
     this.f = f;
     this.formula = formula;
   }
 
   ComplexFunction.prototype = {
+    /** Get the function */
     getFunction: function() {
       return this.f;
     }, 
     
+    /** Get the formula */
     getFormula: function() {
       return this.formula;
     }, 
     
+    /** Notify observers that the formula has changed */
     notifyFormulaChanged: function() {
       $(this).trigger("formulaChanged", [this.getFormula()]);
     }, 
     
+    /** Notify observers that the function has changed */
     notifyFunctionChanged: function(changing) {
       $(this).trigger("functionChanged", [changing]);
     }
@@ -1166,12 +1236,11 @@ var DOMKOL = {};
   };
 
   /** The model for a polynomial function of type (z-a)(z-b)(z-c) with zeroes at a,b,c 
-      (Of degree 3 in that example, but could be any degree.)*/
+      (Of degree 3 in that example, but could be any degree.) Includes the ability
+      to update the zeroes from user interaction. */
   function PolynomialFunction(zeroes) {
     this.zeroes = zeroes;
   }
-  
-  
   
   PolynomialFunction.prototype = $.extend({}, ComplexFunction.prototype, {
     
@@ -1198,6 +1267,8 @@ var DOMKOL = {};
       return formula;
     }, 
     
+    /** Called to update one of the zero's as a result of user interaction.
+     Notifies all observers of the function. */
     updateZero: function(index, number, changing) {
       this.zeroes[index] = number;
       this.notifyFormulaChanged();
