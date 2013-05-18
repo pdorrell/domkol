@@ -24,6 +24,10 @@ text.coordinates {
   width: 8em;
 }
 
+.scale-slider { 
+  width: 240px;
+}
+
 .formula-label {
   display:inline-block;
   width: 8em;
@@ -33,9 +37,30 @@ text.coordinates {
   display:inline-block;
 }
 
+.slider-value {
+  display:inline-block;
+  width: 6em;
+  text-align: left;
+  padding: 0 0 0 1em;
+}
+
 .formula {
   font-weight: bold;
   font-size: 0.9em;
+}
+
+.instructions {
+  font-size: 0.9em;
+  padding: 0.5em 2em 0.7em 2em;
+  font-style: italic;
+  line-height: 1.1em;
+}
+
+.note {
+  font-size: 0.7em;
+  padding: 0.5em 1em 0.3em 3em;
+  font-style: italic;
+  line-height: 1.1em;
 }
 
 .worksBest {
@@ -96,20 +121,6 @@ h1 {
   line-height: 1.5em;
   background-color: #ffffff;
   font-family: Georgia, "Times New Roman",serif;
-}
-
-.instructions {
-  font-size: 0.9em;
-  padding: 0.5em 2em;
-  font-style: italic;
-  line-height: 1.1em;
-}
-
-.note {
-  font-size: 0.7em;
-  padding: 0.5em 1em 0.3em 3em;
-  font-style: italic;
-  line-height: 1.1em;
 }
 
 .function-links {

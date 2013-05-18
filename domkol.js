@@ -75,18 +75,18 @@ var DOMKOL = {};
     
     tr = $('<div/>').appendTo(table);
     // functionScaleSlider - the div that will become the slider that controls the function scale
-    this.functionScaleSlider = $('<div style="width:240px;"/>');
+    this.functionScaleSlider = $('<div class="scale-slider"/>');
     // functionScaleText - the text to display the current function scale
-    this.functionScaleText = $('<span style="width:5em;text-align:right"/>');
+    this.functionScaleText = $('<div class="slider-value"/>');
     tr.append($('<div class="slider-label">Graph scale:</div>'), 
               $('<div class="slider-container"/>').append(this.functionScaleSlider), 
               this.functionScaleText);
     
     tr = $('<div class="control"/>').appendTo(table);
     // colourScaleSlider - the div that will become the slider that controls the colour scale
-    this.colourScaleSlider = $('<div style="width:240px;"/>');
+    this.colourScaleSlider = $('<div class="scale-slider"/>');
     // colourScaleText - the text to display the current colour scale
-    this.colourScaleText = $('<span style="width:5em;text-align:right"/>');
+    this.colourScaleText = $('<div class="slider-value"/>');
     tr.append($('<div class = "slider-label">Colour scale:</div>'), 
               $('<div class="slider-container"/>').append(this.colourScaleSlider), 
               this.colourScaleText);
@@ -108,9 +108,9 @@ var DOMKOL = {};
     
     tr = $('<div/>').appendTo(table);
     // rotateGraphSlider - the div that will become the slider that controls the rotation of the function value
-    this.rotateGraphSlider = $('<div style="width:240px;"/>');
+    this.rotateGraphSlider = $('<div class="scale-slider"/>');
     // graphRotationText - the text to display the current rotation of the function value
-    this.graphRotationText = $('<span style="width:5em;text-align:right;font-size:0.8em"/>');
+    this.graphRotationText = $('<div class = "slider-value"/>');
     tr.append($('<div class = "slider-label">Rotate <b>f</b> values:</div>'), 
               $('<div class="slider-container"/>').append(this.rotateGraphSlider), 
               this.graphRotationText);
@@ -125,8 +125,8 @@ var DOMKOL = {};
     this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
     tr.append($('<span>Repaint domain colouring continuously: </span>').append(this.repaintContinuouslyCheckbox));
     
-    $('<div class="note">(Note: press "c" to recentre any slider that currently has focus.' +
-      '           <br/>Also you can move this control dialog by dragging the white bar at the top.)</div>').appendTo(table);
+    $('<div class="note">(Press "c" to recentre any slider that currently has focus.' +
+      '           <br/>To move this control dialog, drag the white bar at the top.)</div>').appendTo(table);
   }
 
   /** Top-level function to create the ComplexFunctionExplorerModel object */
