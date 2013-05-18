@@ -100,14 +100,14 @@ h1 {
 
 .instructions {
   font-size: 0.9em;
-  padding: 0.3em 1em;
+  padding: 0.5em 2em;
   font-style: italic;
   line-height: 1.1em;
 }
 
 .note {
   font-size: 0.7em;
-  padding: 0.5em 1em 0.3em 7em;
+  padding: 0.5em 1em 0.3em 3em;
   font-style: italic;
   line-height: 1.1em;
 }

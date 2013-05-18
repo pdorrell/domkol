@@ -65,8 +65,8 @@ var DOMKOL = {};
     tr.append($('<div class="formula-label">Function:</div>'), 
               $('<span class ="formula"/>').append(this.formulaText));
     
-    tr = $('<div class="instructions"><span class="instructions">Drag the small black circles to move and' +
-           '                                             resize the large circle.</span></div>').appendTo(table);
+    tr = $('<div class="instructions">Drag the small black circles to move and' +
+           '                                             resize the large circle.</div>').appendTo(table);
 
     tr = $('<div class="instructions/>').appendTo(table);
     // functionInstructionsText - text to display optional instructions about how to manipulate the function
@@ -126,7 +126,7 @@ var DOMKOL = {};
     tr.append($('<span>Repaint domain colouring continuously: </span>').append(this.repaintContinuouslyCheckbox));
     
     $('<div class="note">(Note: press "c" to recentre any slider that currently has focus.' +
-      '           <br/>Also you can move this control window around.)</div>').appendTo(table);
+      '           <br/>Also you can move this control dialog by dragging the white bar at the top.)</div>').appendTo(table);
   }
 
   /** Top-level function to create the ComplexFunctionExplorerModel object */
