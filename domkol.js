@@ -55,16 +55,16 @@ var DOMKOL = {};
     // The top level div which will be inserted into the supplied containing div
     this.div = div;
     var innerDiv = $('<div/>').appendTo(this.div);
+    
     // windowTopBar - the bar that can be used to drag the dialog around
     this.windowTopBar = $('<div class="window-top-bar"/>').appendTo(innerDiv);
     var dialogItems = $('<div class="controls"/>').appendTo(innerDiv);
     
     var functionItem = $('<div class="control-line"/>').appendTo(dialogItems);
     // formulaText - where the function's formula is displayed
-    this.formulaText = $('<span/>');
+    this.formulaText = $('<span class ="formula"/>');
     functionItem.append($('<div class="formula-label">Function:</div>'), 
-                        $('<span class ="formula"/>').append(this.formulaText));
-    
+                        this.formulaText);
     
     var instructionsItem = $('<div class="instructions">Drag the small black circles to move and' +
                              '                resize the large circle.</div>').appendTo(dialogItems);
@@ -80,8 +80,8 @@ var DOMKOL = {};
     // functionScaleText - the text to display the current function scale
     this.functionScaleText = $('<div class="slider-value"/>');
     functionScaleItem.append($('<div class="slider-label">Graph scale:</div>'), 
-              $('<div class="slider-container"/>').append(this.functionScaleSlider), 
-              this.functionScaleText);
+                             $('<div class="slider-container"/>').append(this.functionScaleSlider), 
+                             this.functionScaleText);
     
     var colourScaleItem = $('<div class="control"/>').appendTo(dialogItems);
     // colourScaleSlider - the div that will become the slider that controls the colour scale
@@ -89,8 +89,8 @@ var DOMKOL = {};
     // colourScaleText - the text to display the current colour scale
     this.colourScaleText = $('<div class="slider-value"/>');
     colourScaleItem.append($('<div class = "slider-label">Colour scale:</div>'), 
-              $('<div class="slider-container"/>').append(this.colourScaleSlider), 
-              this.colourScaleText);
+                           $('<div class="slider-container"/>').append(this.colourScaleSlider), 
+                           this.colourScaleText);
     
     var showCircleGraphItem = $('<div/>').appendTo(dialogItems);
     // showCircleGraphCheckbox - checkbox to control if the circle graph is displayed or not
