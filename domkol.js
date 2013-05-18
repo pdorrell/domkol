@@ -931,6 +931,7 @@ var DOMKOL = {};
     /** Compute f for every pixel and write the representative colour values
         to the "data" array in the format that can be directly written to HTML canvas element. */
     writeToCanvasData: function(data) {
+    
       var widthInPixels = this.widthInPixels();
       var heightInPixels = this.heightInPixels();
       var minX = this.minX();
@@ -1565,6 +1566,10 @@ var DOMKOL = {};
     
     this.explorerModel.scaleF = this.functionScale;
     this.explorerModel.colourScale = this.colourScale;
+    
+    this.canvasContext = this.canvas.getContext("2d");
+    this.canvasImageData = this.canvasContext.createImageData(this.explorerModel.widthInPixels(), 
+                                                              this.explorerModel.heightInPixels());
 
     this.functionChanged(false); // force initial repaint
     
@@ -1622,11 +1627,8 @@ var DOMKOL = {};
     /** repaint the domain colouring into the canvas element */
     drawDomainColouring: function(changing) {
       if (!changing || this.repaintContinuously) {
-        var ctx = this.canvas.getContext("2d");
-        var imageData = ctx.createImageData(this.explorerModel.widthInPixels(), 
-                                            this.explorerModel.heightInPixels());
-        this.explorerModel.writeToCanvasData(imageData.data);
-        ctx.putImageData(imageData, 0, 0);
+        this.explorerModel.writeToCanvasData(this.canvasImageData.data);
+        this.canvasContext.putImageData(this.canvasImageData, 0, 0);
       }
     }
     
