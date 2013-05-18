@@ -68,9 +68,9 @@ var DOMKOL = {};
     tr = $('<div class="instructions">Drag the small black circles to move and' +
            '                                             resize the large circle.</div>').appendTo(table);
 
-    tr = $('<div class="instructions/>').appendTo(table);
+    tr = $('<div class="instructions"/>').appendTo(table);
     // functionInstructionsText - text to display optional instructions about how to manipulate the function
-    this.functionInstructionsText = $('<span class="instructions"/>');
+    this.functionInstructionsText = $('<span/>');
     tr.append(this.functionInstructionsText);
     
     tr = $('<div/>').appendTo(table);
