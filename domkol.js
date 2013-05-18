@@ -57,75 +57,76 @@ var DOMKOL = {};
     var innerDiv = $('<div/>').appendTo(this.div);
     // windowTopBar - the bar that can be used to drag the dialog around
     this.windowTopBar = $('<div class="window-top-bar"/>').appendTo(innerDiv);
-    var table = $('<table/>').appendTo(innerDiv);
+    var table = $('<div class="controls"/>').appendTo(innerDiv);
     
-    var tr = $('<tr/>').appendTo(table);
+    var tr = $('<div class="control-line"/>').appendTo(table);
     // formulaText - where the function's formula is displayed
     this.formulaText = $('<span/>');
-    tr.append($('<td>Function:</td>'), $('<td colspan="2" class ="formula"/>').append(this.formulaText));
+    tr.append($('<div class="formula-label">Function:</div>'), 
+              $('<span class ="formula"/>').append(this.formulaText));
     
-    tr = $('<tr><td colspan="3" class="instructions">Drag the small black circles to move and' +
-           '                                             resize the large circle.</td></tr>').appendTo(table);
+    tr = $('<div class="instructions"><span class="instructions">Drag the small black circles to move and' +
+           '                                             resize the large circle.</span></div>').appendTo(table);
 
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div class="instructions/>').appendTo(table);
     // functionInstructionsText - text to display optional instructions about how to manipulate the function
-    this.functionInstructionsText = $('<td colspan="3" class="instructions"/>');
+    this.functionInstructionsText = $('<span class="instructions"/>');
     tr.append(this.functionInstructionsText);
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // functionScaleSlider - the div that will become the slider that controls the function scale
     this.functionScaleSlider = $('<div style="width:240px;"/>');
     // functionScaleText - the text to display the current function scale
-    this.functionScaleText = $('<td style="width:5em;text-align:right"/>');
-    tr.append($('<td>Graph scale:</td>'), 
-              $('<td/>').append(this.functionScaleSlider), 
+    this.functionScaleText = $('<span style="width:5em;text-align:right"/>');
+    tr.append($('<div class="slider-label">Graph scale:</div>'), 
+              $('<div class="slider-container"/>').append(this.functionScaleSlider), 
               this.functionScaleText);
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div class="control"/>').appendTo(table);
     // colourScaleSlider - the div that will become the slider that controls the colour scale
     this.colourScaleSlider = $('<div style="width:240px;"/>');
     // colourScaleText - the text to display the current colour scale
-    this.colourScaleText = $('<td style="width:5em;text-align:right"/>');
-    tr.append($('<td>Colour scale:</td>'), 
-              $('<td/>').append(this.colourScaleSlider), 
+    this.colourScaleText = $('<span style="width:5em;text-align:right"/>');
+    tr.append($('<div class = "slider-label">Colour scale:</div>'), 
+              $('<div class="slider-container"/>').append(this.colourScaleSlider), 
               this.colourScaleText);
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // showCircleGraphCheckbox - checkbox to control if the circle graph is displayed or not
     this.showCircleGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
-    tr.append($('<td colspan="2">Show graph on circular domain: </td>').append(this.showCircleGraphCheckbox));
+    tr.append($('<span>Show graph on circular domain: </span>').append(this.showCircleGraphCheckbox));
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // show3DGraphCheckbox - checkbox to control if the circle graph is shown in 3D (otherwise 2D)
     this.show3DGraphCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
-    tr.append($('<td colspan="2">Show graph on circular domain in 3D: </td>').append(this.show3DGraphCheckbox));
+    tr.append($('<span>Show graph on circular domain in 3D: </span>').append(this.show3DGraphCheckbox));
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // wiggleCheckbox - checkbox to control if the 3D circle graph "wiggles" side to side
     this.wiggleCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
-    tr.append($('<td colspan="2">3D Wiggle animation: </td>').append(this.wiggleCheckbox));
+    tr.append($('<span>3D Wiggle animation: </span>').append(this.wiggleCheckbox));
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // rotateGraphSlider - the div that will become the slider that controls the rotation of the function value
     this.rotateGraphSlider = $('<div style="width:240px;"/>');
     // graphRotationText - the text to display the current rotation of the function value
-    this.graphRotationText = $('<td style="width:5em;text-align:right;font-size:0.8em"/>');
-    tr.append($('<td>Rotate <b>f</b> values:</td>'), 
-              $('<td/>').append(this.rotateGraphSlider), 
+    this.graphRotationText = $('<span style="width:5em;text-align:right;font-size:0.8em"/>');
+    tr.append($('<div class = "slider-label">Rotate <b>f</b> values:</div>'), 
+              $('<div class="slider-container"/>').append(this.rotateGraphSlider), 
               this.graphRotationText);
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // showCoordinateGridCheckbox - checkbox to control if the complex plane coordinates are displayed
     this.showCoordinateGridCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
-    tr.append($('<td colspan="2">Show domain coordinate grid: </td>').append(this.showCoordinateGridCheckbox));
+    tr.append($('<span>Show domain coordinate grid: </span>').append(this.showCoordinateGridCheckbox));
     
-    tr = $('<tr/>').appendTo(table);
+    tr = $('<div/>').appendTo(table);
     // repaintContinuouslyCheckbox - checkbox to control if repainting should be continuous
     this.repaintContinuouslyCheckbox = $('<input style="text-align:left" type="checkbox" checked/>');
-    tr.append($('<td colspan="2">Repaint domain colouring continuously: </td>').append(this.repaintContinuouslyCheckbox));
+    tr.append($('<span>Repaint domain colouring continuously: </span>').append(this.repaintContinuouslyCheckbox));
     
-    $('<tr><td colspan="3" class="note">(Note: press "c" to recentre any slider that currently has focus.',
-      '           <br/>Also you can move this control window around.)</td></tr>').appendTo(table);
+    $('<div class="note">(Note: press "c" to recentre any slider that currently has focus.' +
+      '           <br/>Also you can move this control window around.)</div>').appendTo(table);
   }
 
   /** Top-level function to create the ComplexFunctionExplorerModel object */
