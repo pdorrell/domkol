@@ -515,7 +515,8 @@ var DOMKOL = {};
         (somewhat transparent) domain colouring canvas. */
     initializeRealPathUnder: function() {
       var svg = createSvgElement(this.div, "svg", 
-                                 {style: "position:absolute;top:0;left:0;z-index:1;", 
+                                 {overflow: "hidden", 
+                                  style: "position:absolute;top:0;left:0;z-index:1;", 
                                   width: this.width, height: this.height, 
                                   viewbox: "0 0 " + this.width + " " + this.height});
       var circleGraphUnder = createSvgElement(svg, "g");
@@ -526,7 +527,8 @@ var DOMKOL = {};
     /** Create the SVG paths for the all the components of the circle graph */
     initializeAxesAndCircleGraph: function() {
       var svg = createSvgElement(this.div, "svg", 
-                                 {style: "position:absolute;top:0;left:0;z-index:3;", 
+                                 {overflow: "hidden", 
+                                  style: "position:absolute;top:0;left:0;z-index:3;", 
                                   width: this.width, height: this.height, 
                                   viewbox: "0 0 " + this.width + " " + this.height});
       this.initializeAxes(svg);
