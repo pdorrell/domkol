@@ -707,9 +707,14 @@ var DOMKOL = {};
       });
   }
 
-  /* Create 3 SVG path attributes for an array of 3D points -
-     3rd value of point determines which path it belongs to
-     for over, under and "shadow" */
+  /* Create an array of 4 SVG path attributes for an array of 3D points
+     with each 3D point represented in the form [x, y, z].
+     The 4 attributes are the "over" path, the "under" path
+     and two "shadow" paths.
+     The 3rd z coordinate of each point determines whether it 
+     is part of the "over" path or the "under" path (based on z>0 or z<0).
+     The shadow paths describe two different shadows of the "over" path.
+  */
   function createOverUnderAndShadowPointPaths(points) {
     var pointStrings = [new Array(), new Array(), new Array(), new Array()];
     var currentPath = -1; // initially neither 0 or 1
@@ -757,7 +762,9 @@ var DOMKOL = {};
             pointStrings[2].join(" "), pointStrings[3].join(" ")];
   }
 
-  /* Create SVG path attribute for an array of points */
+  /* Create SVG path attribute for an array of points (this method is used for constructing
+   the paths in the representation of the function graph as two separate paths (real and imaginary)
+   which are both drawn lying flat on the complex plane.*/
   function createPointsPath(points) {
     if (points.length == 0) {
       return "M0,0";
@@ -801,7 +808,7 @@ var DOMKOL = {};
   }
 
   /* Set attributes on a Javascript object from an object literal and an array of keys
-     This is a convenient method to construct an object from multiple named parameters. */
+     This is a convenience method to help construct an object from multiple named parameters. */
   function setAttributes(object, attributes, keys) {
     for (var i=0; i<keys.length; i++) {
       var key = keys[i];
@@ -848,7 +855,13 @@ var DOMKOL = {};
       this.radius = Math.sqrt(edgeX*edgeX + edgeY*edgeY);
     }, 
     
-    /* Return real & imaginary of f on the domain circle as arrays of points (in pixel coordinates) */
+    /* Return real & imaginary parts of f on the domain circle as arrays of points (in pixel coordinates) 
+       Three arrays are returned: "real" for the real part of f as an array of 2D points, "imaginary" for the
+       imaginary part of as array of 2D points, and "real3D" for the combined real and imaginary parts
+       of f as points in the form [x, y, z], where the real component determines x & y, the imaginary component 
+       determines the z value, and the imaginary component also slightly alters the x value as a function of the 
+       z value and the current "wiggle" angle.
+    */
     functionGraphPointArrays: function () {
       var explorerModel = this.explorerModel;
       var unitsPerPixel = explorerModel.unitsPerPixel();
@@ -1660,6 +1673,3 @@ var DOMKOL = {};
   lib.ComplexNumberHandle = ComplexNumberHandle;
   
 })(DOMKOL);
-
-
-
