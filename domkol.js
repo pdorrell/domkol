@@ -156,13 +156,13 @@ var DOMKOL = {};
                                                            domainCircle: domainCircle });
     
     // object representing DOM tree of the complex plane view
-    var domkolElements = new DomkolElements(domkolDivElement[0], explorerModel.originPixelLocation, 
-                                            explorerModel.pixelsDimension, explorerModel.circleRadius);
-    domkolElements.initialize();
+    var explorerViewElements = new ExplorerViewElements(domkolDivElement[0], explorerModel.originPixelLocation, 
+                                                        explorerModel.pixelsDimension, explorerModel.circleRadius);
+    explorerViewElements.initialize();
     
     /* The view of the "domain circle", including two draggable handles, the circle, the polar grid,  
        a checkbox controlling its visibility, and the paths of the real&imaginary values of f on the circle. */
-    var domainCircleView = new DomainCircleView(domkolElements, 
+    var domainCircleView = new DomainCircleView(explorerViewElements, 
                                                 {showCircleGraph: initialValues.showCircleGraph, 
                                                  show3D: initialValues.show3D, 
                                                  wiggling: initialValues.wiggling,
@@ -172,14 +172,14 @@ var DOMKOL = {};
     /* The view of the coordinates in the complex viewport. There is a grid for integral values, and  
        a finer one for multiples of 0.1 & 0.1i. Integral coordinate values are displayed, and there is 
        a checkbox controlling visibility of the coordinate grid. */
-    var coordinatesView = new CoordinatesView(domkolElements, 
+    var coordinatesView = new CoordinatesView(explorerViewElements, 
                                               {explorerModel: explorerModel, 
                                                showCoordinateGrid: initialValues.showCoordinateGrid});
     
     /* The main view of the application containing all its component views and associated models. */
     return new ComplexFunctionExplorerView({explorerModel: explorerModel, 
-                                            canvas: domkolElements.canvas, 
-                                            handlesDiv: domkolElements.handlesDiv, 
+                                            canvas: explorerViewElements.canvas, 
+                                            handlesDiv: explorerViewElements.handlesDiv, 
                                             domainCircleView: domainCircleView, 
                                             coordinatesView: coordinatesView, 
                                             functionScale: initialValues.functionScale, 
@@ -473,10 +473,11 @@ var DOMKOL = {};
   
   /** Object which creates and holds the DOM tree for the complex plane view, the coordinate grid, 
       the circle graph and the "handles" div element to hold any number handles that might (later on) be created.*/
-  function DomkolElements(div, // The containing div into which the DOM elements will be inserted
-                          originPixelLocation, // pixel location of complex origin in form [x, y]
-                          pixelsDimension, // pixel dimension of the complex plane canvas object, in form [width, height]
-                          circleRadius) { // initial radius of the circle in pixels
+  function ExplorerViewElements(div, // The containing div into which the DOM elements will be inserted
+                                originPixelLocation, // pixel location of complex origin in form [x, y]
+                                pixelsDimension, /* pixel dimension of the complex plane canvas object, 
+                                                    in the form [width, height] */
+                                circleRadius) { // initial radius of the circle in pixels
     this.div = div;
     this.originPixelLocation = originPixelLocation;
     this.pixelsDimension = pixelsDimension;
@@ -487,7 +488,7 @@ var DOMKOL = {};
     this.circleRadius = circleRadius;
   }
 
-  DomkolElements.prototype = {
+  ExplorerViewElements.prototype = {
     /** Create and initialise all the DOM components */
     initialize: function() {
       this.initializeCanvas();
@@ -980,9 +981,9 @@ var DOMKOL = {};
   
   /** The view for the circular domain which displays values of f for points on the circle
       as two separate real and imaginary graphs.*/
-  function DomainCircleView (domkolElements, attributes) {
+  function DomainCircleView (explorerViewElements, attributes) {
     this.dom = {};
-    setJQueryWrappedAttributes(this.dom, domkolElements, 
+    setJQueryWrappedAttributes(this.dom, explorerViewElements, 
                                ["circleGraph", /** element contain the whole view (for showing/hiding) */
                                 "centreHandle", /** centre handle which is a SVG circle */
                                 "edgeHandle", /** edge handle which is a SVG circle */
@@ -1388,9 +1389,9 @@ var DOMKOL = {};
   }
 
   /** The view representing the coordinates in the complex plane as displayed within the complex viewport */
-  function CoordinatesView(domkolElements, attributes) {
+  function CoordinatesView(explorerViewElements, attributes) {
     this.dom = {};
-    setJQueryWrappedAttributes(this.dom, domkolElements, 
+    setJQueryWrappedAttributes(this.dom, explorerViewElements, 
                                ["coordinates", /** element containing all the coordinate elements */
                                 "coordinatesGroup", /** element containing all the coordinate elements */
                                 "axes", /** SVG path representing the real & imaginary axes */
@@ -1667,7 +1668,7 @@ var DOMKOL = {};
   // additional classes (useful if you wish to write your own alternative to createExplorerView)
   lib.DomainCircle = DomainCircle;
   lib.ComplexFunctionExplorerModel = ComplexFunctionExplorerModel;
-  lib.DomkolElements = DomkolElements;
+  lib.ExplorerViewElements = ExplorerViewElements;
   lib.DomainCircleView = DomainCircleView;
   lib.CoordinatesView = CoordinatesView;
   lib.ComplexNumberHandle = ComplexNumberHandle;
