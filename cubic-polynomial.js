@@ -1,10 +1,10 @@
 $(document).ready(function(){
 
   /** Object representing the control Dialog DOM Tree within the specified div element. */
-  var controlDialogElement = new DOMKOL.ControlDialogElement($("#control-dialog"));
+  var controlDialogElements = new DOMKOL.ControlDialogElements($("#control-dialog"));
   
   /** The Control Dialog itself (as an object which can be connected to the Complex Plane & graph view)*/
-  var controlDialog = new DOMKOL.ControlDialog(controlDialogElement);
+  var controlDialog = new DOMKOL.ControlDialog(controlDialogElements);
   
   /** Add additional instructions about the function to the control dialog */
   controlDialog.addFunctionInstructions("Drag the blue numbers to change the zeroes of the cubic polynomial " + 

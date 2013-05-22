@@ -51,7 +51,7 @@ var DOMKOL = {};
   /** Object which constructs the DOM tree of the Control Dialog, and which holds references to
    the active components in the dialog (i.e. those elements which are used to control the main
    explorer view and those which echo the status of the explorer view)*/
-  function ControlDialogElement(div) {
+  function ControlDialogElements(div) {
     // The top level div which will be inserted into the supplied containing div
     this.div = div;
     var innerDiv = $('<div/>').appendTo(this.div);
@@ -1658,7 +1658,7 @@ var DOMKOL = {};
   // export publicly accessible classes & functions
   
   // minimal required to use the library
-  lib.ControlDialogElement = ControlDialogElement;
+  lib.ControlDialogElements = ControlDialogElements;
   lib.ControlDialog = ControlDialog;
   lib.PolynomialFunction = PolynomialFunction;
   lib.ComplexFunction = ComplexFunction;
