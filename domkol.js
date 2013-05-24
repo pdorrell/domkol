@@ -135,7 +135,7 @@ var DOMKOL = {};
   }
 
   /** Top-level function to create the ComplexFunctionExplorerModel object */
-  function createExplorerView(domkolDivElement, // object representing the complex plane DOM tree
+  function createExplorerView(explorerViewDivElement, // object representing the complex plane DOM tree
                               complexFunction, // object representing the complex function being "explored"
                               initialValues, // initial values (for settings controlled by the control dialog)
                               pixelsPerUnit, // How many pixels per complex unit (i.e. to represent either 1 or i)?
@@ -156,7 +156,7 @@ var DOMKOL = {};
                                                            domainCircle: domainCircle });
     
     // object representing DOM tree of the complex plane view
-    var explorerViewElements = new ExplorerViewElements(domkolDivElement[0], explorerModel.originPixelLocation, 
+    var explorerViewElements = new ExplorerViewElements(explorerViewDivElement[0], explorerModel.originPixelLocation, 
                                                         explorerModel.pixelsDimension, explorerModel.circleRadius);
     explorerViewElements.initialize();
     
@@ -913,11 +913,11 @@ var DOMKOL = {};
                    "originPixelLocation", /** What is the pixel location of the complex origin? */
                    "pixelsDimension", /** pixelsDimension = [width, height], width & height of complex viewport in pixels */
                    "circleRadius", /** Initial radius of the domain circle */
-                   "domainCircle"]);/* multiply re(f) and im(f) values by colourScale to get values 
-                                       where values in range -1 to 1.0 are represented by 0 to 255
-                                       in the specified RGB components. (currently hardcoded to real=>R, imaginary=>G)*/
+                   "domainCircle"]); /** A reference to the DomainCircle model object */
     
-    // attributes set by view: scaleF, colourScale
+    /* attributes set by view: scaleF, colourScale (multiply re(f) and im(f) values by colourScale to get values 
+       where values in range -1 to 1.0 are represented by 0 to 255
+       in the specified RGB components. (currently hardcoded to real=>R, imaginary=>G))*/
     
     this.domainCircle.explorerModel = this; // link to parent
   }
