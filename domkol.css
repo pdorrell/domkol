@@ -1,98 +1,80 @@
-
 #control-dialog {
   border: 1px solid #a0a0a0;
-  background-color: rgb(230,230,230);
-  background-color: rgba(230,230,230,0.7);
-  padding: 0.4em 0.6em;
-}
+  background-color: #e6e6e6;
+  background-color: rgba(230, 230, 230, 0.7);
+  padding: 0.4em 0.6em; }
 
 text.coordinates {
   font-family: "Arial";
-  font-size: 0.7em;
-}
+  font-size: 0.7em; }
 
 .window-top-bar {
   width: 100%;
   height: 1em;
   border: 1px solid #808080;
   background-color: white;
-  cursor: move;
-}
+  cursor: move; }
 
 .slider-label {
-  display:inline-block;
-  width: 8em;
-}
+  display: inline-block;
+  width: 8em; }
 
-.scale-slider { 
-  width: 14em;
-}
+.scale-slider {
+  width: 14em; }
 
 .formula-label {
-  display:inline-block;
-  width: 8em;
-}
+  display: inline-block;
+  width: 8em; }
 
 .slider-container {
-  display:inline-block;
-}
+  display: inline-block; }
 
 .slider-value {
-  display:inline-block;
+  display: inline-block;
   width: 6em;
   text-align: left;
-  padding: 0 0 0 1em;
-}
+  padding: 0 0 0 1em; }
 
 .formula {
   font-weight: bold;
-  font-size: 0.9em;
-}
+  font-size: 0.9em; }
 
 .instructions {
   font-size: 0.9em;
   padding: 0.2em 2em;
   font-style: italic;
-  line-height: 1.1em;
-}
+  line-height: 1.1em; }
 
 .note {
   font-size: 0.7em;
   padding: 0.5em 1em 0.3em 3em;
   font-style: italic;
-  line-height: 1.1em;
-}
+  line-height: 1.1em; }
 
 .worksBest {
   border: 1px solid #808080;
   background-color: #d0e0f0;
   font-size: 0.8em;
   padding: 0.5em;
-  line-height: 1.2em;
-}
+  line-height: 1.2em; }
 
 .number-handle {
   padding: 0;
-  margin: 0;
-}
-
-.number-handle .number-text {
-  color: blue;
-  padding: 0.1em;
-  margin: 0 0;
-  line-height: 100%;
-  background-color: rgba(255,255,255,0.35);
-  white-space: nowrap;
-}
-
-.number-handle .point-circle {
-  background: rgba(0,0,255,0.5);
-  padding: 0;
-  margin: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-}
+  margin: 0; }
+  .number-handle .number-text {
+    color: blue;
+    padding: 0.1em;
+    margin: 0 0;
+    line-height: 100%;
+    background-color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap; }
+  .number-handle .point-circle {
+    background: rgba(0, 0, 255, 0.5);
+    padding: 0;
+    margin: 0;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%; }
 
 h1 {
   font-family: Tahoma,Helvetica,sans-serif;
@@ -102,8 +84,9 @@ h1 {
   background-color: #f0f0f0;
   padding: 0 0 0.2em 0.5em;
   margin: 0.3em;
-  color: #000060;
-}
+  color: #000060; }
+  h1 a {
+    text-decoration: none; }
 
 .wideItem {
   border: 1px solid #000060;
@@ -111,8 +94,7 @@ h1 {
   margin: 0.1em 0.1em;
   line-height: 1.5em;
   background-color: #ffffff;
-  font-family: Georgia, "Times New Roman",serif;
-}
+  font-family: Georgia, "Times New Roman",serif; }
 
 .article {
   border: 1px solid #000060;
@@ -120,8 +102,7 @@ h1 {
   margin: 1em 3em 1em 5em;
   line-height: 1.5em;
   background-color: #ffffff;
-  font-family: Georgia, "Times New Roman",serif;
-}
+  font-family: Georgia, "Times New Roman",serif; }
 
 .function-links {
   font-family: Tahoma,Helvetica,sans-serif;
@@ -129,30 +110,15 @@ h1 {
   border: 1px solid #e0c0c0;
   padding: 0.3em 0.2em;
   margin: 0.5em 2em;
-  background-color: #fafafa;
-
-}
-
-.function-links a, .function-links .non-link {
-  font-weight: bold;
-  margin: 0 0.5em;
-  padding: 0 0.1em;
-  text-decoration: none;
-  background-color: #f0f0f0;
-  border: 1px solid #a0a0a0;
-}
-
-.function-links .non-link {
-  background-color: #d0e0ff;
-}
-
-.function-links a:hover {
-  background-color: #f0f050;
- }
-
-h1 a {
-  text-decoration: none;
-}
-
-
-
+  background-color: #fafafa; }
+  .function-links a, .function-links .non-link {
+    font-weight: bold;
+    margin: 0 0.5em;
+    padding: 0 0.1em;
+    text-decoration: none;
+    background-color: #f0f0f0;
+    border: 1px solid #a0a0a0; }
+  .function-links .non-link {
+    background-color: #d0e0ff; }
+  .function-links a:hover {
+    background-color: #f0f050; }
