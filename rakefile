@@ -11,6 +11,8 @@ if DOMKOL_WEB_DIR == nil
   raise "ERROR: environment variable DOMKOL_WEB_PUBLISH_DIR not defined"
 end
 
+DOMKOL_WEB_HTML_SOURCE_DIR = File.join(DOMKOL_WEB_DIR, "_html_source")
+
 puts "DOMKOL_WEB_DIR = #{DOMKOL_WEB_DIR}"
 
 DOMKOL_WEB_TEMPLATE_DIR = File.expand_path(File.join(DOMKOL_WEB_DIR, "..", "_domkol"))
@@ -20,44 +22,13 @@ puts "DOMKOL_WEB_TEMPLATE_DIR = #{DOMKOL_WEB_TEMPLATE_DIR}"
 task :default => [:web]
 
 task :copyFiles do |t|
-  if File.directory? DOMKOL_WEB_DIR
-    FileUtils.rm_r DOMKOL_WEB_DIR, :verbose => true
-  end
-  FileUtils.mkdir DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.js"), DOMKOL_WEB_DIR, :verbose => true
-  FileUtils.cp Dir.glob("*.html"), DOMKOL_WEB_DIR, :verbose => true
+  FileUtils.cp Dir.glob("*.html"), DOMKOL_WEB_HTML_SOURCE_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.css"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.scss"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp Dir.glob("*.txt"), DOMKOL_WEB_DIR, :verbose => true
   FileUtils.cp_r "lib", DOMKOL_WEB_DIR, :verbose => true
 end
 
-task :web => [:copyFiles, :substituteMainHtml]
+task :web => [:copyFiles]
 
-def substituteCommentLine(fileName, fileContents)
-  commentLine = "<!-- #{fileName} -->"
-  replacementContent = File.read(File.join(DOMKOL_WEB_TEMPLATE_DIR, fileName))
-  fileContents.gsub(commentLine, replacementContent)
-end
-
-# This task updates the main.html to match the style of the website it is being inserted into
-# (without having to include that data into this project source)
-task :substituteMainHtml do
-  for htmlFile in ["main.html", "quinticPolynomial.html", "exponentialFunction.html"] do
-    htmlFileName = File.join(DOMKOL_WEB_DIR, htmlFile)
-    puts "Doing substitutions in #{htmlFile} ..."
-  
-    htmlFileContents = File.read(htmlFile)
-  
-    for entry in Dir.entries(DOMKOL_WEB_TEMPLATE_DIR) do
-      if entry.end_with?(".html")
-        puts " doing substitution for #{entry} ..."
-        htmlFileContents = substituteCommentLine(entry, htmlFileContents)
-      end
-    end
-  
-    File.open(htmlFileName, "w") do |f|
-      f.write(htmlFileContents)
-    end
-  end
-end
