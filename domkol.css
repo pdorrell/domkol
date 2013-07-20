@@ -5,7 +5,7 @@
   padding: 0.4em 0.6em; }
 
 text.coordinates {
-  font-family: "Arial";
+  font-family: Arial;
   font-size: 0.7em; }
 
 .window-top-bar {
@@ -77,16 +77,43 @@ text.coordinates {
     border-radius: 50%; }
 
 h1 {
-  font-family: Tahoma,Helvetica,sans-serif;
+  font-family: Tahoma, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 1.6em;
-  border: 1px solid #a0a0a0;
+  border: 1px solid #606060;
   background-color: #f0f0f0;
-  padding: 0 0 0.2em 0.5em;
+  padding: 0.2em 0 0.2em 0.5em;
   margin: 0.3em;
   color: #000060; }
   h1 a {
     text-decoration: none; }
+
+h2 {
+  font-family: Tahoma, Helvetica, sans-serif;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-top: 1px solid #606060;
+  font-size: 1.4em;
+  padding: 0.2em 0 0.2em 0.4em;
+  margin: 1.8em 0 0.2em -0.4em;
+  color: #000060; }
+  h2:first-child {
+    margin-top: 0; }
+
+h3 {
+  font-family: Tahoma, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 1.2em;
+  background-color: #f0f0f0;
+  padding: 0.2em 0 0.2em 0.2em;
+  margin: 1.3em 0 0.2em -0.2em;
+  color: #000060; }
+
+h3 + p, h2 + p {
+  margin-top: 0; }
+
+p {
+  margin: 0.8em 0; }
 
 .wideItem {
   border: 1px solid #000060;
@@ -94,18 +121,18 @@ h1 {
   margin: 0.1em 0.1em;
   line-height: 1.5em;
   background-color: #ffffff;
-  font-family: Georgia, "Times New Roman",serif; }
+  font-family: Georgia, "Times New Roman", serif; }
 
 .article {
-  border: 1px solid #000060;
   padding: 1em 1em 0.5em 1em;
-  margin: 1em 3em 1em 5em;
+  margin: 2em 7em 1em 8em;
+  max-width: 40em;
   line-height: 1.5em;
   background-color: #ffffff;
-  font-family: Georgia, "Times New Roman",serif; }
+  font-family: Georgia, "Times New Roman", serif; }
 
 .function-links {
-  font-family: Tahoma,Helvetica,sans-serif;
+  font-family: Tahoma, Helvetica, sans-serif;
   font-size: 0.8em;
   border: 1px solid #e0c0c0;
   padding: 0.3em 0.2em;
@@ -122,3 +149,6 @@ h1 {
     background-color: #d0e0ff; }
   .function-links a:hover {
     background-color: #f0f050; }
+
+.updated {
+  font-style: italic; }
