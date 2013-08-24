@@ -707,6 +707,7 @@ var DOMKOL = {};
         var y = position[1];
         this.trigger('svgDragStop', [x, y]);
       });
+    return this;
   }
 
   /* Create an array of 4 SVG path attributes for an array of 3D points
