@@ -7,7 +7,7 @@ $(document).ready(function(){
   var controlDialog = new DOMKOL.ControlDialog(controlDialogElements);
   
   /** Add additional instructions about the function to the control dialog */
-  controlDialog.addFunctionInstructions("Drag the blue numbers to change the zero of the linear polynomial " + 
+  controlDialog.addFunctionInstructions("Drag the blue number to change the zero of the linear polynomial " + 
                                         "(initially located on the origin).");
 
   /** Initial complex zeroes for linear polynomial, i.e. 0+0i. */

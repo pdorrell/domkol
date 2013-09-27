@@ -67,7 +67,7 @@ var DOMKOL = {};
                         this.formulaText);
     
     var instructionsItem = $('<div class="instructions">Drag the small black circles to move and' +
-                             '                resize the large circle.</div>').appendTo(dialogItems);
+                             '                resize the large white circle.</div>').appendTo(dialogItems);
 
     var functionInstructions = $('<div class="instructions"/>').appendTo(dialogItems);
     // functionInstructionsText - text to display optional instructions about how to manipulate the function
