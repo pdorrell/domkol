@@ -18,69 +18,74 @@
     along with Domkol.  If not, see <http://www.gnu.org/licenses/>.
  -->
 
-<head>
-<meta charset="utf-8">
-<title>Domkol: HTML5 Complex Function Visualisation using Canvas and SVG (exponential function)</title>
+<head><meta charset="utf-8">
+<title>Domkol: HTML5 Complex Function Visualisation using Canvas and SVG (identity/linear polynomial)</title>
 
 <link rel="stylesheet" href="lib/jquery-ui-1.10.2.css" />
 <script language="javascript" type="text/javascript" src="lib/jquery-1.10.2.js"></script>
 <script language="javascript" type="text/javascript" src="lib/jquery-ui-1.10.2.js"></script>
 <script language="javascript" type="text/javascript" src="domkol.js"></script>
-<script language="javascript" type="text/javascript" src="exponential.js"></script>
+<script language="javascript" type="text/javascript" src="identity.js"></script>
 <link rel="stylesheet" href="domkol.css" />
 
 <style type="text/css">
 <!--
-.formula-label {
-  width: 5em;
+.formula {
+  line-height: 1.2em;
+  height: 3em;
+  width: 70em;
+  font-size: 0.8em;
 }
-
+.formula-label {
+  width: 4.5em;
+}
+.scale-slider {
+  width: 18em;
+}
 -->
 </style>
+
+
+<!-- site.css.link.html -->
 
 </head>
 
 <body>
 
-<h1 class="main"><a href="main.html">Domkol:</a> Exponential Function</h1>
+<!-- heading.wrapper.start.html -->
+<h1 class="main"><a href="main.html">Domkol:</a> Identity Function (Linear Polynomial)</h1>
+<!-- heading.wrapper.end.html -->
 
 <div class="function-links">
   Function:
   <a href="main.html">Cubic Polynomial</a>
   <a href="quinticPolynomial.html">Quintic Polynomial</a>
-  <span class="non-link">Exponential</span>
-  <a href="identity.html">Identity Function</a>
+  <a href="exponentialFunction.html">Exponential</a>
+  <span class="non-link">Identity Function</span>
 </div>
 
 <div class="wideItem">
   <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
-  <div style="position:relative;height:800px;">
+  <div style="position:relative;height:700px;">
 
     <!-- The complex plane view will be inserted into this div -->
     <div id="domkol" style="position:absolute;top:0;left:0;"></div>
     
     <!-- The control dialog will be inserted into this div -->
-    <div id="control-dialog" style="position:absolute;top:20px;left:650px;z-index:6;width:31em"></div>
+    <div id="control-dialog" style="position:absolute;top:15px;left:635px;z-index:6;width:37em"></div>
   </div>
 
 </div>
 
 <div class="article">
 <h2>Explanation</h2>
-<p>This example is similar to the <a href="main.html">cubic polynomial example</a>, and
-the <a href="quinticPolynomial.html">quintic polynomial example</a>, except:
-</p>
 
-<ul>
- <li>The canvas is larger than in either of the polynomial examples.</li>
- <li>The pixels per complex unit is <i>less</i>, so more of the complex plane is shown.</li>
- <li>The exponential function does not have any zeroes, so there isn't any position where the 3D
-graph winds around the white circle. (Note that in the positive real part of the plane,
-the exponential function outstrips the ability of the "graph scale" slider to reduce the 
-graph scale enough to prevent the radial component of the graph position becoming too negative.)</li>
-</ul>
+<p>This example shows the identity function, i.e. <b>f(z) = z</b>. You can also alter the "zero" of the function,
+i.e. to show a function <b>f(z) = z - a</b> for arbitrary <b>a</b>.</p>
 
-<!-- extra -->
+<p>The identity function is not enormously interesting, however, it serves as a useful reference point,
+to help understand the color scheme for the domain colouring, and also the representation of <b>f(z)</b>
+on the subset of the domain represented by the white circle.</p>
 
 <div class="updated">Last updated: 21 May 2013</div>
 </div>
