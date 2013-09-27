@@ -681,31 +681,30 @@ var DOMKOL = {};
      * it manages the position of the object using the "translate" SVG element "transform" attribute.
      * dragging position is determined from JQuery event.pageX and event.pageY values
      * the offset between the translate value and the pageX/pageY values is stored when dragging starts */
-  
-  $.fn.svgDraggable = function() {
+  function svgDraggable(handle) {
     var translateRegexp = /^translate[(]([-0-9.]+)[ ]+([-0-9.]+)[)]$/;
-    var position = getTranslation(this); /* test that the transform attribute is set properly */
-    this.draggable()
+    var position = getTranslation(handle); /* test that the transform attribute is set properly */
+    handle.draggable()
       .css('cursor', 'move')
       .bind('mousedown', function(event){
-        var position = getTranslation(this);
+        var position = getTranslation(handle);
         var x = position[0];
         var y = position[1];
-        this.data("offset", [x - event.pageX, y - event.pageY]);
-        this.trigger('startSvgDrag', [x, y]);
+        handle.data("offset", [x - event.pageX, y - event.pageY]);
+        handle.trigger('startSvgDrag', [x, y]);
       })
       .bind('drag', function(event, ui){
-        var offset = this.data("offset");
+        var offset = handle.data("offset");
         var x = event.pageX + offset[0];
         var y = event.pageY + offset[1];
-        setTranslation(this, x, y);
-        this.trigger('svgDrag', [x, y]);
+        setTranslation(handle, x, y);
+        handle.trigger('svgDrag', [x, y]);
       })
       .bind('dragstop', function(event){
-        var position = getTranslation(this);
+        var position = getTranslation(handle);
         var x = position[0];
         var y = position[1];
-        this.trigger('svgDragStop', [x, y]);
+        handle.trigger('svgDragStop', [x, y]);
       });
   }
 
@@ -1011,8 +1010,8 @@ var DOMKOL = {};
                    "wiggling",  /** Initial state of wiggling or not */
                    "graphRotation"]); /** Initial graph rotation (usually 1.0) */
     
-    $(this.dom.centreHandle).svgDraggable(); // Make the centre handle (which is an SVG element) draggable
-    $(this.dom.edgeHandle).svgDraggable(); // Make the edge handle (which is an SVG element) draggable
+    svgDraggable(this.dom.centreHandle); // Make the centre handle (which is an SVG element) draggable
+    svgDraggable(this.dom.edgeHandle); // Make the edge handle (which is an SVG element) draggable
     
     /** Set local variable values for access inside inner functions */
     var view = this;
