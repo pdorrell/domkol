@@ -1,0 +1,7 @@
+{
+  "included_extensions":  [],
+  "excluded_extensions":  [],
+  "included_files":  ["rakefile"],
+  "excluded_files":  [],
+  "excluded_dirs": ["lib"]
+}
