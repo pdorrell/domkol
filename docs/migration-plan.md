@@ -113,3 +113,50 @@ I want to migrate the application to use the following stack:
 * MobX for model classes
 * Functional React components for the views
 * A modern Javascript local web development setup, using Vite & esbuild
+
+## Existing application
+
+The old application consists mostly of model and view classes which should correspond
+directly to MobX model classes (or "stores") and React functional components.
+
+### Model classes
+
+* ComplexFunctionExplorerModel
+* DomainCircle
+* ComplexFunction
+* PolynomialFunction
+
+### View functions & classes
+
+* ControlDialog
+* ExplorerViewElements
+* DomainCircleView
+* CoordinatesView
+* ComplexNumberHandle
+* ComplexFunctionExplorerView
+
+
+All of the "connect" and "notify" functions should be replaced by use of MobX observables and observers.
+
+Where 'setAttributes' or 'setJQueryWrappedAttributes' are called on view classes, these 
+will correspond to props for React functional components. However where attributes are view objects 
+themselves, these should instead be child elements of the view class virtual dom as rendered.
+
+(Note that there will be no use of jquery in the new application.)
+
+Where view classes take explorerViewElements as a first argument, this is not needed in 
+the React application, because explorerViewElements is a handle to predefined HTML DOM elements,
+whereas with React all DOM elements are generated from the React functions (and situated in
+the DOM using root.render taking the top-level virtual DOM element as it's parameter).
+
+Where existing view classes take model objects as attributes, this should directly translate to 
+passing MobX models as props to the corresponding React view function.
+
+Many of the individual methods on the view classes would be defined as separate function React
+components in the new application.
+
+## Staged Migration Plan
+
+I think a good plan to do the migration would be to reproduce the new MobX/functional React application
+one feature at a time.
+
