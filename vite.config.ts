@@ -26,7 +26,7 @@ function getHostname() {
 export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
   const hostname = getHostname();
-  
+
   return {
     plugins: [react()],
     root: './src',
@@ -41,9 +41,9 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     server: {
-      port: 3002,
+      port: 3004,
       host: '0.0.0.0',
-      open: `http://${hostname}.local:3002`,
+      open: `http://${hostname}.local:3004`,
       allowedHosts: ['localhost', '.local'],
     },
     define: {
