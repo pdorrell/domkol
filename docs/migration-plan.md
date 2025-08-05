@@ -114,6 +114,10 @@ I want to migrate the application to use the following stack:
 * Functional React components for the views
 * A modern Javascript local web development setup, using Vite & esbuild
 
+I have added some initial configuration and script files copied from an 
+existing Typescript/MobX/React application which should be a good starting
+point for setting up this application.
+
 ## Existing application
 
 The old application consists mostly of model and view classes which should correspond
