@@ -155,8 +155,35 @@ passing MobX models as props to the corresponding React view function.
 Many of the individual methods on the view classes would be defined as separate function React
 components in the new application.
 
+In the new MobX application, each view function should take as props any model objects that are
+relevant to rendering that view. When necessary model objects should have links to their parents.
+(That is, don't set up the application to access the main model as a global object - it is preferable
+to maintain locality of reference as much as possible.)
+
 ## Staged Migration Plan
 
 I think a good plan to do the migration would be to reproduce the new MobX/functional React application
 one feature at a time.
 
+Start with the page where the function is a cubic polynomial.
+
+Defining the migration in terms of visible view components, add these features
+to the new application one at a time:
+
+* Control dialog, showing the function as the product of three factors.
+* Display draggable zero handles (so the displayed function will update when these are dragged around)
+* Display domain circle.
+* Add center handle to domain circle for dragging around
+* Add handle on the circle for scaling the circle
+* Add polar coordinate grid
+* Add graph not in 3D (ie two separate graphs), add "Show graph on circular domain" to control dialog
+* Add 3D SVG graph, and add "Show graph on circular domain in 3D" checkbox to control dialog
+* Add 3D wiggle animation, and the control dialog checkbox to enable that
+* Add shadows to 3D SVG graph
+* Add cartesian coordinates and grid
+* Add canvas colour encoded representation of values of the function on the complex plane
+* In the control dialog add:
+  * Graph scale control
+  * Colour scale control
+  * Rotate f values
+  * Repaint domain colouring continuously
