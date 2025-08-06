@@ -1,0 +1,19 @@
+.domain-handle {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  user-select: none;
+}
+
+.domain-handle:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.domain-handle.center-handle {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.domain-handle.edge-handle {
+  background-color: rgba(0, 0, 0, 0.5);
+}

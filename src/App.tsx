@@ -1,10 +1,12 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
+import { DomainCircle } from '@/stores/DomainCircle';
 import { Complex, complex } from '@/utils/complex';
 import { createDefaultViewport } from '@/utils/coordinateTransforms';
 import ControlDialog from '@/components/ControlDialog';
 import ComplexNumberHandle from '@/components/ComplexNumberHandle';
+import DomainCircleView from '@/components/DomainCircleView';
 import './App.css';
 
 const App = observer(() => {
@@ -14,6 +16,10 @@ const App = observer(() => {
       complex(0, 0), 
       complex(0, 0)
     ])
+  );
+
+  const [domainCircle] = React.useState(() => 
+    new DomainCircle(complex(0, 0), 1) // Center at origin, radius 1
   );
 
   // Create viewport configuration for the complex plane (match CSS dimensions)
@@ -36,6 +42,13 @@ const App = observer(() => {
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
+            {/* Domain circle with draggable center and radius handles */}
+            <DomainCircleView
+              domainCircle={domainCircle}
+              viewport={viewport}
+            />
+            
+            {/* Zero handles for the polynomial */}
             {polynomialFunction.zeroes.map((zero, index) => (
               <ComplexNumberHandle
                 key={index}

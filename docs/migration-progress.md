@@ -26,16 +26,20 @@ This document tracks the progress of migrating the Domkol complex function visua
 - [x] Blue-colored number labels with semi-transparent background
 - [x] Small blue circles indicating precise zero positions
 
+### Stage 3: Domain Circle Visualization ✅
+- [x] DomainCircle MobX store (`src/stores/DomainCircle.ts`)
+- [x] DomainCircleView component with SVG circle rendering (`src/components/DomainCircleView.tsx`)
+- [x] Display domain circle (white circle with 80% opacity)
+- [x] DomainHandle component for black circular handles (`src/components/DomainHandle.tsx`)
+- [x] Center handle for dragging circle position
+- [x] Circumference handle for scaling circle radius
+- [x] Real-time circle updates during drag operations
+
 ## In Progress 🚧
 
-Ready for stage 3 of the staged migration plan.
+Ready for stage 4 of the staged migration plan.
 
 ## Remaining Features 📋
-
-### Stage 3: Domain Circle Visualization
-- [ ] Display domain circle (white circle)
-- [ ] Center handle for dragging circle position
-- [ ] Circumference handle for scaling circle radius
 
 ### Stage 4: Coordinate Systems
 - [ ] Polar coordinate grid

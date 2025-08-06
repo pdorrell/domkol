@@ -1,0 +1,112 @@
+import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { Complex } from '@/utils/complex';
+import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
+import './DomainHandle.css';
+
+interface DomainHandleProps {
+  index: number;
+  value: Complex;
+  viewport: ViewportConfig;
+  onChange: (index: number, newValue: Complex, changing: boolean) => void;
+  className?: string;
+}
+
+const DomainHandle: React.FC<DomainHandleProps> = ({
+  index,
+  value,
+  viewport,
+  onChange,
+  className = 'center-handle'
+}) => {
+  const handleRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState<[number, number]>([0, 0]);
+  
+  // Convert complex number to pixel position for display
+  const [pixelX, pixelY] = complexToPixel(value, viewport);
+  
+  // Handle mouse down to start dragging
+  const handleMouseDown = useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    setIsDragging(true);
+    
+    // Calculate offset from mouse position to handle center
+    const rect = handleRef.current?.getBoundingClientRect();
+    if (rect) {
+      const offsetX = event.clientX - (rect.left + rect.width / 2);
+      const offsetY = event.clientY - (rect.top + rect.height / 2);
+      setDragOffset([offsetX, offsetY]);
+    }
+  }, []);
+  
+  // Handle mouse move during drag
+  const handleMouseMove = useCallback((event: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const container = handleRef.current?.parentElement;
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    
+    // Convert mouse position to container-relative coordinates
+    const containerX = event.clientX - containerRect.left - dragOffset[0];
+    const containerY = event.clientY - containerRect.top - dragOffset[1];
+    
+    // Convert to complex number
+    const newValue = pixelToComplex(containerX, containerY, viewport);
+    
+    // Call onChange with changing=true
+    onChange(index, newValue, true);
+  }, [isDragging, dragOffset, viewport, index, onChange]);
+  
+  // Handle mouse up to end dragging
+  const handleMouseUp = useCallback((event: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const container = handleRef.current?.parentElement;
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    
+    // Convert final mouse position to container-relative coordinates
+    const containerX = event.clientX - containerRect.left - dragOffset[0];
+    const containerY = event.clientY - containerRect.top - dragOffset[1];
+    
+    // Convert to complex number
+    const newValue = pixelToComplex(containerX, containerY, viewport);
+    
+    // Call onChange with changing=false to indicate drag is complete
+    onChange(index, newValue, false);
+    setIsDragging(false);
+  }, [isDragging, dragOffset, viewport, index, onChange]);
+  
+  // Set up global mouse event listeners during drag
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+  
+  return (
+    <div
+      ref={handleRef}
+      className={`domain-handle ${className}`}
+      style={{
+        position: 'absolute',
+        left: pixelX - 4,
+        top: pixelY - 4,
+        cursor: 'move',
+        zIndex: 3
+      }}
+      onMouseDown={handleMouseDown}
+    />
+  );
+};
+
+export default DomainHandle;
