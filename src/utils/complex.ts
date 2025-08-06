@@ -68,3 +68,13 @@ export function formatComplex(z: Complex, precision: number = 3): string {
   // Remove spaces to match original: "-1+i" not "-1 + i"
   return `${r}${sign}${iStr}`;
 }
+
+export function formatComplexCoefficient(z: Complex): string {
+  const r = Number(z[0].toFixed(2));
+  const i = Number(z[1].toFixed(2));
+  
+  if (i === 0) return r.toFixed(2);
+  
+  const sign = i >= 0 ? '+' : '';
+  return `${r.toFixed(2)}${sign}${i.toFixed(2)}i`;
+}

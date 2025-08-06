@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { Complex, complex, subtract, multiply, formatComplex } from '@/utils/complex';
+import { Complex, complex, subtract, multiply, formatComplexCoefficient } from '@/utils/complex';
 
 export class PolynomialFunction {
   zeroes: Complex[];
@@ -35,20 +35,20 @@ export class PolynomialFunction {
     
     const factors = this.zeroes.map(zero => {
       if (zero[0] === 0 && zero[1] === 0) {
-        return 'z';
+        return '(z)';
       }
       
       const negativeZero: Complex = [-zero[0], -zero[1]];
-      const formatted = formatComplex(negativeZero);
+      const formatted = formatComplexCoefficient(negativeZero);
       
-      if (formatted === '0') {
-        return 'z';
+      if (formatted === '0.00') {
+        return '(z)';
       }
       
-      return `(z - ${formatted})`;
+      return `(z+${formatted})`;
     });
     
-    return factors.join(' × ');
+    return factors.join('');
   }
 
   get degree(): number {
