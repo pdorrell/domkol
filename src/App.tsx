@@ -70,7 +70,7 @@ const App = observer(() => {
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
-            {/* Domain coloring canvas (z-index: 2) */}
+            {/* Layer 1: Domain coloring canvas */}
             {domainColoringRenderer.showDomainColoring && (
               <DomainColoringCanvas
                 polynomialFunction={polynomialFunction}
@@ -81,22 +81,8 @@ const App = observer(() => {
               />
             )}
             
-            {/* SVG under layer (z-index: 1.5) - for 3D graph "under" parts */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1.5 }}>
-              {/* Function graph "under" parts - below domain coloring */}
-              {functionGraphRenderer.showGraphOnCircle && functionGraphRenderer.show3DGraph && (
-                <FunctionGraphView
-                  functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={polynomialFunction}
-                  domainCircle={domainCircle}
-                  viewport={viewport}
-                  renderMode="under"
-                />
-              )}
-            </svg>
-            
+            {/* Layer 2: Cartesian coordinates and grid */}
             <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
-              {/* Cartesian coordinate grid - above domain coloring */}
               <CoordinateGrid
                 viewport={viewport}
                 showPolar={false}
@@ -104,7 +90,20 @@ const App = observer(() => {
               />
             </svg>
             
-            {/* Domain circle with draggable center and radius handles */}
+            {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
+            {functionGraphRenderer.show3DGraph && (
+              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 3 }}>
+                <FunctionGraphView
+                  functionGraphRenderer={functionGraphRenderer}
+                  polynomialFunction={polynomialFunction}
+                  domainCircle={domainCircle}
+                  viewport={viewport}
+                  renderMode="under"
+                />
+              </svg>
+            )}
+            
+            {/* Layer 4: Domain circle with polar grid */}
             <DomainCircleView
               domainCircle={domainCircle}
               functionGraphRenderer={functionGraphRenderer}
@@ -112,9 +111,8 @@ const App = observer(() => {
               viewport={viewport}
             />
             
-            {/* SVG over layer (z-index: 4) - for 3D graph "over" parts */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4 }}>
-              {/* Function graph "over" parts and 2D graphs - above domain coloring */}
+            {/* Layer 5: 3D graph "over" parts OR 2D graphs */}
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 5 }}>
               {functionGraphRenderer.showGraphOnCircle && (
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}

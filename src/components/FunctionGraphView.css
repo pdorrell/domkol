@@ -3,26 +3,34 @@
 }
 
 .real-path {
-  stroke: #4a90e2;
-  stroke-width: 3;
+  stroke: #0066cc;
+  stroke-width: 2;
   fill: none;
   opacity: 1.0;
-  stroke-dasharray: 6, 3;
 }
 
 .imaginary-path {
-  stroke: #4ecdc4;
+  stroke: #000000;
   stroke-width: 2;
   fill: none;
-  opacity: 0.8;
+  opacity: 1.0;
 }
 
-.real-path-under {
-  stroke: #4a90e2;
+/* 3D mode paths */
+.real-path-3d-over {
+  stroke: #003d7a;
   stroke-width: 3;
   fill: none;
   stroke-dasharray: 6, 3;
-  opacity: 0.6;
+  opacity: 1.0;
+}
+
+.real-path-under {
+  stroke: #888888;
+  stroke-width: 3;
+  fill: none;
+  stroke-dasharray: 6, 3;
+  opacity: 0.7;
 }
 
 .real-path-shadow {

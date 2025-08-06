@@ -59,7 +59,7 @@ const FunctionGraphView = observer(({
               
               {/* Over path (solid, in front of domain coloring) */}
               <path
-                className="real-path"
+                className="real-path-3d-over"
                 d={paths.realPath3D}
               />
             </>

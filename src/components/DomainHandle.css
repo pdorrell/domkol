@@ -4,6 +4,8 @@
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   user-select: none;
+  position: relative;
+  z-index: 6;
 }
 
 .domain-handle:hover {

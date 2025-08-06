@@ -22,10 +22,10 @@ export interface FunctionGraphPaths {
 export class FunctionGraphRenderer {
   // Visualization settings
   showGraphOnCircle: boolean = true;
-  show3DGraph: boolean = false;
+  show3DGraph: boolean = true; // Start in 3D mode like original
   scaleF: number = 1.0; // Function scaling factor
   graphRotation: Complex = complex(1, 0); // Rotation applied to function values
-  wiggling: boolean = false;
+  wiggling: boolean = true; // Start with wiggle animation like original
   wiggleAngle: number = 0;
   
   // Animation state
