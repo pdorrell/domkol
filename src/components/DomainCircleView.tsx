@@ -126,7 +126,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   
   return (
     <div className="domain-circle-view">
-      {/* SVG for the white domain circle */}
+      {/* SVG for polar grid */}
       <svg
         className="domain-circle-svg"
         style={{
@@ -135,15 +135,28 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           left: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          zIndex: 4
         }}
       >
         {/* Polar grid associated with domain circle */}
         <g className="polar-grid">
           {renderPolarGrid()}
         </g>
-        
-        
+      </svg>
+      
+      {/* SVG for domain circle outline - separate layer */}
+      <svg
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 6
+        }}
+      >
         {/* Domain circle outline */}
         <circle
           cx={centerPixelX}
