@@ -1,0 +1,51 @@
+.control-dialog {
+  position: absolute;
+  top: 140px;
+  left: 580px;
+  width: 31em;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.window-top-bar {
+  background-color: #f0f0f0;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+  cursor: move;
+  border-radius: 4px 4px 0 0;
+}
+
+.controls {
+  padding: 15px;
+}
+
+.control-line {
+  margin-bottom: 15px;
+}
+
+.formula-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.formula {
+  font-family: 'Times New Roman', serif;
+  font-size: 16px;
+  font-style: italic;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  display: inline-block;
+  min-width: 200px;
+}
+
+.instructions {
+  margin-bottom: 12px;
+  line-height: 1.4;
+  color: #555;
+}

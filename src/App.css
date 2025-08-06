@@ -1,0 +1,42 @@
+.app {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+header {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.function-links {
+  font-size: 14px;
+}
+
+.current-function {
+  font-weight: bold;
+  color: #000;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.visualization-area {
+  position: relative;
+  min-height: 600px;
+}
+
+.complex-plane {
+  width: 560px;
+  height: 560px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  position: relative;
+}
