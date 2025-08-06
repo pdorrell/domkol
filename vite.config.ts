@@ -28,7 +28,20 @@ export default defineConfig(({ mode }) => {
   const hostname = getHostname();
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      {
+        name: 'kill-server',
+        configureServer(server) {
+          server.middlewares.use('/kill', (req, res) => {
+            res.end('Killing server...');
+            setTimeout(() => {
+              process.exit(0);
+            }, 100);
+          });
+        }
+      }
+    ],
     root: './src',
     publicDir: false,
     resolve: {
