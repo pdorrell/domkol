@@ -62,73 +62,31 @@ const DomainColoringCanvas = observer(({
   }, [polynomialFunction, viewport, colorScale]);
   
   // Translated from original drawDomainColouring function
-  const drawDomainColoring = useCallback((overrideChanging?: boolean) => {
+  const drawDomainColoring = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const context = canvas.getContext('2d');
     if (!context) return;
     
-    const currentlyChanging = overrideChanging !== undefined ? overrideChanging : (changing || false);
-    
-    if (!currentlyChanging || repaintContinuously) {
+    // Original logic: if repaintContinuously is true, always repaint (even while changing)
+    // If repaintContinuously is false, only repaint when not changing
+    if (repaintContinuously || !changing) {
       const imageData = context.createImageData(viewport.width, viewport.height);
       writeToCanvasData(imageData.data);
       context.putImageData(imageData, 0, 0);
     }
   }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height]);
   
-  // Handle polynomial function changes with proper change tracking
-  const [isChanging, setIsChanging] = React.useState(false);
-  
-  // Create a dependency array that includes all the zeros to trigger on any change
+  // Simple dependency tracking - redraw when anything changes
   const zeroesHash = React.useMemo(() => {
     return polynomialFunction.zeroes.map(z => `${z[0]},${z[1]}`).join('|');
   }, [polynomialFunction.zeroes]);
   
+  // Single effect that handles all redraws - matches original behavior
   useEffect(() => {
-    // Track if we're in a changing state
-    let changeTimeout: number;
-    
-    const handleChange = () => {
-      setIsChanging(true);
-      
-      // Clear existing timeout
-      if (changeTimeout) {
-        clearTimeout(changeTimeout);
-      }
-      
-      // Set timeout to mark as not changing after a delay
-      changeTimeout = setTimeout(() => {
-        setIsChanging(false);
-        // Redraw once more when changing stops (to ensure final quality render)
-        drawDomainColoring(false);
-      }, 100);
-      
-      // Immediate redraw with changing state
-      drawDomainColoring(true);
-    };
-    
-    handleChange();
-    
-    return () => {
-      if (changeTimeout) {
-        clearTimeout(changeTimeout);
-      }
-    };
-  }, [zeroesHash, colorScale, changing, drawDomainColoring]);
-  
-  // Initial draw
-  useEffect(() => {
-    drawDomainColoring(false);
-  }, [drawDomainColoring]);
-  
-  // Respond to external changing state
-  useEffect(() => {
-    if (changing !== undefined) {
-      drawDomainColoring(changing);
-    }
-  }, [changing, drawDomainColoring]);
+    drawDomainColoring();
+  }, [zeroesHash, colorScale, repaintContinuously, changing, drawDomainColoring]);
   
   return (
     <canvas

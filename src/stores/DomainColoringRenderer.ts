@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx';
 export class DomainColoringRenderer {
   showDomainColoring: boolean = true;
   colorScale: number = 1.0; // Default color scale
-  repaintContinuously: boolean = false;
+  repaintContinuously: boolean = true;
   
   constructor() {
     makeAutoObservable(this);

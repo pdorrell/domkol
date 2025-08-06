@@ -9,8 +9,10 @@ export class PolynomialFunction {
     makeAutoObservable(this);
   }
 
-  updateZero(index: number, newValue: Complex, _changing?: boolean): void {
+  updateZero(index: number, newValue: Complex, changing?: boolean): void {
     if (index >= 0 && index < this.zeroes.length) {
+      // Always update the zero position immediately - the domain coloring canvas
+      // will decide whether to repaint based on its own repaintContinuously setting
       this.zeroes[index] = newValue;
     }
   }
