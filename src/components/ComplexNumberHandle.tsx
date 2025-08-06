@@ -28,11 +28,14 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = ({
     event.preventDefault();
     setIsDragging(true);
     
-    // Calculate offset from mouse position to handle center
+    // Calculate offset from mouse position to the point circle position
+    // The point circle is at left: -4px, top: 21px relative to the container
     const rect = handleRef.current?.getBoundingClientRect();
     if (rect) {
-      const offsetX = event.clientX - (rect.left + rect.width / 2);
-      const offsetY = event.clientY - (rect.top + rect.height / 2);
+      const pointCircleX = rect.left - 4 + 2; // -4px offset + 2px radius to get center
+      const pointCircleY = rect.top + 21 + 2; // 21px offset + 2px radius to get center
+      const offsetX = event.clientX - pointCircleX;
+      const offsetY = event.clientY - pointCircleY;
       setDragOffset([offsetX, offsetY]);
     }
   }, []);
