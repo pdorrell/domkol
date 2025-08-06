@@ -56,13 +56,17 @@ export function getViewportBounds(config: ViewportConfig): {
 }
 
 /**
- * Create default viewport configuration for a given container size
+ * Create default viewport configuration matching original domkol
+ * Original had domain range from -1.16 to 1.16 (total span of 2.32 units)
  */
 export function createDefaultViewport(width: number, height: number): ViewportConfig {
+  const domainSpan = 2.32; // Total span from -1.16 to 1.16
+  const pixelsPerUnit = Math.min(width, height) / domainSpan;
+  
   return {
     width,
     height,
     originPixelLocation: [width / 2, height / 2], // Center of viewport
-    pixelsPerUnit: Math.min(width, height) / 8 // Show roughly 8 units from center to edge
+    pixelsPerUnit // Scale to show -1.16 to 1.16 range
   };
 }

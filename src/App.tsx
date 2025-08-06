@@ -21,7 +21,7 @@ const App = observer(() => {
   );
 
   const [domainCircle] = React.useState(() => 
-    new DomainCircle(complex(0, 0), 1) // Center at origin, radius 1
+    new DomainCircle(complex(0, 0), 0.62) // Center at origin, radius 0.62 (matching original)
   );
 
   const [functionGraphRenderer] = React.useState(() => 
