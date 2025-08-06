@@ -35,15 +35,18 @@ This document tracks the progress of migrating the Domkol complex function visua
 - [x] Circumference handle for scaling circle radius
 - [x] Real-time circle updates during drag operations
 
+### Stage 4: Coordinate Systems ✅
+- [x] CoordinateGrid component with SVG rendering (`src/components/CoordinateGrid.tsx`)
+- [x] Polar coordinate grid with concentric circles and radial lines
+- [x] Cartesian coordinate grid with axis lines and grid lines
+- [x] Grid labels showing coordinate values and angles
+- [x] Integrated coordinate grids into main visualization
+
 ## In Progress 🚧
 
-Ready for stage 4 of the staged migration plan.
+Ready for stage 5 of the staged migration plan.
 
 ## Remaining Features 📋
-
-### Stage 4: Coordinate Systems
-- [ ] Polar coordinate grid
-- [ ] Cartesian coordinate grid with labels
 
 ### Stage 5: Function Graph Visualization
 - [ ] 2D graph representation (separate real/imaginary)

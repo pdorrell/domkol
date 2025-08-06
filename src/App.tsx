@@ -7,6 +7,7 @@ import { createDefaultViewport } from '@/utils/coordinateTransforms';
 import ControlDialog from '@/components/ControlDialog';
 import ComplexNumberHandle from '@/components/ComplexNumberHandle';
 import DomainCircleView from '@/components/DomainCircleView';
+import CoordinateGrid from '@/components/CoordinateGrid';
 import './App.css';
 
 const App = observer(() => {
@@ -42,6 +43,15 @@ const App = observer(() => {
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0 }}>
+              {/* Coordinate grids */}
+              <CoordinateGrid
+                viewport={viewport}
+                showPolar={true}
+                showCartesian={true}
+              />
+            </svg>
+            
             {/* Domain circle with draggable center and radius handles */}
             <DomainCircleView
               domainCircle={domainCircle}
