@@ -78,15 +78,11 @@ const DomainColoringCanvas = observer(({
     }
   }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height]);
   
-  // Simple dependency tracking - redraw when anything changes
-  const zeroesHash = React.useMemo(() => {
-    return polynomialFunction.zeroes.map(z => `${z[0]},${z[1]}`).join('|');
-  }, [polynomialFunction.zeroes]);
-  
-  // Single effect that handles all redraws - matches original behavior
+  // MobX will automatically trigger re-renders when observables change
+  // Just redraw whenever any dependencies change
   useEffect(() => {
     drawDomainColoring();
-  }, [zeroesHash, colorScale, repaintContinuously, changing, drawDomainColoring]);
+  }, [polynomialFunction.zeroes, colorScale, repaintContinuously, changing, drawDomainColoring]);
   
   return (
     <canvas
