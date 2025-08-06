@@ -6,7 +6,10 @@
       "Bash(mkdir:*)",
       "Bash(npm install)",
       "Bash(npm run typecheck:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test)"
     ],
     "deny": []
   }
