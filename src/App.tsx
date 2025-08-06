@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
+import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { Complex, complex } from '@/utils/complex';
 import { createDefaultViewport } from '@/utils/coordinateTransforms';
 import ControlDialog from '@/components/ControlDialog';
@@ -23,6 +24,10 @@ const App = observer(() => {
     new DomainCircle(complex(0, 0), 1) // Center at origin, radius 1
   );
 
+  const [functionGraphRenderer] = React.useState(() => 
+    new FunctionGraphRenderer()
+  );
+
   // Create viewport configuration for the complex plane (match CSS dimensions)
   const viewport = React.useMemo(() => createDefaultViewport(560, 560), []);
 
@@ -30,6 +35,17 @@ const App = observer(() => {
   const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
     polynomialFunction.updateZero(index, newValue, changing);
   }, [polynomialFunction]);
+
+  // Wiggle animation effect
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (functionGraphRenderer.wiggling) {
+        functionGraphRenderer.wiggleOneStep();
+      }
+    }, 80); // 80ms = ~12.5 FPS, matching original domkol
+
+    return () => clearInterval(interval);
+  }, [functionGraphRenderer]);
 
   return (
     <div className="app">
@@ -55,6 +71,8 @@ const App = observer(() => {
             {/* Domain circle with draggable center and radius handles */}
             <DomainCircleView
               domainCircle={domainCircle}
+              functionGraphRenderer={functionGraphRenderer}
+              polynomialFunction={polynomialFunction}
               viewport={viewport}
             />
             
@@ -72,6 +90,7 @@ const App = observer(() => {
           
           <ControlDialog 
             polynomialFunction={polynomialFunction}
+            functionGraphRenderer={functionGraphRenderer}
           />
         </div>
       </main>

@@ -1,10 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Viewport } from '@/utils/coordinateTransforms';
+import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
 import './CoordinateGrid.css';
 
 interface CoordinateGridProps {
-  viewport: Viewport;
+  viewport: ViewportConfig;
   showPolar?: boolean;
   showCartesian?: boolean;
 }
@@ -12,7 +12,7 @@ interface CoordinateGridProps {
 const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = true }: CoordinateGridProps) => {
   const renderCartesianGrid = () => {
     const lines: JSX.Element[] = [];
-    const { xMin, xMax, yMin, yMax } = viewport;
+    const { xMin, xMax, yMin, yMax } = getViewportBounds(viewport);
     
     const gridSpacing = 0.5;
     
@@ -84,7 +84,8 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
     
     const maxRadius = Math.min(viewport.width, viewport.height) / 2;
     const radiusStep = 0.5;
-    const scale = viewport.width / (viewport.xMax - viewport.xMin);
+    const bounds = getViewportBounds(viewport);
+    const scale = viewport.width / (bounds.xMax - bounds.xMin);
     
     for (let r = radiusStep; r * scale <= maxRadius; r += radiusStep) {
       const screenRadius = r * scale;

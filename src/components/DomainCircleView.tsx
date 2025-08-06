@@ -1,18 +1,25 @@
 import React, { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { DomainCircle } from '@/stores/DomainCircle';
+import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
+import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { Complex } from '@/utils/complex';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
 import DomainHandle from './DomainHandle';
+import FunctionGraphView from './FunctionGraphView';
 import './DomainCircleView.css';
 
 interface DomainCircleViewProps {
   domainCircle: DomainCircle;
+  functionGraphRenderer: FunctionGraphRenderer;
+  polynomialFunction: PolynomialFunction;
   viewport: ViewportConfig;
 }
 
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   domainCircle,
+  functionGraphRenderer,
+  polynomialFunction,
   viewport
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates
@@ -132,6 +139,14 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
         <g className="polar-grid">
           {renderPolarGrid()}
         </g>
+        
+        {/* Function graph visualization */}
+        <FunctionGraphView
+          functionGraphRenderer={functionGraphRenderer}
+          polynomialFunction={polynomialFunction}
+          domainCircle={domainCircle}
+          viewport={viewport}
+        />
         
         {/* Domain circle outline */}
         <circle

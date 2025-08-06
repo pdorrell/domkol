@@ -1,0 +1,39 @@
+.function-graph {
+  pointer-events: none;
+}
+
+.real-path {
+  stroke: #ff6b6b;
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.8;
+}
+
+.imaginary-path {
+  stroke: #4ecdc4;
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.8;
+}
+
+.real-path-under {
+  stroke: #ff6b6b;
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 4, 2;
+  opacity: 0.6;
+}
+
+.real-path-shadow {
+  stroke: #000;
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.3;
+}
+
+.real-path-shadow2 {
+  stroke: #000;
+  stroke-width: 3;
+  fill: none;
+  opacity: 0.2;
+}

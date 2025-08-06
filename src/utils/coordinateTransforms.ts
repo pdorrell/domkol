@@ -38,6 +38,24 @@ export function complexToPixel(
 }
 
 /**
+ * Calculate the complex plane bounds for a given viewport
+ */
+export function getViewportBounds(config: ViewportConfig): {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+} {
+  const [originX, originY] = config.originPixelLocation;
+  const xMin = -originX / config.pixelsPerUnit;
+  const xMax = (config.width - originX) / config.pixelsPerUnit;
+  const yMin = (originY - config.height) / config.pixelsPerUnit;
+  const yMax = originY / config.pixelsPerUnit;
+  
+  return { xMin, xMax, yMin, yMax };
+}
+
+/**
  * Create default viewport configuration for a given container size
  */
 export function createDefaultViewport(width: number, height: number): ViewportConfig {
