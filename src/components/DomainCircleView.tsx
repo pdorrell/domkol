@@ -28,10 +28,9 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   // Convert radius from complex units to pixels
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
   
-  // Calculate edge handle position (point slightly outside circle circumference at angle 0)
-  const handleOffset = 0.02; // Small offset to ensure handle is outside the stroke
+  // Calculate edge handle position (point on circle circumference at angle 0)
   const edgeComplex: Complex = [
-    domainCircle.center[0] + (domainCircle.radiusInUnits + handleOffset),
+    domainCircle.center[0] + domainCircle.radiusInUnits,
     domainCircle.center[1]
   ];
   
@@ -61,10 +60,11 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     const numRadialLines = numRadialLinesPerQuarter * 4; // 24 total lines
     const thetaIncrement = (Math.PI * 2) / numRadialLines;
     
-    // Calculate grid dimensions - polar grid extends from 0.12 to 1.12
+    // Calculate grid dimensions - polar grid extends ±0.5 units from domain circle
     const pixelsPerUnit = viewport.pixelsPerUnit;
-    const outerGridRadius = 1.12 * pixelsPerUnit; // Outer edge at 1.12
-    const innerGridRadius = 0.12 * pixelsPerUnit; // Inner edge at 0.12
+    const domainRadius = domainCircle.radiusInUnits;
+    const outerGridRadius = (domainRadius + 0.5) * pixelsPerUnit;
+    const innerGridRadius = Math.max(0.01, domainRadius - 0.5) * pixelsPerUnit; // Minimum 0.01 to avoid zero
     
     // Draw radial lines (spokes) - vertical and horizontal should be thicker
     for (let i = 0; i < numRadialLines; i++) {
@@ -94,11 +94,17 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       );
     }
     
-    // Draw concentric circles with fixed radii from 0.12 to 1.12
-    // Domain circle is at 0.62, exactly in the middle of this range
+    // Draw concentric circles that move with domain circle radius
+    // Grid extends from (domainRadius - 0.5) to (domainRadius + 0.5)
+    const gridStart = domainRadius - 0.5;
+    const gridEnd = domainRadius + 0.5;
+    
     const polarGridRadii = [];
-    for (let r = 0.12; r <= 1.12; r += 0.1) {
-      polarGridRadii.push(r);
+    for (let r = gridStart; r <= gridEnd; r += 0.1) {
+      // Only add positive radii (negative circles are not displayed)
+      if (r > 0) {
+        polarGridRadii.push(r);
+      }
     }
     
     for (let i = 0; i < polarGridRadii.length; i++) {

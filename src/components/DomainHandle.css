@@ -1,22 +1,24 @@
 .domain-handle {
   width: 12px;
   height: 12px;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #000000;
+  border: 2px solid white;
   border-radius: 50%;
   user-select: none;
   position: absolute !important;
   z-index: 900 !important;
   pointer-events: auto;
+  box-sizing: border-box;
 }
 
 .domain-handle:hover {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: #333333;
 }
 
 .domain-handle.center-handle {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #000000;
 }
 
 .domain-handle.edge-handle {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #000000;
 }
