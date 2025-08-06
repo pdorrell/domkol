@@ -1,6 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
+import { ViewportConfig } from '@/utils/coordinateTransforms';
+import { formatComplex, Complex } from '@/utils/complex';
 import './CoordinateGrid.css';
 
 interface CoordinateGridProps {
@@ -10,149 +11,141 @@ interface CoordinateGridProps {
 }
 
 const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = true }: CoordinateGridProps) => {
+  // Translated from original domkol drawGrid function
+  const drawGrid = (spacing: number, showCoordinateLabels: boolean) => {
+    const paths: string[] = [];
+    const labels: JSX.Element[] = [];
+    
+    const [originX, originY] = viewport.originPixelLocation;
+    const pixelsPerUnit = viewport.pixelsPerUnit;
+    const maxX = viewport.width;
+    const maxY = viewport.height;
+    
+    // Calculate grid bounds (translated from original logic)
+    const minXIndex = Math.ceil((0 - originX) / (pixelsPerUnit * spacing));
+    const maxXIndex = Math.floor((maxX - originX) / (pixelsPerUnit * spacing));
+    const minYIndex = Math.ceil((originY - maxY) / (pixelsPerUnit * spacing));
+    const maxYIndex = Math.floor(originY / (pixelsPerUnit * spacing));
+    
+    // Vertical lines
+    for (let i = minXIndex; i <= maxXIndex; i++) {
+      const xPixels = originX + i * pixelsPerUnit * spacing;
+      paths.push(`M${xPixels},0 L${xPixels},${maxY}`);
+      
+      // Add coordinate labels if requested and not at origin
+      if (showCoordinateLabels && i !== 0) {
+        const realPart = i * spacing;
+        const complexNumber: Complex = [realPart, 0];
+        const label = formatComplex(complexNumber, 2);
+        
+        labels.push(
+          <text
+            key={`v-label-${i}`}
+            x={xPixels + 3} // xCoordinateOffset = 3
+            y={originY + 3} // yCoordinateOffset = 3 (but Y flipped)
+            className="coordinate-label"
+          >
+            {label}
+          </text>
+        );
+      }
+    }
+    
+    // Horizontal lines
+    for (let i = minYIndex; i <= maxYIndex; i++) {
+      const yPixels = originY - i * pixelsPerUnit * spacing; // Y flipped
+      paths.push(`M0,${yPixels} L${maxX},${yPixels}`);
+      
+      // Add coordinate labels if requested and not at origin
+      if (showCoordinateLabels && i !== 0) {
+        const imagPart = i * spacing;
+        const complexNumber: Complex = [0, imagPart];
+        const label = formatComplex(complexNumber, 2);
+        
+        labels.push(
+          <text
+            key={`h-label-${i}`}
+            x={originX + 3} // xCoordinateOffset = 3
+            y={yPixels + 3} // yCoordinateOffset = 3
+            className="coordinate-label"
+          >
+            {label}
+          </text>
+        );
+      }
+    }
+    
+    // Combined grid lines and corner labels
+    for (let i = minXIndex; i <= maxXIndex; i++) {
+      for (let j = minYIndex; j <= maxYIndex; j++) {
+        if (showCoordinateLabels && i !== 0 && j !== 0) {
+          const xPixels = originX + i * pixelsPerUnit * spacing;
+          const yPixels = originY - j * pixelsPerUnit * spacing; // Y flipped
+          
+          const realPart = i * spacing;
+          const imagPart = j * spacing;
+          const complexNumber: Complex = [realPart, imagPart];
+          const label = formatComplex(complexNumber, 2);
+          
+          labels.push(
+            <text
+              key={`corner-label-${i}-${j}`}
+              x={xPixels + 3}
+              y={yPixels + 3}
+              className="coordinate-label"
+            >
+              {label}
+            </text>
+          );
+        }
+      }
+    }
+    
+    return { pathData: paths.join(' '), labels };
+  };
+
   const renderCartesianGrid = () => {
-    const lines: JSX.Element[] = [];
-    const { xMin, xMax, yMin, yMax } = getViewportBounds(viewport);
+    const elements: JSX.Element[] = [];
     
-    const gridSpacing = 0.5;
+    // Axes (thickest - stroke-width: 0.6)
+    const [originX, originY] = viewport.originPixelLocation;
+    elements.push(
+      <g key="axes" className="axes">
+        {/* Real axis (horizontal) */}
+        <line x1={0} y1={originY} x2={viewport.width} y2={originY} />
+        {/* Imaginary axis (vertical) */}
+        <line x1={originX} y1={0} x2={originX} y2={viewport.height} />
+      </g>
+    );
     
-    for (let x = Math.floor(xMin / gridSpacing) * gridSpacing; x <= xMax; x += gridSpacing) {
-      const screenX = (x - xMin) / (xMax - xMin) * viewport.width;
-      const isAxis = Math.abs(x) < 0.001;
-      
-      lines.push(
-        <line
-          key={`v-${x}`}
-          x1={screenX}
-          y1={0}
-          x2={screenX}
-          y2={viewport.height}
-          className={isAxis ? 'cartesian-axis' : 'cartesian-grid'}
+    // Fine grid (0.1 spacing, thin lines - stroke-width: 0.2)
+    const fineGrid = drawGrid(0.1, false);
+    elements.push(
+      <path
+        key="fine-grid"
+        d={fineGrid.pathData}
+        className="fine-coordinate-grid"
+      />
+    );
+    
+    // Unit grid (1.0 spacing, medium lines - stroke-width: 0.5, with labels)
+    const unitGrid = drawGrid(1.0, true);
+    elements.push(
+      <g key="unit-grid">
+        <path
+          d={unitGrid.pathData}
+          className="unit-coordinate-grid"
         />
-      );
-      
-      if (!isAxis && Math.abs(x % 1) < 0.001) {
-        lines.push(
-          <text
-            key={`vl-${x}`}
-            x={screenX + 5}
-            y={viewport.height / 2 - 5}
-            className="grid-label"
-          >
-            {x.toFixed(0)}
-          </text>
-        );
-      }
-    }
+        {unitGrid.labels}
+      </g>
+    );
     
-    for (let y = Math.floor(yMin / gridSpacing) * gridSpacing; y <= yMax; y += gridSpacing) {
-      const screenY = (yMax - y) / (yMax - yMin) * viewport.height;
-      const isAxis = Math.abs(y) < 0.001;
-      
-      lines.push(
-        <line
-          key={`h-${y}`}
-          x1={0}
-          y1={screenY}
-          x2={viewport.width}
-          y2={screenY}
-          className={isAxis ? 'cartesian-axis' : 'cartesian-grid'}
-        />
-      );
-      
-      if (!isAxis && Math.abs(y % 1) < 0.001) {
-        lines.push(
-          <text
-            key={`hl-${y}`}
-            x={viewport.width / 2 + 5}
-            y={screenY - 5}
-            className="grid-label"
-          >
-            {y.toFixed(0)}i
-          </text>
-        );
-      }
-    }
-    
-    return lines;
+    return elements;
   };
 
   const renderPolarGrid = () => {
-    const elements: JSX.Element[] = [];
-    const centerX = viewport.width / 2;
-    const centerY = viewport.height / 2;
-    
-    const maxRadius = Math.min(viewport.width, viewport.height) / 2;
-    const radiusStep = 0.5;
-    const bounds = getViewportBounds(viewport);
-    const scale = viewport.width / (bounds.xMax - bounds.xMin);
-    
-    for (let r = radiusStep; r * scale <= maxRadius; r += radiusStep) {
-      const screenRadius = r * scale;
-      elements.push(
-        <circle
-          key={`circle-${r}`}
-          cx={centerX}
-          cy={centerY}
-          r={screenRadius}
-          className="polar-circle"
-        />
-      );
-      
-      if (Math.abs(r % 1) < 0.001) {
-        elements.push(
-          <text
-            key={`radius-label-${r}`}
-            x={centerX + screenRadius + 5}
-            y={centerY - 5}
-            className="grid-label"
-          >
-            {r.toFixed(0)}
-          </text>
-        );
-      }
-    }
-    
-    const angleStep = Math.PI / 6;
-    for (let angle = 0; angle < 2 * Math.PI; angle += angleStep) {
-      const x1 = centerX;
-      const y1 = centerY;
-      const x2 = centerX + maxRadius * Math.cos(angle);
-      const y2 = centerY - maxRadius * Math.sin(angle);
-      
-      elements.push(
-        <line
-          key={`ray-${angle}`}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          className="polar-ray"
-        />
-      );
-      
-      const labelRadius = maxRadius * 0.9;
-      const labelX = centerX + labelRadius * Math.cos(angle);
-      const labelY = centerY - labelRadius * Math.sin(angle);
-      const degrees = Math.round((angle * 180) / Math.PI);
-      
-      if (degrees % 30 === 0 && degrees !== 0) {
-        elements.push(
-          <text
-            key={`angle-label-${angle}`}
-            x={labelX}
-            y={labelY}
-            className="grid-label angle-label"
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            {degrees}°
-          </text>
-        );
-      }
-    }
-    
-    return elements;
+    // Polar grid is handled by domain circle - this is just a placeholder
+    return null;
   };
 
   return (

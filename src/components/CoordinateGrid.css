@@ -2,38 +2,31 @@
   pointer-events: none;
 }
 
-.cartesian-grid {
-  stroke: #333;
-  stroke-width: 0.5;
-  opacity: 0.3;
-}
-
-.cartesian-axis {
-  stroke: #555;
-  stroke-width: 1;
-  opacity: 0.6;
-}
-
-.polar-circle {
+/* Axes (thickest lines - x=0, y=0) */
+.axes line {
+  stroke: #909090;
+  stroke-width: 0.6;
   fill: none;
-  stroke: #666;
+}
+
+/* Unit coordinate grid (1.0 spacing, medium thickness) */
+.unit-coordinate-grid {
+  stroke: #909090;
   stroke-width: 0.5;
-  opacity: 0.4;
+  fill: none;
 }
 
-.polar-ray {
-  stroke: #666;
-  stroke-width: 0.5;
-  opacity: 0.3;
+/* Fine coordinate grid (0.1 spacing, thin lines) */
+.fine-coordinate-grid {
+  stroke: #909090;
+  stroke-width: 0.2;
+  fill: none;
 }
 
-.grid-label {
-  font-size: 10px;
-  fill: #888;
-  font-family: 'Arial', sans-serif;
-  opacity: 0.7;
-}
-
-.angle-label {
-  font-size: 9px;
+/* Coordinate labels (light blue, Arial font) */
+.coordinate-label {
+  font-family: Arial, sans-serif;
+  font-size: 0.7em;
+  fill: #d0d0ff;
+  pointer-events: none;
 }
