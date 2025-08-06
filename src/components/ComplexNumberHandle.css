@@ -3,7 +3,8 @@
   margin: 0;
   user-select: none;
   position: relative;
-  z-index: 6;
+  z-index: 1000;
+  pointer-events: auto;
 }
 
 .number-handle .number-text {

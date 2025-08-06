@@ -82,7 +82,7 @@ const App = observer(() => {
             )}
             
             {/* Layer 2: Cartesian coordinates and grid */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}>
               <CoordinateGrid
                 viewport={viewport}
                 showPolar={false}
@@ -92,7 +92,7 @@ const App = observer(() => {
             
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {functionGraphRenderer.show3DGraph && (
-              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 3 }}>
+              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}>
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
                   polynomialFunction={polynomialFunction}
@@ -112,7 +112,7 @@ const App = observer(() => {
             />
             
             {/* Layer 5: 3D graph "over" parts OR 2D graphs */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 5 }}>
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}>
               {functionGraphRenderer.showGraphOnCircle && (
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
