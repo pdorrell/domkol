@@ -54,15 +54,22 @@ This document tracks the progress of migrating the Domkol complex function visua
 - [x] Graph scale slider for function visualization scaling
 - [x] Preserved original domkol path generation algorithms and math
 
+### Stage 6: Domain Coloring ✅
+- [x] DomainColoringRenderer MobX store (`src/stores/DomainColoringRenderer.ts`)
+- [x] DomainColoringCanvas component with pixel-perfect canvas rendering (`src/components/DomainColoringCanvas.tsx`)
+- [x] Canvas-based color encoding of function values using original algorithm
+- [x] Red/green color scheme: real→red, imaginary→green, blue=0, alpha=200
+- [x] Exact color mapping: (value*scale+1.0)*128 for pixel values
+- [x] Color scale slider with exponential mapping (1.2^(slider-50))
+- [x] "Repaint domain coloring continuously" performance control
+- [x] Proper z-index layering (canvas above grid, below UI elements)
+- [x] Coordinate system integration with Y-axis inversion preserved
+
 ## In Progress 🚧
 
-Ready for stage 6 of the staged migration plan.
+Ready for stage 7 of the staged migration plan.
 
 ## Remaining Features 📋
-
-### Stage 6: Domain Coloring
-- [ ] Canvas-based color encoding of function values
-- [ ] Red/green color scheme for real/imaginary components
 
 ### Stage 7: Advanced Controls
 - [ ] Graph scale slider (0 to 1.0)
