@@ -28,9 +28,10 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   // Convert radius from complex units to pixels
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
   
-  // Calculate edge handle position (point on circle circumference at angle 0)
+  // Calculate edge handle position (point slightly outside circle circumference at angle 0)
+  const handleOffset = 0.02; // Small offset to ensure handle is outside the stroke
   const edgeComplex: Complex = [
-    domainCircle.center[0] + domainCircle.radiusInUnits,
+    domainCircle.center[0] + (domainCircle.radiusInUnits + handleOffset),
     domainCircle.center[1]
   ];
   
@@ -154,7 +155,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           width: '100%',
           height: '100%',
           pointerEvents: 'none',
-          zIndex: 6
+          zIndex: 10
         }}
       >
         {/* Domain circle outline */}
