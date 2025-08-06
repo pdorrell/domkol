@@ -44,6 +44,76 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     }
   }, [domainCircle]);
   
+  // Render polar grid associated with this domain circle
+  const renderPolarGrid = () => {
+    const elements: JSX.Element[] = [];
+    
+    // Parameters matching original domkol implementation
+    const numRadialLinesPerQuarter = 6;
+    const numRadialLines = numRadialLinesPerQuarter * 4; // 24 total lines
+    const thetaIncrement = (Math.PI * 2) / numRadialLines;
+    
+    // Calculate grid dimensions based on domain circle
+    const pixelsPerUnit = viewport.pixelsPerUnit;
+    const pixelsPerScaledUnit = pixelsPerUnit; // TODO: Add scaleF when function scaling is implemented
+    const gridRadius = radiusPixels + pixelsPerScaledUnit;
+    const innerRadius = radiusPixels - pixelsPerScaledUnit;
+    const innerGridRadius = Math.max(innerRadius, 0);
+    
+    // Draw radial lines (spokes)
+    for (let i = 0; i < numRadialLines; i++) {
+      const theta = i * thetaIncrement;
+      const sinTheta = Math.sin(theta);
+      const cosTheta = Math.cos(theta);
+      
+      const lineStartX = centerPixelX + innerGridRadius * sinTheta;
+      const lineEndX = centerPixelX + gridRadius * sinTheta;
+      const lineStartY = centerPixelY + innerGridRadius * cosTheta;
+      const lineEndY = centerPixelY + gridRadius * cosTheta;
+      
+      const isCoarse = i % numRadialLinesPerQuarter === 0;
+      
+      elements.push(
+        <line
+          key={`radial-${i}`}
+          x1={lineStartX}
+          y1={lineStartY}
+          x2={lineEndX}
+          y2={lineEndY}
+          stroke="white"
+          strokeWidth={isCoarse ? "0.4" : "0.2"}
+          opacity={0.7}
+        />
+      );
+    }
+    
+    // Draw concentric circles
+    const stepsPerScaledUnit = 10;
+    const radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
+    
+    for (let i = -stepsPerScaledUnit; i <= stepsPerScaledUnit; i++) {
+      const gridCircleRadius = radiusPixels + i * radiusStep;
+      if (gridCircleRadius > 0) {
+        const isCoarse = i % stepsPerScaledUnit === 0;
+        
+        elements.push(
+          <circle
+            key={`circle-${i}`}
+            cx={centerPixelX}
+            cy={centerPixelY}
+            r={gridCircleRadius}
+            fill="none"
+            stroke="white"
+            strokeWidth={isCoarse ? "0.4" : "0.2"}
+            opacity={0.7}
+          />
+        );
+      }
+    }
+    
+    return elements;
+  };
+  
   return (
     <div className="domain-circle-view">
       {/* SVG for the white domain circle */}
@@ -58,6 +128,12 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           pointerEvents: 'none'
         }}
       >
+        {/* Polar grid associated with domain circle */}
+        <g className="polar-grid">
+          {renderPolarGrid()}
+        </g>
+        
+        {/* Domain circle outline */}
         <circle
           cx={centerPixelX}
           cy={centerPixelY}

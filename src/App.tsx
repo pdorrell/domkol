@@ -44,10 +44,10 @@ const App = observer(() => {
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
             <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0 }}>
-              {/* Coordinate grids */}
+              {/* Cartesian coordinate grid only - polar grid is part of domain circle */}
               <CoordinateGrid
                 viewport={viewport}
-                showPolar={true}
+                showPolar={false}
                 showCartesian={true}
               />
             </svg>
