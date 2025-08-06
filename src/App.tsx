@@ -37,9 +37,13 @@ const App = observer(() => {
   // Create viewport configuration for the complex plane (match CSS dimensions)
   const viewport = React.useMemo(() => createDefaultViewport(560, 560), []);
 
+  // Track changing state for domain coloring
+  const [isZeroChanging, setIsZeroChanging] = React.useState(false);
+  
   // Handle changes to zero positions
   const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
     polynomialFunction.updateZero(index, newValue, changing);
+    setIsZeroChanging(changing);
   }, [polynomialFunction]);
 
   // Wiggle animation effect
@@ -72,6 +76,7 @@ const App = observer(() => {
                 viewport={viewport}
                 colorScale={domainColoringRenderer.colorScale}
                 repaintContinuously={domainColoringRenderer.repaintContinuously}
+                changing={isZeroChanging}
               />
             )}
             

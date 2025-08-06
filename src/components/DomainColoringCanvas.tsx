@@ -62,27 +62,29 @@ const DomainColoringCanvas = observer(({
   }, [polynomialFunction, viewport, colorScale]);
   
   // Translated from original drawDomainColouring function
-  const drawDomainColoring = useCallback((currentlyChanging: boolean = false) => {
+  const drawDomainColoring = useCallback((overrideChanging?: boolean) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const context = canvas.getContext('2d');
     if (!context) return;
     
+    const currentlyChanging = overrideChanging !== undefined ? overrideChanging : (changing || false);
+    
     if (!currentlyChanging || repaintContinuously) {
       const imageData = context.createImageData(viewport.width, viewport.height);
       writeToCanvasData(imageData.data);
       context.putImageData(imageData, 0, 0);
     }
-  }, [writeToCanvasData, repaintContinuously, viewport.width, viewport.height]);
-  
-  // Redraw when any dependencies change
-  useEffect(() => {
-    drawDomainColoring();
-  }, [drawDomainColoring]);
+  }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height]);
   
   // Handle polynomial function changes with proper change tracking
   const [isChanging, setIsChanging] = React.useState(false);
+  
+  // Create a dependency array that includes all the zeros to trigger on any change
+  const zeroesHash = React.useMemo(() => {
+    return polynomialFunction.zeroes.map(z => `${z[0]},${z[1]}`).join('|');
+  }, [polynomialFunction.zeroes]);
   
   useEffect(() => {
     // Track if we're in a changing state
@@ -99,6 +101,8 @@ const DomainColoringCanvas = observer(({
       // Set timeout to mark as not changing after a delay
       changeTimeout = setTimeout(() => {
         setIsChanging(false);
+        // Redraw once more when changing stops (to ensure final quality render)
+        drawDomainColoring(false);
       }, 100);
       
       // Immediate redraw with changing state
@@ -112,7 +116,19 @@ const DomainColoringCanvas = observer(({
         clearTimeout(changeTimeout);
       }
     };
-  }, [polynomialFunction.zeroes, colorScale, drawDomainColoring]);
+  }, [zeroesHash, colorScale, changing, drawDomainColoring]);
+  
+  // Initial draw
+  useEffect(() => {
+    drawDomainColoring(false);
+  }, [drawDomainColoring]);
+  
+  // Respond to external changing state
+  useEffect(() => {
+    if (changing !== undefined) {
+      drawDomainColoring(changing);
+    }
+  }, [changing, drawDomainColoring]);
   
   return (
     <canvas
