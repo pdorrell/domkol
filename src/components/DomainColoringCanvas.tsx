@@ -21,9 +21,10 @@ const DomainColoringCanvas = observer(({
   changing = false
 }: DomainColoringCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageDataRef = useRef<ImageData | null>(null);
   
-  // Translated from original writeToCanvasData function
-  const writeToCanvasData = useCallback((data: Uint8ClampedArray) => {
+  // Translated from original writeToCanvasData function - moved outside useCallback to avoid closure overhead
+  const writeToCanvasData = (data: Uint8ClampedArray, zeroes: any[], colorScale: number, viewport: ViewportConfig) => {
     const widthInPixels = viewport.width;
     const heightInPixels = viewport.height;
     
@@ -35,9 +36,6 @@ const DomainColoringCanvas = observer(({
     const minX = -(originX / pixelsPerUnit);
     const minY = (originY - heightInPixels) / pixelsPerUnit;
     
-    // Cache the zeroes array to avoid MobX reactivity overhead in the hot loop
-    const zeroes = polynomialFunction.zeroes;
-    
     let x = minX; // start with lowest value of re(z)
     
     for (let i = 0; i < widthInPixels; i++) {
@@ -46,7 +44,7 @@ const DomainColoringCanvas = observer(({
       // Note - canvas Y coords are upside down, so we start at the bottom
       for (let j = heightInPixels - 1; j >= 0; j--) {
         // Inline polynomial evaluation to match old code performance
-        let result: Complex = [1, 0];
+        let result = [1, 0];
         for (let k = 0; k < zeroes.length; k++) {
           const zero = zeroes[k];
           const factorReal = x - zero[0];
@@ -72,7 +70,7 @@ const DomainColoringCanvas = observer(({
       }
       x += unitsPerPixel;
     }
-  }, [polynomialFunction.zeroes, viewport, colorScale]);
+  };
   
   // Translated from original drawDomainColouring function
   const drawDomainColoring = useCallback(() => {
@@ -86,22 +84,31 @@ const DomainColoringCanvas = observer(({
     // If repaintContinuously is false, only repaint when not changing
     if (repaintContinuously || !changing) {
       const startTime = performance.now();
-      console.log(`Domain Colouring: START f=${polynomialFunction.formula} cs=${colorScale}`);
       
-      const imageData = context.createImageData(viewport.width, viewport.height);
-      writeToCanvasData(imageData.data);
-      context.putImageData(imageData, 0, 0);
+      // Reuse ImageData like the old code does
+      if (!imageDataRef.current || 
+          imageDataRef.current.width !== viewport.width || 
+          imageDataRef.current.height !== viewport.height) {
+        imageDataRef.current = context.createImageData(viewport.width, viewport.height);
+      }
+      
+      // Cache formula to avoid MobX overhead during logging
+      const formula = polynomialFunction.formula;
+      console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
+      
+      writeToCanvasData(imageDataRef.current.data, polynomialFunction.zeroes, colorScale, viewport);
+      context.putImageData(imageDataRef.current, 0, 0);
       
       const endTime = performance.now();
       console.log(`  END Domain Colouring: ${(endTime - startTime).toFixed(2)}ms`);
     }
-  }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height, polynomialFunction.formula, colorScale]);
+  }, [repaintContinuously, changing, viewport, colorScale, polynomialFunction.zeroes, polynomialFunction.formula]);
   
   // MobX will automatically trigger re-renders when observables change
   // Just redraw whenever any dependencies change
   useEffect(() => {
     drawDomainColoring();
-  }, [polynomialFunction.zeroes, colorScale, repaintContinuously, changing, drawDomainColoring]);
+  }, [drawDomainColoring]);
   
   return (
     <canvas
