@@ -102,7 +102,7 @@ const DomainHandle: React.FC<DomainHandleProps> = ({
         left: pixelX - 4,
         top: pixelY - 4,
         cursor: 'move',
-        zIndex: 3
+        zIndex: 900
       }}
       onMouseDown={handleMouseDown}
     />
