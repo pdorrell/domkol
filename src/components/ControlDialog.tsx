@@ -2,14 +2,16 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
+import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import './ControlDialog.css';
 
 interface ControlDialogProps {
   polynomialFunction: PolynomialFunction;
   functionGraphRenderer: FunctionGraphRenderer;
+  domainColoringRenderer: DomainColoringRenderer;
 }
 
-const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer }: ControlDialogProps) => {
+const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, domainColoringRenderer }: ControlDialogProps) => {
   return (
     <div className="control-dialog">
       <div className="window-top-bar">
@@ -86,6 +88,50 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer }: C
                   onChange={(e) => functionGraphRenderer.setScaleF(parseFloat(e.target.value))}
                 />
                 <span className="slider-value">{functionGraphRenderer.scaleF.toFixed(1)}</span>
+              </div>
+            </>
+          )}
+        </div>
+        
+        <div className="control-section">
+          <div className="control-line">
+            <label className="checkbox-container">
+              <input
+                type="checkbox"
+                checked={domainColoringRenderer.showDomainColoring}
+                onChange={(e) => domainColoringRenderer.setShowDomainColoring(e.target.checked)}
+              />
+              <span className="checkmark"></span>
+              Show domain coloring
+            </label>
+          </div>
+          
+          {domainColoringRenderer.showDomainColoring && (
+            <>
+              <div className="control-line">
+                <label htmlFor="color-scale-slider">Color scale:</label>
+                <input
+                  id="color-scale-slider"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={domainColoringRenderer.colorScaleSliderValue}
+                  onChange={(e) => domainColoringRenderer.setColorScaleFromSlider(parseInt(e.target.value))}
+                />
+                <span className="slider-value">{domainColoringRenderer.colorScale.toFixed(2)}</span>
+              </div>
+              
+              <div className="control-line">
+                <label className="checkbox-container">
+                  <input
+                    type="checkbox"
+                    checked={domainColoringRenderer.repaintContinuously}
+                    onChange={(e) => domainColoringRenderer.setRepaintContinuously(e.target.checked)}
+                  />
+                  <span className="checkmark"></span>
+                  Repaint domain coloring continuously
+                </label>
               </div>
             </>
           )}

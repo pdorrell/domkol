@@ -3,12 +3,14 @@ import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
+import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import { Complex, complex } from '@/utils/complex';
 import { createDefaultViewport } from '@/utils/coordinateTransforms';
 import ControlDialog from '@/components/ControlDialog';
 import ComplexNumberHandle from '@/components/ComplexNumberHandle';
 import DomainCircleView from '@/components/DomainCircleView';
 import CoordinateGrid from '@/components/CoordinateGrid';
+import DomainColoringCanvas from '@/components/DomainColoringCanvas';
 import './App.css';
 
 const App = observer(() => {
@@ -26,6 +28,10 @@ const App = observer(() => {
 
   const [functionGraphRenderer] = React.useState(() => 
     new FunctionGraphRenderer()
+  );
+
+  const [domainColoringRenderer] = React.useState(() => 
+    new DomainColoringRenderer()
   );
 
   // Create viewport configuration for the complex plane (match CSS dimensions)
@@ -59,6 +65,16 @@ const App = observer(() => {
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
+            {/* Domain coloring canvas (z-index: 2) */}
+            {domainColoringRenderer.showDomainColoring && (
+              <DomainColoringCanvas
+                polynomialFunction={polynomialFunction}
+                viewport={viewport}
+                colorScale={domainColoringRenderer.colorScale}
+                repaintContinuously={domainColoringRenderer.repaintContinuously}
+              />
+            )}
+            
             <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0 }}>
               {/* Cartesian coordinate grid only - polar grid is part of domain circle */}
               <CoordinateGrid
@@ -91,6 +107,7 @@ const App = observer(() => {
           <ControlDialog 
             polynomialFunction={polynomialFunction}
             functionGraphRenderer={functionGraphRenderer}
+            domainColoringRenderer={domainColoringRenderer}
           />
         </div>
       </main>
