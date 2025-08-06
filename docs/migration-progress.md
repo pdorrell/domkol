@@ -42,19 +42,23 @@ This document tracks the progress of migrating the Domkol complex function visua
 - [x] Grid labels showing coordinate values and angles
 - [x] Integrated coordinate grids into main visualization
 
+### Stage 5: Function Graph Visualization ✅
+- [x] FunctionGraphRenderer MobX store (`src/stores/FunctionGraphRenderer.ts`)
+- [x] FunctionGraphView component with SVG rendering (`src/components/FunctionGraphView.tsx`)
+- [x] 2D graph representation (separate real/imaginary paths)
+- [x] "Show graph on circular domain" control in ControlDialog
+- [x] 3D SVG graph with depth visualization (over/under paths)
+- [x] "Show graph on circular domain in 3D" control
+- [x] 3D wiggle animation with 80ms intervals (matching original)
+- [x] Shadow effects for 3D graph (dual shadow paths)
+- [x] Graph scale slider for function visualization scaling
+- [x] Preserved original domkol path generation algorithms and math
+
 ## In Progress 🚧
 
-Ready for stage 5 of the staged migration plan.
+Ready for stage 6 of the staged migration plan.
 
 ## Remaining Features 📋
-
-### Stage 5: Function Graph Visualization
-- [ ] 2D graph representation (separate real/imaginary)
-- [ ] "Show graph on circular domain" control
-- [ ] 3D SVG graph with depth visualization
-- [ ] "Show graph on circular domain in 3D" control
-- [ ] 3D wiggle animation
-- [ ] Shadow effects for 3D graph
 
 ### Stage 6: Domain Coloring
 - [ ] Canvas-based color encoding of function values
