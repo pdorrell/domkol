@@ -35,6 +35,9 @@ const DomainColoringCanvas = observer(({
     const minX = -(originX / pixelsPerUnit);
     const minY = (originY - heightInPixels) / pixelsPerUnit;
     
+    // Cache the zeroes array to avoid MobX reactivity overhead in the hot loop
+    const zeroes = polynomialFunction.zeroes;
+    
     let x = minX; // start with lowest value of re(z)
     
     for (let i = 0; i < widthInPixels; i++) {
@@ -42,24 +45,34 @@ const DomainColoringCanvas = observer(({
       
       // Note - canvas Y coords are upside down, so we start at the bottom
       for (let j = heightInPixels - 1; j >= 0; j--) {
-        const z: Complex = [x, y];
-        const fValue = polynomialFunction.evaluate(z);
+        // Inline polynomial evaluation to match old code performance
+        let result: Complex = [1, 0];
+        for (let k = 0; k < zeroes.length; k++) {
+          const zero = zeroes[k];
+          const factorReal = x - zero[0];
+          const factorImag = y - zero[1];
+          // Inline complex multiplication: result = result * (z - zero)
+          const newReal = result[0] * factorReal - result[1] * factorImag;
+          const newImag = result[0] * factorImag + result[1] * factorReal;
+          result[0] = newReal;
+          result[1] = newImag;
+        }
         
-        const k = (j * widthInPixels + i) * 4;
+        const pixelIndex = (j * widthInPixels + i) * 4;
         
         // Original color encoding algorithm:
         // positive real & negative imaginary = red
-        data[k] = (fValue[0] * colorScale + 1.0) * 128;
+        data[pixelIndex] = (result[0] * colorScale + 1.0) * 128;
         // positive imaginary & negative real = green  
-        data[k + 1] = (fValue[1] * colorScale + 1.0) * 128;
-        data[k + 2] = 0; // blue channel unused
-        data[k + 3] = 200; // semi-transparent alpha
+        data[pixelIndex + 1] = (result[1] * colorScale + 1.0) * 128;
+        data[pixelIndex + 2] = 0; // blue channel unused
+        data[pixelIndex + 3] = 200; // semi-transparent alpha
         
         y += unitsPerPixel;
       }
       x += unitsPerPixel;
     }
-  }, [polynomialFunction, viewport, colorScale]);
+  }, [polynomialFunction.zeroes, viewport, colorScale]);
   
   // Translated from original drawDomainColouring function
   const drawDomainColoring = useCallback(() => {
