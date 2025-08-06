@@ -28,6 +28,25 @@ export class PolynomialFunction {
     return result;
   }
 
+  // Create a closure function like the old code for maximum performance
+  getFunction() {
+    const zeroes = this.zeroes;
+    return (z: Complex): Complex => {
+      let result: Complex = [1, 0];
+      for (let i = 0; i < zeroes.length; i++) {
+        const zero = zeroes[i];
+        // Inline complex arithmetic for performance
+        const factorReal = z[0] - zero[0];
+        const factorImag = z[1] - zero[1];
+        const newReal = result[0] * factorReal - result[1] * factorImag;
+        const newImag = result[0] * factorImag + result[1] * factorReal;
+        result[0] = newReal;
+        result[1] = newImag;
+      }
+      return result;
+    };
+  }
+
   get formula(): string {
     if (this.zeroes.length === 0) {
       return '1';
