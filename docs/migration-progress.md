@@ -17,16 +17,20 @@ This document tracks the progress of migrating the Domkol complex function visua
 - [x] Control dialog displaying polynomial formula (`src/components/ControlDialog.tsx`)
 - [x] Function formula display showing product of factors (e.g., "z × z × z" for zeroes at origin)
 
+### Stage 2: Interactive Zero Handles ✅
+- [x] Coordinate transformation utilities (`src/utils/coordinateTransforms.ts`)
+- [x] ComplexNumberHandle component (`src/components/ComplexNumberHandle.tsx`)
+- [x] Display draggable zero handles on the complex plane
+- [x] Handle drag interactions to update polynomial zeroes
+- [x] Real-time formula updates when zeroes are moved
+- [x] Blue-colored number labels with semi-transparent background
+- [x] Small blue circles indicating precise zero positions
+
 ## In Progress 🚧
 
-Currently at stage 1 of the staged migration plan.
+Ready for stage 3 of the staged migration plan.
 
 ## Remaining Features 📋
-
-### Stage 2: Interactive Zero Handles
-- [ ] Display draggable zero handles on the complex plane
-- [ ] Handle drag interactions to update polynomial zeroes
-- [ ] Real-time formula updates when zeroes are moved
 
 ### Stage 3: Domain Circle Visualization
 - [ ] Display domain circle (white circle)

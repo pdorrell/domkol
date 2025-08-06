@@ -1,8 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { complex } from '@/utils/complex';
+import { Complex, complex } from '@/utils/complex';
+import { createDefaultViewport } from '@/utils/coordinateTransforms';
 import ControlDialog from '@/components/ControlDialog';
+import ComplexNumberHandle from '@/components/ComplexNumberHandle';
 import './App.css';
 
 const App = observer(() => {
@@ -13,6 +15,14 @@ const App = observer(() => {
       complex(0, 0)
     ])
   );
+
+  // Create viewport configuration for the complex plane (match CSS dimensions)
+  const viewport = React.useMemo(() => createDefaultViewport(560, 560), []);
+
+  // Handle changes to zero positions
+  const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
+    polynomialFunction.updateZero(index, newValue, changing);
+  }, [polynomialFunction]);
 
   return (
     <div className="app">
@@ -26,7 +36,15 @@ const App = observer(() => {
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
-            {/* Complex plane visualization will go here */}
+            {polynomialFunction.zeroes.map((zero, index) => (
+              <ComplexNumberHandle
+                key={index}
+                index={index}
+                value={zero}
+                viewport={viewport}
+                onChange={handleZeroChange}
+              />
+            ))}
           </div>
           
           <ControlDialog 
