@@ -3,10 +3,11 @@
 }
 
 .real-path {
-  stroke: #ff6b6b;
-  stroke-width: 2;
+  stroke: #4a90e2;
+  stroke-width: 3;
   fill: none;
-  opacity: 0.8;
+  opacity: 1.0;
+  stroke-dasharray: 6, 3;
 }
 
 .imaginary-path {
@@ -17,10 +18,10 @@
 }
 
 .real-path-under {
-  stroke: #ff6b6b;
-  stroke-width: 2;
+  stroke: #4a90e2;
+  stroke-width: 3;
   fill: none;
-  stroke-dasharray: 4, 2;
+  stroke-dasharray: 6, 3;
   opacity: 0.6;
 }
 

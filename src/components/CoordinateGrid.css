@@ -26,7 +26,7 @@
 /* Coordinate labels (light blue, Arial font) */
 .coordinate-label {
   font-family: Arial, sans-serif;
-  font-size: 0.7em;
+  font-size: 1.0em;
   fill: #d0d0ff;
   pointer-events: none;
 }

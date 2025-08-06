@@ -51,23 +51,23 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     }
   }, [domainCircle]);
   
-  // Render polar grid associated with this domain circle
+  // Render polar grid associated with this domain circle (matching original exactly)
   const renderPolarGrid = () => {
     const elements: JSX.Element[] = [];
     
-    // Parameters matching original domkol implementation
+    // Parameters exactly matching original domkol implementation
     const numRadialLinesPerQuarter = 6;
     const numRadialLines = numRadialLinesPerQuarter * 4; // 24 total lines
     const thetaIncrement = (Math.PI * 2) / numRadialLines;
     
-    // Calculate grid dimensions based on domain circle
+    // Calculate grid dimensions - original had 10 circles inside and 10 outside
     const pixelsPerUnit = viewport.pixelsPerUnit;
-    const pixelsPerScaledUnit = pixelsPerUnit; // TODO: Add scaleF when function scaling is implemented
+    const pixelsPerScaledUnit = pixelsPerUnit; // Function scale factor
     const gridRadius = radiusPixels + pixelsPerScaledUnit;
     const innerRadius = radiusPixels - pixelsPerScaledUnit;
     const innerGridRadius = Math.max(innerRadius, 0);
     
-    // Draw radial lines (spokes)
+    // Draw radial lines (spokes) - vertical and horizontal should be thicker
     for (let i = 0; i < numRadialLines; i++) {
       const theta = i * thetaIncrement;
       const sinTheta = Math.sin(theta);
@@ -78,7 +78,8 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       const lineStartY = centerPixelY + innerGridRadius * cosTheta;
       const lineEndY = centerPixelY + gridRadius * cosTheta;
       
-      const isCoarse = i % numRadialLinesPerQuarter === 0;
+      // Vertical and horizontal lines (every 90 degrees) should be thicker
+      const isMainAxis = i % numRadialLinesPerQuarter === 0;
       
       elements.push(
         <line
@@ -88,20 +89,21 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           x2={lineEndX}
           y2={lineEndY}
           stroke="white"
-          strokeWidth={isCoarse ? "0.4" : "0.2"}
+          strokeWidth={isMainAxis ? "0.6" : "0.2"}
           opacity={0.7}
         />
       );
     }
     
-    // Draw concentric circles
+    // Draw concentric circles - exactly 10 inside and 10 outside domain circle
     const stepsPerScaledUnit = 10;
     const radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
     
     for (let i = -stepsPerScaledUnit; i <= stepsPerScaledUnit; i++) {
       const gridCircleRadius = radiusPixels + i * radiusStep;
       if (gridCircleRadius > 0) {
-        const isCoarse = i % stepsPerScaledUnit === 0;
+        // Last circle in each direction (innermost and outermost) should be thicker
+        const isOutermost = Math.abs(i) === stepsPerScaledUnit;
         
         elements.push(
           <circle
@@ -111,7 +113,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
             r={gridCircleRadius}
             fill="none"
             stroke="white"
-            strokeWidth={isCoarse ? "0.4" : "0.2"}
+            strokeWidth={isOutermost ? "0.6" : "0.2"}
             opacity={0.7}
           />
         );
@@ -140,13 +142,6 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           {renderPolarGrid()}
         </g>
         
-        {/* Function graph visualization */}
-        <FunctionGraphView
-          functionGraphRenderer={functionGraphRenderer}
-          polynomialFunction={polynomialFunction}
-          domainCircle={domainCircle}
-          viewport={viewport}
-        />
         
         {/* Domain circle outline */}
         <circle
@@ -155,8 +150,8 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           r={radiusPixels}
           fill="none"
           stroke="white"
-          strokeWidth="2"
-          opacity="0.8"
+          strokeWidth="3"
+          opacity="1.0"
         />
       </svg>
       

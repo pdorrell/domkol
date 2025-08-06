@@ -11,13 +11,15 @@ interface FunctionGraphViewProps {
   polynomialFunction: PolynomialFunction;
   domainCircle: DomainCircle;
   viewport: ViewportConfig;
+  renderMode?: 'under' | 'over' | '2d';
 }
 
 const FunctionGraphView = observer(({
   functionGraphRenderer,
   polynomialFunction,
   domainCircle,
-  viewport
+  viewport,
+  renderMode = '2d'
 }: FunctionGraphViewProps) => {
   if (!functionGraphRenderer.showGraphOnCircle) {
     return null;
@@ -33,64 +35,51 @@ const FunctionGraphView = observer(({
     <g className="function-graph">
       {functionGraphRenderer.show3DGraph ? (
         <>
-          {/* 3D Mode: Under path (dashed, behind everything) */}
-          <path
-            className="real-path-under"
-            d={paths.realPathUnder3D}
-            fill="none"
-            stroke="#ff6b6b"
-            strokeWidth="2"
-            strokeDasharray="4,2"
-            opacity="0.6"
-          />
-          
-          {/* 3D Mode: Shadow paths */}
-          <path
-            className="real-path-shadow2"
-            d={paths.realPathShadow2}
-            fill="none"
-            stroke="#000"
-            strokeWidth="3"
-            opacity="0.2"
-          />
-          <path
-            className="real-path-shadow"
-            d={paths.realPathShadow}
-            fill="none"
-            stroke="#000"
-            strokeWidth="2"
-            opacity="0.3"
-          />
-          
-          {/* 3D Mode: Over path (solid, in front) */}
-          <path
-            className="real-path"
-            d={paths.realPath3D}
-            fill="none"
-            stroke="#ff6b6b"
-            strokeWidth="2"
-            opacity="1.0"
-          />
+          {/* 3D Mode - render based on mode */}
+          {renderMode === 'under' && (
+            <>
+              {/* Under path (dashed, behind domain coloring) */}
+              <path
+                className="real-path-under"
+                d={paths.realPathUnder3D}
+              />
+            </>
+          )}
+          {renderMode === 'over' && (
+            <>
+              {/* Shadow paths */}
+              <path
+                className="real-path-shadow2"
+                d={paths.realPathShadow2}
+              />
+              <path
+                className="real-path-shadow"
+                d={paths.realPathShadow}
+              />
+              
+              {/* Over path (solid, in front of domain coloring) */}
+              <path
+                className="real-path"
+                d={paths.realPath3D}
+              />
+            </>
+          )}
         </>
       ) : (
         <>
-          {/* 2D Mode: Separate real and imaginary paths */}
-          <path
-            className="real-path"
-            d={paths.real}
-            fill="none"
-            stroke="#ff6b6b"
-            strokeWidth="2"
-            opacity="0.8"
-          />
-          <path
-            className="imaginary-path"
-            d={paths.imaginary}
-            fill="none"
-            stroke="#4ecdc4"
-            strokeWidth="2"
-            opacity="0.8"
-          />
+          {/* 2D Mode: Only render in "2d" or "over" mode */}
+          {(renderMode === '2d' || renderMode === 'over') && (
+            <>
+              <path
+                className="real-path"
+                d={paths.real}
+              />
+              <path
+                className="imaginary-path"
+                d={paths.imaginary}
+              />
+            </>
+          )}
         </>
       )}
     </g>

@@ -11,6 +11,7 @@ import ComplexNumberHandle from '@/components/ComplexNumberHandle';
 import DomainCircleView from '@/components/DomainCircleView';
 import CoordinateGrid from '@/components/CoordinateGrid';
 import DomainColoringCanvas from '@/components/DomainColoringCanvas';
+import FunctionGraphView from '@/components/FunctionGraphView';
 import './App.css';
 
 const App = observer(() => {
@@ -80,8 +81,22 @@ const App = observer(() => {
               />
             )}
             
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0 }}>
-              {/* Cartesian coordinate grid only - polar grid is part of domain circle */}
+            {/* SVG under layer (z-index: 1.5) - for 3D graph "under" parts */}
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1.5 }}>
+              {/* Function graph "under" parts - below domain coloring */}
+              {functionGraphRenderer.showGraphOnCircle && functionGraphRenderer.show3DGraph && (
+                <FunctionGraphView
+                  functionGraphRenderer={functionGraphRenderer}
+                  polynomialFunction={polynomialFunction}
+                  domainCircle={domainCircle}
+                  viewport={viewport}
+                  renderMode="under"
+                />
+              )}
+            </svg>
+            
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
+              {/* Cartesian coordinate grid - above domain coloring */}
               <CoordinateGrid
                 viewport={viewport}
                 showPolar={false}
@@ -96,6 +111,20 @@ const App = observer(() => {
               polynomialFunction={polynomialFunction}
               viewport={viewport}
             />
+            
+            {/* SVG over layer (z-index: 4) - for 3D graph "over" parts */}
+            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4 }}>
+              {/* Function graph "over" parts and 2D graphs - above domain coloring */}
+              {functionGraphRenderer.showGraphOnCircle && (
+                <FunctionGraphView
+                  functionGraphRenderer={functionGraphRenderer}
+                  polynomialFunction={polynomialFunction}
+                  domainCircle={domainCircle}
+                  viewport={viewport}
+                  renderMode={functionGraphRenderer.show3DGraph ? "over" : "2d"}
+                />
+              )}
+            </svg>
             
             {/* Zero handles for the polynomial */}
             {polynomialFunction.zeroes.map((zero, index) => (

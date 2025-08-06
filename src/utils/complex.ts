@@ -65,5 +65,6 @@ export function formatComplex(z: Complex, precision: number = 3): string {
   const absI = Math.abs(i);
   const iStr = absI === 1 ? 'i' : `${absI}i`;
   
-  return `${r} ${sign} ${iStr}`;
+  // Remove spaces to match original: "-1+i" not "-1 + i"
+  return `${r}${sign}${iStr}`;
 }
