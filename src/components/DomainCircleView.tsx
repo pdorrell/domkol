@@ -60,12 +60,10 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     const numRadialLines = numRadialLinesPerQuarter * 4; // 24 total lines
     const thetaIncrement = (Math.PI * 2) / numRadialLines;
     
-    // Calculate grid dimensions - original had 10 circles inside and 10 outside
+    // Calculate grid dimensions - polar grid extends from 0.12 to 1.12
     const pixelsPerUnit = viewport.pixelsPerUnit;
-    const pixelsPerScaledUnit = pixelsPerUnit; // Function scale factor
-    const gridRadius = radiusPixels + pixelsPerScaledUnit;
-    const innerRadius = radiusPixels - pixelsPerScaledUnit;
-    const innerGridRadius = Math.max(innerRadius, 0);
+    const outerGridRadius = 1.12 * pixelsPerUnit; // Outer edge at 1.12
+    const innerGridRadius = 0.12 * pixelsPerUnit; // Inner edge at 0.12
     
     // Draw radial lines (spokes) - vertical and horizontal should be thicker
     for (let i = 0; i < numRadialLines; i++) {
@@ -74,9 +72,9 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       const cosTheta = Math.cos(theta);
       
       const lineStartX = centerPixelX + innerGridRadius * sinTheta;
-      const lineEndX = centerPixelX + gridRadius * sinTheta;
+      const lineEndX = centerPixelX + outerGridRadius * sinTheta;
       const lineStartY = centerPixelY + innerGridRadius * cosTheta;
-      const lineEndY = centerPixelY + gridRadius * cosTheta;
+      const lineEndY = centerPixelY + outerGridRadius * cosTheta;
       
       // Vertical and horizontal lines (every 90 degrees) should be thicker
       const isMainAxis = i % numRadialLinesPerQuarter === 0;
@@ -95,29 +93,32 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       );
     }
     
-    // Draw concentric circles - exactly 10 inside and 10 outside domain circle
-    const stepsPerScaledUnit = 10;
-    const radiusStep = pixelsPerScaledUnit / stepsPerScaledUnit;
+    // Draw concentric circles with fixed radii from 0.12 to 1.12
+    // Domain circle is at 0.62, exactly in the middle of this range
+    const polarGridRadii = [];
+    for (let r = 0.12; r <= 1.12; r += 0.1) {
+      polarGridRadii.push(r);
+    }
     
-    for (let i = -stepsPerScaledUnit; i <= stepsPerScaledUnit; i++) {
-      const gridCircleRadius = radiusPixels + i * radiusStep;
-      if (gridCircleRadius > 0) {
-        // Last circle in each direction (innermost and outermost) should be thicker
-        const isOutermost = Math.abs(i) === stepsPerScaledUnit;
-        
-        elements.push(
-          <circle
-            key={`circle-${i}`}
-            cx={centerPixelX}
-            cy={centerPixelY}
-            r={gridCircleRadius}
-            fill="none"
-            stroke="white"
-            strokeWidth={isOutermost ? "0.6" : "0.2"}
-            opacity={0.7}
-          />
-        );
-      }
+    for (let i = 0; i < polarGridRadii.length; i++) {
+      const gridRadius = polarGridRadii[i];
+      const gridCircleRadius = gridRadius * pixelsPerUnit;
+      
+      // First and last circles should be thicker
+      const isOutermost = i === 0 || i === polarGridRadii.length - 1;
+      
+      elements.push(
+        <circle
+          key={`circle-${gridRadius}`}
+          cx={centerPixelX}
+          cy={centerPixelY}
+          r={gridCircleRadius}
+          fill="none"
+          stroke="white"
+          strokeWidth={isOutermost ? "0.6" : "0.2"}
+          opacity={0.7}
+        />
+      );
     }
     
     return elements;
