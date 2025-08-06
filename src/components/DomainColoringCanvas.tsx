@@ -72,11 +72,17 @@ const DomainColoringCanvas = observer(({
     // Original logic: if repaintContinuously is true, always repaint (even while changing)
     // If repaintContinuously is false, only repaint when not changing
     if (repaintContinuously || !changing) {
+      const startTime = performance.now();
+      console.log(`Domain Colouring: START f=${polynomialFunction.formula} cs=${colorScale}`);
+      
       const imageData = context.createImageData(viewport.width, viewport.height);
       writeToCanvasData(imageData.data);
       context.putImageData(imageData, 0, 0);
+      
+      const endTime = performance.now();
+      console.log(`  END Domain Colouring: ${(endTime - startTime).toFixed(2)}ms`);
     }
-  }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height]);
+  }, [writeToCanvasData, repaintContinuously, changing, viewport.width, viewport.height, polynomialFunction.formula, colorScale]);
   
   // MobX will automatically trigger re-renders when observables change
   // Just redraw whenever any dependencies change

@@ -1649,8 +1649,14 @@ var DOMKOL = {};
     /** repaint the domain colouring into the canvas element */
     drawDomainColouring: function(changing) {
       if (!changing || this.repaintContinuously) {
+        var startTime = performance.now();
+        console.log("Domain Colouring: START f=" + this.complexFunction.getFormula() + " cs=" + this.explorerModel.colourScale);
+        
         this.explorerModel.writeToCanvasData(this.canvasImageData.data);
         this.canvasContext.putImageData(this.canvasImageData, 0, 0);
+        
+        var endTime = performance.now();
+        console.log("  END Domain Colouring: " + (endTime - startTime).toFixed(2) + "ms");
       }
     }
     
