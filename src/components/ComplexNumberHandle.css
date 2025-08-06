@@ -3,7 +3,7 @@
   margin: 0;
   user-select: none;
   position: relative;
-  z-index: 1000;
+  z-index: 1000 !important;
   pointer-events: auto;
 }
 

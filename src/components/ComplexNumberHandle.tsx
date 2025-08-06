@@ -106,7 +106,7 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = ({
         left: pixelX + 2,
         top: pixelY - 23,
         cursor: 'move',
-        zIndex: 4
+        zIndex: 1000
       }}
       onMouseDown={handleMouseDown}
     >
