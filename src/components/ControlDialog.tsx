@@ -61,6 +61,35 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
+  
+  // Handle "c" key to reset sliders to default
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'c' || e.key === 'C') {
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.tagName === 'INPUT' && activeElement.getAttribute('type') === 'range') {
+          const sliderId = activeElement.id;
+          switch (sliderId) {
+            case 'scale-slider':
+              functionGraphRenderer.setScaleFFromSlider(50);
+              break;
+            case 'color-scale-slider':
+              domainColoringRenderer.setColorScaleFromSlider(50);
+              break;
+            case 'rotate-slider':
+              functionGraphRenderer.setGraphRotationFromSlider(50);
+              break;
+          }
+        }
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [functionGraphRenderer, domainColoringRenderer]);
 
   return (
     <div ref={dialogRef} className="control-dialog">
