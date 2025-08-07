@@ -76,7 +76,8 @@ export default [
       'deploy/',
       'dist/',
       'build/',
-      '*.min.js'
+      '*.min.js',
+      'old/'
     ]
   }
 ];
