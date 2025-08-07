@@ -1,6 +1,6 @@
 .control-dialog {
   position: absolute;
-  top: calc(10% + 20px);
+  top: calc(5% + 20px);
   left: calc(540px - 31em * 0.25);
   width: 31em;
   background-color: rgba(240, 240, 240, 0.85);
