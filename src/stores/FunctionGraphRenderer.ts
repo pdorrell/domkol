@@ -198,7 +198,10 @@ export class FunctionGraphRenderer {
     const shadowPoints2: string[] = [];
     
     let currentPath = -1;
-    let currentPointNum = -1;
+    let currentPointNumOver = -1;
+    let currentPointNumUnder = -1;
+    let currentPointNumShadow = -1;
+    let currentPointNumShadow2 = -1;
     const dashLength = 5;
     const dashGap = 1;
     
@@ -208,48 +211,62 @@ export class FunctionGraphRenderer {
       
       // Handle path switching like the old code
       if (whichPath !== currentPath) {
-        currentPointNum = 0;
+        currentPointNumOver = -1;
+        currentPointNumUnder = -1;
+        currentPointNumShadow = -1;
+        currentPointNumShadow2 = -1;
         currentPath = whichPath;
-      } else {
-        currentPointNum++;
       }
       
       // Calculate dash position like the old code
-      const dashPos = i % dashLength;
-      if (dashPos === 0) {
-        currentPointNum = 0;
-      }
+      const dashPos = i % (dashLength + dashGap);
+      const isInDash = dashPos < dashLength;
       
       const x = 0.001 * Math.round(point.x * 1000);
       const y = 0.001 * Math.round(point.y * 1000);
       
       // Only add points that are in the "dash" part, not the "gap" part
-      if (dashPos + dashGap < dashLength) {
-        const prefix = currentPointNum === 0 ? "M" : (currentPointNum === 1 ? "L" : "");
-        const pointString = prefix + `${x},${y}`;
-        
+      if (isInDash) {
         if (whichPath === 0) {
+          currentPointNumOver++;
+          const prefix = currentPointNumOver === 0 ? "M" : (currentPointNumOver === 1 ? "L" : "");
+          const pointString = prefix + `${x},${y}`;
           overPoints.push(pointString);
         } else {
+          currentPointNumUnder++;
+          const prefix = currentPointNumUnder === 0 ? "M" : (currentPointNumUnder === 1 ? "L" : "");
+          const pointString = prefix + `${x},${y}`;
           underPoints.push(pointString);
+        }
+      } else {
+        // Reset counters when we hit a gap (to start new path segments)
+        if (whichPath === 0) {
+          currentPointNumOver = -1;
+          currentPointNumShadow = -1;
+          currentPointNumShadow2 = -1;
+        } else {
+          currentPointNumUnder = -1;
         }
       }
       
       // Create shadow points for "over" portions (only when in dash, not gap)
-      if (whichPath === 0 && point.z && dashPos + dashGap < dashLength) {
+      if (whichPath === 0 && point.z && isInDash) {
         // First shadow (like old code)
         const shadowOffset = point.z * 3; // Amplify the shadow offset
         const shadowX = x + shadowOffset;
         const shadowY = y + shadowOffset;
         
-        const prefix = currentPointNum === 0 ? "M" : (currentPointNum === 1 ? "L" : "");
+        currentPointNumShadow++;
+        const prefix = currentPointNumShadow === 0 ? "M" : (currentPointNumShadow === 1 ? "L" : "");
         const shadowPointString = prefix + `${shadowX},${shadowY}`;
         shadowPoints.push(shadowPointString);
         
         // Second shadow (0.7 * z for x, 0.5 * z for y like old code)
         const shadow2X = x + 0.7 * shadowOffset;
         const shadow2Y = y + 0.5 * shadowOffset;
-        const shadow2PointString = prefix + `${shadow2X},${shadow2Y}`;
+        currentPointNumShadow2++;
+        const prefix2 = currentPointNumShadow2 === 0 ? "M" : (currentPointNumShadow2 === 1 ? "L" : "");
+        const shadow2PointString = prefix2 + `${shadow2X},${shadow2Y}`;
         shadowPoints2.push(shadow2PointString);
       }
     }

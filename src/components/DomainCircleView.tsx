@@ -66,16 +66,33 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     const outerGridRadius = (domainRadius + 0.5) * pixelsPerUnit;
     const innerGridRadius = Math.max(0.01, domainRadius - 0.5) * pixelsPerUnit; // Minimum 0.01 to avoid zero
     
-    // Draw radial lines (spokes) - vertical and horizontal should be thicker
+    // Find innermost and outermost grid circles to determine radial line extent
+    const scaleF = functionGraphRenderer.scaleF;
+    
+    let minGridRadius = Infinity;
+    let maxGridRadius = -Infinity;
+    
+    for (let fValue = -0.5; fValue <= 0.5; fValue += 0.05) {
+      const scaledFValueInPixels = fValue * scaleF * viewport.pixelsPerUnit;
+      const circleRadius = domainRadius + scaledFValueInPixels / viewport.pixelsPerUnit;
+      
+      if (circleRadius > 0) {
+        const radiusInPixels = circleRadius * viewport.pixelsPerUnit;
+        minGridRadius = Math.min(minGridRadius, radiusInPixels);
+        maxGridRadius = Math.max(maxGridRadius, radiusInPixels);
+      }
+    }
+
+    // Draw radial lines (spokes) from innermost to outermost grid circle
     for (let i = 0; i < numRadialLines; i++) {
       const theta = i * thetaIncrement;
       const sinTheta = Math.sin(theta);
       const cosTheta = Math.cos(theta);
       
-      const lineStartX = centerPixelX + innerGridRadius * sinTheta;
-      const lineEndX = centerPixelX + outerGridRadius * sinTheta;
-      const lineStartY = centerPixelY + innerGridRadius * cosTheta;
-      const lineEndY = centerPixelY + outerGridRadius * cosTheta;
+      const lineStartX = centerPixelX + minGridRadius * sinTheta;
+      const lineEndX = centerPixelX + maxGridRadius * sinTheta;
+      const lineStartY = centerPixelY + minGridRadius * cosTheta;
+      const lineEndY = centerPixelY + maxGridRadius * cosTheta;
       
       // Vertical and horizontal lines (every 90 degrees) should be thicker
       const isMainAxis = i % numRadialLinesPerQuarter === 0;
@@ -97,7 +114,6 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     // Draw concentric circles representing f-values from -0.5 to 0.5 in steps of 0.05
     // This gives 10 circles on each side of the domain circle (20 total + center)
     // Scale by functionGraphRenderer.scaleF to match function scaling
-    const scaleF = functionGraphRenderer.scaleF;
     const polarGridRadii = [];
     
     // Create 21 circles (from -0.5 to 0.5 in 0.05 increments)
@@ -119,6 +135,18 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       // f-values at 0.1 intervals (like -0.5, -0.4, ..., 0.0, ..., 0.4, 0.5) should be thicker
       const isMainGridLine = Math.abs((gridItem.fValue * 10) % 1.0) < 0.001;
       
+      // Innermost and outermost circles should be thicker (twice as thick)
+      const isInnermost = i === 0;
+      const isOutermost = i === polarGridRadii.length - 1;
+      const isExtreme = isInnermost || isOutermost;
+      
+      let strokeWidth = "0.2";
+      if (isExtreme) {
+        strokeWidth = isMainGridLine ? "0.8" : "0.4"; // Double thickness for extreme circles
+      } else if (isMainGridLine) {
+        strokeWidth = "0.4";
+      }
+      
       elements.push(
         <circle
           key={`circle-${gridItem.fValue}`}
@@ -127,7 +155,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           r={gridCircleRadius}
           fill="none"
           stroke="white"
-          strokeWidth={isMainGridLine ? "0.4" : "0.2"}
+          strokeWidth={strokeWidth}
           opacity={0.7}
         />
       );
@@ -176,7 +204,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           r={radiusPixels}
           fill="none"
           stroke="white"
-          strokeWidth="3"
+          strokeWidth="5"
           opacity="1.0"
         />
       </svg>

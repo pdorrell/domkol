@@ -99,8 +99,8 @@ const DomainHandle: React.FC<DomainHandleProps> = ({
       className={`domain-handle ${className}`}
       style={{
         position: 'absolute',
-        left: pixelX - 6,
-        top: pixelY - 6,
+        left: pixelX - 8,
+        top: pixelY - 8,
         cursor: 'move',
         zIndex: 900
       }}
