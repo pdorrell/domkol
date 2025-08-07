@@ -94,35 +94,39 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       );
     }
     
-    // Draw concentric circles that move with domain circle radius
-    // Grid extends from (domainRadius - 0.5) to (domainRadius + 0.5)
-    const gridStart = domainRadius - 0.5;
-    const gridEnd = domainRadius + 0.5;
-    
+    // Draw concentric circles representing f-values from -1.0 to 1.0 in steps of 0.1
+    // Scale by functionGraphRenderer.scaleF to match function scaling
+    const scaleF = functionGraphRenderer.scaleF;
     const polarGridRadii = [];
-    for (let r = gridStart; r <= gridEnd; r += 0.1) {
+    
+    // Create 21 circles (from -1.0 to 1.0 in 0.1 increments)
+    for (let fValue = -1.0; fValue <= 1.0; fValue += 0.1) {
+      // Calculate radius: domain circle radius + (f-value * scale * pixelsPerUnit)
+      const scaledFValueInPixels = fValue * scaleF * pixelsPerUnit;
+      const circleRadius = domainRadius + scaledFValueInPixels / pixelsPerUnit;
+      
       // Only add positive radii (negative circles are not displayed)
-      if (r > 0) {
-        polarGridRadii.push(r);
+      if (circleRadius > 0) {
+        polarGridRadii.push({ radius: circleRadius, fValue: Math.round(fValue * 10) / 10 });
       }
     }
     
     for (let i = 0; i < polarGridRadii.length; i++) {
-      const gridRadius = polarGridRadii[i];
-      const gridCircleRadius = gridRadius * pixelsPerUnit;
+      const gridItem = polarGridRadii[i];
+      const gridCircleRadius = gridItem.radius * pixelsPerUnit;
       
-      // First and last circles should be thicker
-      const isOutermost = i === 0 || i === polarGridRadii.length - 1;
+      // Integer f-values (like -1.0, 0.0, 1.0) should be thicker
+      const isIntegerFValue = Math.abs(gridItem.fValue % 1.0) < 0.001;
       
       elements.push(
         <circle
-          key={`circle-${gridRadius}`}
+          key={`circle-${gridItem.fValue}`}
           cx={centerPixelX}
           cy={centerPixelY}
           r={gridCircleRadius}
           fill="none"
           stroke="white"
-          strokeWidth={isOutermost ? "0.6" : "0.2"}
+          strokeWidth={isIntegerFValue ? "0.4" : "0.2"}
           opacity={0.7}
         />
       );
