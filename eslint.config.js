@@ -41,10 +41,9 @@ export default [
     rules: {
       ...typescript.configs.recommended.rules,
       ...react.configs.recommended.rules,
-      
+
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
-      
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
