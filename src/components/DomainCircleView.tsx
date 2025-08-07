@@ -161,7 +161,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           width: '100%',
           height: '100%',
           pointerEvents: 'none',
-          zIndex: 10
+          zIndex: 4
         }}
       >
         {/* Domain circle outline */}
