@@ -28,6 +28,9 @@ export class FunctionGraphRenderer {
   wiggling: boolean = true; // Start with wiggle animation like original
   wiggleAngle: number = 0;
   
+  // Graph rotation slider value (0-100, where 50 is default/no rotation)
+  graphRotationSliderValue: number = 50;
+  
   // Animation state
   private wiggleAngles: number[] = [];
   private wiggleIndex: number = 0;
@@ -58,6 +61,13 @@ export class FunctionGraphRenderer {
   
   setWiggling(wiggling: boolean): void {
     this.wiggling = wiggling;
+  }
+  
+  setGraphRotationFromSlider(sliderValue: number): void {
+    this.graphRotationSliderValue = sliderValue;
+    // Convert slider value (0-100) to rotation angle
+    const angle = ((sliderValue - 50) / 50) * Math.PI; // -π to π
+    this.graphRotation = complex(Math.cos(angle), Math.sin(angle));
   }
   
   private initializeWiggleAngles(): void {

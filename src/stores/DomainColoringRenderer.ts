@@ -4,6 +4,7 @@ export class DomainColoringRenderer {
   showDomainColoring: boolean = true;
   colorScale: number = 1.0; // Default color scale
   repaintContinuously: boolean = true;
+  showDomainGrid: boolean = true; // Show coordinate grid on domain
   
   constructor() {
     makeAutoObservable(this);
@@ -15,6 +16,10 @@ export class DomainColoringRenderer {
   
   setRepaintContinuously(repaint: boolean): void {
     this.repaintContinuously = repaint;
+  }
+  
+  setShowDomainGrid(show: boolean): void {
+    this.showDomainGrid = show;
   }
   
   // Translated from original getColourScaleFromSliderValue function
