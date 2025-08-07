@@ -111,9 +111,9 @@ const App = observer(() => {
               viewport={viewport}
             />
             
-            {/* Layer 4.5: Shadows (only in 3D mode, above domain circle) */}
+            {/* Layer 4.8: Shadows (only in 3D mode, above domain circle but below "over" parts) */}
             {functionGraphRenderer.show3DGraph && (
-              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4.5, pointerEvents: 'none' }}>
+              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4.8, pointerEvents: 'none' }}>
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
                   polynomialFunction={polynomialFunction}
