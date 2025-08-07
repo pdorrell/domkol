@@ -9,18 +9,18 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-size: 13px;
   z-index: 1000;
+  padding: 10px 12px;
 }
 
 .drag-handle {
   background-color: white;
   height: 20px;
-  width: 100%;
+  margin: -10px -12px 10px -12px;
   cursor: move;
   border-bottom: 1px solid #ccc;
 }
 
 .controls {
-  padding: 10px 12px;
 }
 
 .control-line {
