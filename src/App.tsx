@@ -12,6 +12,7 @@ import DomainCircleView from '@/components/DomainCircleView';
 import CoordinateGrid from '@/components/CoordinateGrid';
 import DomainColoringCanvas from '@/components/DomainColoringCanvas';
 import FunctionGraphView from '@/components/FunctionGraphView';
+import VersionDisplay from '@/components/VersionDisplay';
 import './App.css';
 
 const App = observer(() => {
@@ -60,6 +61,7 @@ const App = observer(() => {
 
   return (
     <div className="app">
+      <VersionDisplay />
       <header>
         <h1>Domkol: Complex Function Visualisation</h1>
         <div className="function-links">
