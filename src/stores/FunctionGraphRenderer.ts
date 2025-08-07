@@ -200,7 +200,7 @@ export class FunctionGraphRenderer {
     let currentPath = -1;
     let currentPointNum = -1; // Track point number within current path segment
     const dashLength = 9;
-    const dashGap = 2;
+    const dashGap = 3;
     
     for (let i = 0; i < points.length; i++) {
       const point = points[i];
