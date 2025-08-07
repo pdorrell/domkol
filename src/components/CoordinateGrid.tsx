@@ -46,6 +46,8 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
             className="coordinate-label"
             textAnchor="start"
             dominantBaseline="alphabetic"
+            dx="0.1em"
+            dy="-0.1em"
           >
             {label}
           </text>
@@ -72,6 +74,8 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
             className="coordinate-label"
             textAnchor="start"
             dominantBaseline="alphabetic"
+            dx="0.1em"
+            dy="-0.1em"
           >
             {label}
           </text>
@@ -99,6 +103,8 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
               className="coordinate-label"
               textAnchor="start"
               dominantBaseline="alphabetic"
+              dx="0.1em"
+              dy="-0.1em"
             >
               {label}
             </text>
