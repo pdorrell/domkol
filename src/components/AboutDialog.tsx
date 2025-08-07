@@ -95,7 +95,7 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
             The new Domkol is based on a tech stack of Typescript, MobX and functional React components.
           </p>
           <p>
-            The migration was mostly vibe coded – I have hardly looked at the new code. (But once the initial upgrade has been completed, I will actually look at the code so I can have some opinions on how good it is and tidy it up if need be.)
+            The migration was mostly vibe-coded – I have hardly looked at the new code. (But once the initial upgrade has been completed, I will actually look at the code so I can have some opinions on how good it is and tidy it up if need be.)
           </p>
           <p>
             The one time I had to look at the code was when there was a performance issue that turned out to be caused by accessing proxied MobX attributes inside a per-pixel rendering loop – an issue that was easy to fix once it was understood what was causing it.
