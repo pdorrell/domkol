@@ -41,9 +41,11 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         labels.push(
           <text
             key={`v-label-${i}`}
-            x={xPixels + 3} // xCoordinateOffset = 3
-            y={originY + 3} // yCoordinateOffset = 3 (but Y flipped)
+            x={xPixels}
+            y={originY}
             className="coordinate-label"
+            textAnchor="start"
+            dominantBaseline="alphabetic"
           >
             {label}
           </text>
@@ -65,9 +67,11 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         labels.push(
           <text
             key={`h-label-${i}`}
-            x={originX + 3} // xCoordinateOffset = 3
-            y={yPixels + 3} // yCoordinateOffset = 3
+            x={originX}
+            y={yPixels}
             className="coordinate-label"
+            textAnchor="start"
+            dominantBaseline="alphabetic"
           >
             {label}
           </text>
@@ -90,9 +94,11 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
           labels.push(
             <text
               key={`corner-label-${i}-${j}`}
-              x={xPixels + 3}
-              y={yPixels + 3}
+              x={xPixels}
+              y={yPixels}
               className="coordinate-label"
+              textAnchor="start"
+              dominantBaseline="alphabetic"
             >
               {label}
             </text>
