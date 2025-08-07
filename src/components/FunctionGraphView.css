@@ -18,7 +18,7 @@
 
 /* 3D mode paths */
 .real-path-3d-over {
-  stroke: #003d7a;
+  stroke: #0066cc;
   stroke-width: 3;
   fill: none;
   stroke-dasharray: 6, 3;
@@ -26,7 +26,7 @@
 }
 
 .real-path-under {
-  stroke: #888888;
+  stroke: #555555;
   stroke-width: 3;
   fill: none;
   stroke-dasharray: 6, 3;
