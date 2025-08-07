@@ -3,7 +3,7 @@
 }
 
 .real-path {
-  stroke: #0066cc;
+  stroke: blue;
   stroke-width: 2;
   fill: none;
   opacity: 1.0;
@@ -18,7 +18,7 @@
 
 /* 3D mode paths */
 .real-path-3d-over {
-  stroke: #0066cc;
+  stroke: blue;
   stroke-width: 3;
   fill: none;
   stroke-dasharray: 6, 3;
