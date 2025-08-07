@@ -230,8 +230,9 @@ export class FunctionGraphRenderer {
       
       // Create shadow points for "over" portions
       if (whichPath === 0 && point.z) {
-        const shadowX = x + point.z;
-        const shadowY = y + point.z;
+        const shadowOffset = point.z * 3; // Amplify the shadow offset
+        const shadowX = x + shadowOffset;
+        const shadowY = y + shadowOffset;
         const shadowPointString = `${shadowX},${shadowY}`;
         
         if (i === 0 || (points[i - 1].z || 0) < 0) {
