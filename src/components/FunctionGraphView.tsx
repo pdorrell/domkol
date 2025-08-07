@@ -11,7 +11,7 @@ interface FunctionGraphViewProps {
   polynomialFunction: PolynomialFunction;
   domainCircle: DomainCircle;
   viewport: ViewportConfig;
-  renderMode?: 'under' | 'over' | '2d';
+  renderMode?: 'under' | 'over' | '2d' | 'shadows';
 }
 
 const FunctionGraphView = observer(({
@@ -45,9 +45,9 @@ const FunctionGraphView = observer(({
               />
             </>
           )}
-          {renderMode === 'over' && (
+          {renderMode === 'shadows' && (
             <>
-              {/* Shadow paths */}
+              {/* Shadow paths only */}
               <path
                 className="real-path-shadow2"
                 d={paths.realPathShadow2}
@@ -56,7 +56,10 @@ const FunctionGraphView = observer(({
                 className="real-path-shadow"
                 d={paths.realPathShadow}
               />
-              
+            </>
+          )}
+          {renderMode === 'over' && (
+            <>
               {/* Over path (solid, in front of domain coloring) */}
               <path
                 className="real-path-3d-over"

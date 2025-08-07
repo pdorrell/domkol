@@ -38,6 +38,7 @@
   stroke-width: 3;
   fill: none;
   opacity: 0.15;
+  stroke-dasharray: 6, 3;
 }
 
 .real-path-shadow2 {
@@ -45,4 +46,5 @@
   stroke-width: 5;
   fill: none;
   opacity: 0.1;
+  stroke-dasharray: 6, 3;
 }
