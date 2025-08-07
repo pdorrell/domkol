@@ -31,6 +31,9 @@ export class FunctionGraphRenderer {
   // Graph rotation slider value (0-100, where 50 is default/no rotation)
   graphRotationSliderValue: number = 50;
   
+  // Graph scale slider value (0-100, where 50 is default scale of 1.0)
+  scaleFSliderValue: number = 50;
+  
   // Animation state
   private wiggleAngles: number[] = [];
   private wiggleIndex: number = 0;
@@ -68,6 +71,13 @@ export class FunctionGraphRenderer {
     // Convert slider value (0-100) to rotation angle
     const angle = ((sliderValue - 50) / 50) * Math.PI; // -π to π
     this.graphRotation = complex(Math.cos(angle), Math.sin(angle));
+  }
+  
+  setScaleFFromSlider(sliderValue: number): void {
+    this.scaleFSliderValue = sliderValue;
+    // Convert slider value (0-100) to scale, where 50 = 1.0
+    // Using exponential scaling for better range
+    this.scaleF = Math.pow(1.05, sliderValue - 50);
   }
   
   private initializeWiggleAngles(): void {

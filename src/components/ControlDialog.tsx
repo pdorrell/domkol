@@ -86,11 +86,11 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
           <input
             id="scale-slider"
             type="range"
-            min="0.1"
-            max="5.0"
-            step="0.1"
-            value={functionGraphRenderer.scaleF}
-            onChange={(e) => functionGraphRenderer.setScaleF(parseFloat(e.target.value))}
+            min="0"
+            max="100"
+            step="1"
+            value={functionGraphRenderer.scaleFSliderValue}
+            onChange={(e) => functionGraphRenderer.setScaleFFromSlider(parseInt(e.target.value))}
           />
         </div>
         
