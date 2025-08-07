@@ -16,7 +16,7 @@
   height: 20px;
   margin: 0 0 10px 0;
   cursor: move;
-  border-bottom: 1px solid #aaa;
+  border: 1px solid #aaa;
 }
 
 .controls {
