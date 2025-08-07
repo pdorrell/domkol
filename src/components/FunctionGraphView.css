@@ -34,15 +34,15 @@
 }
 
 .real-path-shadow {
-  stroke: #000;
-  stroke-width: 2;
+  stroke: #404040;
+  stroke-width: 5;
   fill: none;
-  opacity: 0.3;
+  stroke-opacity: 0.08;
 }
 
 .real-path-shadow2 {
-  stroke: #000;
-  stroke-width: 3;
+  stroke: #404040;
+  stroke-width: 5;
   fill: none;
-  opacity: 0.2;
+  stroke-opacity: 0.05;
 }
