@@ -199,8 +199,8 @@ export class FunctionGraphRenderer {
     
     let currentPath = -1;
     let currentPointNum = -1;
-    const dashLength = 10;
-    const dashGap = 3;
+    const dashLength = 5;
+    const dashGap = 2;
     
     for (let i = 0; i < points.length; i++) {
       const point = points[i];
