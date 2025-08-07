@@ -15,23 +15,23 @@ import FunctionGraphView from '@/components/FunctionGraphView';
 import './App.css';
 
 const App = observer(() => {
-  const [polynomialFunction] = React.useState(() => 
+  const [polynomialFunction] = React.useState(() =>
     new PolynomialFunction([
       complex(0, 0),
-      complex(0, 0), 
+      complex(0, 0),
       complex(0, 0)
     ])
   );
 
-  const [domainCircle] = React.useState(() => 
+  const [domainCircle] = React.useState(() =>
     new DomainCircle(complex(0, 0), 0.62) // Center at origin, radius 0.62 (matching original)
   );
 
-  const [functionGraphRenderer] = React.useState(() => 
+  const [functionGraphRenderer] = React.useState(() =>
     new FunctionGraphRenderer()
   );
 
-  const [domainColoringRenderer] = React.useState(() => 
+  const [domainColoringRenderer] = React.useState(() =>
     new DomainColoringRenderer()
   );
 
@@ -40,7 +40,7 @@ const App = observer(() => {
 
   // Track changing state for domain coloring
   const [isZeroChanging, setIsZeroChanging] = React.useState(false);
-  
+
   // Handle changes to zero positions
   const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
     polynomialFunction.updateZero(index, newValue, changing);
@@ -66,7 +66,7 @@ const App = observer(() => {
           Function: <span className="current-function">Cubic Polynomial</span>
         </div>
       </header>
-      
+
       <main className="main-content">
         <div className="visualization-area">
           <div className="complex-plane" id="domkol">
@@ -80,7 +80,7 @@ const App = observer(() => {
                 changing={isZeroChanging}
               />
             )}
-            
+
             {/* Layer 2: Cartesian coordinates and grid */}
             <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}>
               <CoordinateGrid
@@ -89,7 +89,7 @@ const App = observer(() => {
                 showCartesian={true}
               />
             </svg>
-            
+
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {functionGraphRenderer.show3DGraph && (
               <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}>
@@ -102,7 +102,7 @@ const App = observer(() => {
                 />
               </svg>
             )}
-            
+
             {/* Layer 4: Domain circle with polar grid */}
             <DomainCircleView
               domainCircle={domainCircle}
@@ -110,7 +110,7 @@ const App = observer(() => {
               polynomialFunction={polynomialFunction}
               viewport={viewport}
             />
-            
+
             {/* Layer 4.8: Shadows (only in 3D mode, above domain circle but below "over" parts) */}
             {functionGraphRenderer.show3DGraph && (
               <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4.8, pointerEvents: 'none' }}>
@@ -123,7 +123,7 @@ const App = observer(() => {
                 />
               </svg>
             )}
-            
+
             {/* Layer 5: 3D graph "over" parts OR 2D graphs */}
             <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}>
               {functionGraphRenderer.showGraphOnCircle && (
@@ -136,7 +136,7 @@ const App = observer(() => {
                 />
               )}
             </svg>
-            
+
             {/* Zero handles for the polynomial */}
             {polynomialFunction.zeroes.map((zero, index) => (
               <ComplexNumberHandle
@@ -148,8 +148,8 @@ const App = observer(() => {
               />
             ))}
           </div>
-          
-          <ControlDialog 
+
+          <ControlDialog
             polynomialFunction={polynomialFunction}
             functionGraphRenderer={functionGraphRenderer}
             domainColoringRenderer={domainColoringRenderer}

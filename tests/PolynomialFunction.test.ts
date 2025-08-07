@@ -55,12 +55,12 @@ describe('PolynomialFunction', () => {
     it('should evaluate polynomial correctly', () => {
       const roots: Complex[] = [[1, 0], [-1, 0]]; // (z-1)(z+1) = z^2 - 1
       const poly = new PolynomialFunction(roots);
-      
+
       // At z = 0: should give -1
       const result = poly.evaluate([0, 0]);
       expect(result[0]).toBeCloseTo(-1);
       expect(result[1]).toBeCloseTo(0);
-      
+
       // At z = 2: should give 3
       const result2 = poly.evaluate([2, 0]);
       expect(result2[0]).toBeCloseTo(3);

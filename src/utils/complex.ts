@@ -57,14 +57,14 @@ export function imaginary(z: Complex): number {
 export function formatComplex(z: Complex, precision: number = 3): string {
   const r = Number(z[0].toFixed(precision));
   const i = Number(z[1].toFixed(precision));
-  
+
   if (i === 0) return r.toString();
   if (r === 0) return i === 1 ? 'i' : i === -1 ? '-i' : `${i}i`;
-  
+
   const sign = i >= 0 ? '+' : '-';
   const absI = Math.abs(i);
   const iStr = absI === 1 ? 'i' : `${absI}i`;
-  
+
   // Remove spaces to match original: "-1+i" not "-1 + i"
   return `${r}${sign}${iStr}`;
 }
@@ -72,9 +72,9 @@ export function formatComplex(z: Complex, precision: number = 3): string {
 export function formatComplexCoefficient(z: Complex): string {
   const r = Number(z[0].toFixed(2));
   const i = Number(z[1].toFixed(2));
-  
+
   if (i === 0) return r.toFixed(2);
-  
+
   const sign = i >= 0 ? '+' : '';
   return `${r.toFixed(2)}${sign}${i.toFixed(2)}i`;
 }

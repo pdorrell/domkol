@@ -24,58 +24,58 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates
   const [centerPixelX, centerPixelY] = complexToPixel(domainCircle.center, viewport);
-  
+
   // Convert radius from complex units to pixels
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
-  
+
   // Calculate edge handle position (point on circle circumference at angle 0)
   const edgeComplex: Complex = [
     domainCircle.center[0] + domainCircle.radiusInUnits,
     domainCircle.center[1]
   ];
-  
+
   // Handle center position changes
   const handleCenterChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
     domainCircle.setCenter(newValue);
   }, [domainCircle]);
-  
+
   // Handle edge position changes (affects radius)
   const handleEdgeChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
     // Calculate new radius based on distance from center to new edge position
     const dx = newValue[0] - domainCircle.center[0];
     const dy = newValue[1] - domainCircle.center[1];
     const newRadius = Math.sqrt(dx * dx + dy * dy);
-    
+
     if (newRadius > 0.01) { // Minimum radius threshold
       domainCircle.setRadius(newRadius);
     }
   }, [domainCircle]);
-  
+
   // Render polar grid associated with this domain circle (matching original exactly)
   const renderPolarGrid = () => {
     const elements: JSX.Element[] = [];
-    
+
     // Parameters exactly matching original domkol implementation
     const numRadialLinesPerQuarter = 6;
     const numRadialLines = numRadialLinesPerQuarter * 4; // 24 total lines
     const thetaIncrement = (Math.PI * 2) / numRadialLines;
-    
+
     // Calculate grid dimensions - polar grid extends ±0.5 units from domain circle
     const pixelsPerUnit = viewport.pixelsPerUnit;
     const domainRadius = domainCircle.radiusInUnits;
     const outerGridRadius = (domainRadius + 0.5) * pixelsPerUnit;
     const innerGridRadius = Math.max(0.01, domainRadius - 0.5) * pixelsPerUnit; // Minimum 0.01 to avoid zero
-    
+
     // Find innermost and outermost grid circles to determine radial line extent
     const scaleF = functionGraphRenderer.scaleF;
-    
+
     let minGridRadius = Infinity;
     let maxGridRadius = -Infinity;
-    
+
     for (let fValue = -0.5; fValue <= 0.5; fValue += 0.05) {
       const scaledFValueInPixels = fValue * scaleF * viewport.pixelsPerUnit;
       const circleRadius = domainRadius + scaledFValueInPixels / viewport.pixelsPerUnit;
-      
+
       if (circleRadius > 0) {
         const radiusInPixels = circleRadius * viewport.pixelsPerUnit;
         minGridRadius = Math.min(minGridRadius, radiusInPixels);
@@ -88,15 +88,15 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       const theta = i * thetaIncrement;
       const sinTheta = Math.sin(theta);
       const cosTheta = Math.cos(theta);
-      
+
       const lineStartX = centerPixelX + minGridRadius * sinTheta;
       const lineEndX = centerPixelX + maxGridRadius * sinTheta;
       const lineStartY = centerPixelY + minGridRadius * cosTheta;
       const lineEndY = centerPixelY + maxGridRadius * cosTheta;
-      
+
       // Vertical and horizontal lines (every 90 degrees) should be thicker
       const isMainAxis = i % numRadialLinesPerQuarter === 0;
-      
+
       elements.push(
         <line
           key={`radial-${i}`}
@@ -110,43 +110,43 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
         />
       );
     }
-    
+
     // Draw concentric circles representing f-values from -0.5 to 0.5 in steps of 0.05
     // This gives 10 circles on each side of the domain circle (20 total + center)
     // Scale by functionGraphRenderer.scaleF to match function scaling
     const polarGridRadii = [];
-    
+
     // Create 21 circles (from -0.5 to 0.5 in 0.05 increments)
     for (let fValue = -0.5; fValue <= 0.5; fValue += 0.05) {
       // Calculate radius: domain circle radius + (f-value * scale * pixelsPerUnit)
       const scaledFValueInPixels = fValue * scaleF * pixelsPerUnit;
       const circleRadius = domainRadius + scaledFValueInPixels / pixelsPerUnit;
-      
+
       // Only add positive radii (negative circles are not displayed)
       if (circleRadius > 0) {
         polarGridRadii.push({ radius: circleRadius, fValue: Math.round(fValue * 20) / 20 });
       }
     }
-    
+
     for (let i = 0; i < polarGridRadii.length; i++) {
       const gridItem = polarGridRadii[i];
       const gridCircleRadius = gridItem.radius * pixelsPerUnit;
-      
+
       // f-values at 0.1 intervals (like -0.5, -0.4, ..., 0.0, ..., 0.4, 0.5) should be thicker
       const isMainGridLine = Math.abs((gridItem.fValue * 10) % 1.0) < 0.001;
-      
+
       // Innermost and outermost circles should be thicker (twice as thick)
       const isInnermost = i === 0;
       const isOutermost = i === polarGridRadii.length - 1;
       const isExtreme = isInnermost || isOutermost;
-      
+
       let strokeWidth = "0.2";
       if (isExtreme) {
         strokeWidth = isMainGridLine ? "0.8" : "0.4"; // Double thickness for extreme circles
       } else if (isMainGridLine) {
         strokeWidth = "0.4";
       }
-      
+
       elements.push(
         <circle
           key={`circle-${gridItem.fValue}`}
@@ -160,10 +160,10 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
         />
       );
     }
-    
+
     return elements;
   };
-  
+
   return (
     <div className="domain-circle-view">
       {/* SVG for polar grid */}
@@ -184,7 +184,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           {renderPolarGrid()}
         </g>
       </svg>
-      
+
       {/* SVG for domain circle outline - separate layer */}
       <svg
         style={{
@@ -208,7 +208,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           opacity="1.0"
         />
       </svg>
-      
+
       {/* Draggable center handle */}
       <DomainHandle
         index={0}
@@ -217,7 +217,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
         onChange={handleCenterChange}
         className="center-handle"
       />
-      
+
       {/* Draggable edge handle for radius control */}
       <DomainHandle
         index={1}

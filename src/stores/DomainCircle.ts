@@ -4,7 +4,7 @@ import { Complex, complex } from '@/utils/complex';
 export class DomainCircle {
   center: Complex; // Center position of the circle in complex coordinates
   radiusInUnits: number; // Radius of the circle in complex plane units
-  
+
   constructor(center: Complex = complex(0, 0), radiusInUnits: number = 1) {
     this.center = [...center];
     this.radiusInUnits = radiusInUnits;

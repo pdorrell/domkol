@@ -15,29 +15,29 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
   const drawGrid = (spacing: number, showCoordinateLabels: boolean) => {
     const paths: string[] = [];
     const labels: JSX.Element[] = [];
-    
+
     const [originX, originY] = viewport.originPixelLocation;
     const pixelsPerUnit = viewport.pixelsPerUnit;
     const maxX = viewport.width;
     const maxY = viewport.height;
-    
+
     // Calculate grid bounds (translated from original logic)
     const minXIndex = Math.ceil((0 - originX) / (pixelsPerUnit * spacing));
     const maxXIndex = Math.floor((maxX - originX) / (pixelsPerUnit * spacing));
     const minYIndex = Math.ceil((originY - maxY) / (pixelsPerUnit * spacing));
     const maxYIndex = Math.floor(originY / (pixelsPerUnit * spacing));
-    
+
     // Vertical lines
     for (let i = minXIndex; i <= maxXIndex; i++) {
       const xPixels = originX + i * pixelsPerUnit * spacing;
       paths.push(`M${xPixels},0 L${xPixels},${maxY}`);
-      
+
       // Add coordinate labels if requested and not at origin
       if (showCoordinateLabels && i !== 0) {
         const realPart = i * spacing;
         const complexNumber: Complex = [realPart, 0];
         const label = formatComplex(complexNumber, 2);
-        
+
         labels.push(
           <text
             key={`v-label-${i}`}
@@ -52,18 +52,18 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         );
       }
     }
-    
+
     // Horizontal lines
     for (let i = minYIndex; i <= maxYIndex; i++) {
       const yPixels = originY - i * pixelsPerUnit * spacing; // Y flipped
       paths.push(`M0,${yPixels} L${maxX},${yPixels}`);
-      
+
       // Add coordinate labels if requested and not at origin
       if (showCoordinateLabels && i !== 0) {
         const imagPart = i * spacing;
         const complexNumber: Complex = [0, imagPart];
         const label = formatComplex(complexNumber, 2);
-        
+
         labels.push(
           <text
             key={`h-label-${i}`}
@@ -78,19 +78,19 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         );
       }
     }
-    
+
     // Combined grid lines and corner labels
     for (let i = minXIndex; i <= maxXIndex; i++) {
       for (let j = minYIndex; j <= maxYIndex; j++) {
         if (showCoordinateLabels && i !== 0 && j !== 0) {
           const xPixels = originX + i * pixelsPerUnit * spacing;
           const yPixels = originY - j * pixelsPerUnit * spacing; // Y flipped
-          
+
           const realPart = i * spacing;
           const imagPart = j * spacing;
           const complexNumber: Complex = [realPart, imagPart];
           const label = formatComplex(complexNumber, 2);
-          
+
           labels.push(
             <text
               key={`corner-label-${i}-${j}`}
@@ -106,13 +106,13 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         }
       }
     }
-    
+
     return { pathData: paths.join(' '), labels };
   };
 
   const renderCartesianGrid = () => {
     const elements: JSX.Element[] = [];
-    
+
     // Axes (thickest - stroke-width: 0.6)
     const [originX, originY] = viewport.originPixelLocation;
     elements.push(
@@ -123,7 +123,7 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         <line x1={originX} y1={0} x2={originX} y2={viewport.height} />
       </g>
     );
-    
+
     // Fine grid (0.1 spacing, thin lines - stroke-width: 0.2)
     const fineGrid = drawGrid(0.1, false);
     elements.push(
@@ -133,7 +133,7 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         className="fine-coordinate-grid"
       />
     );
-    
+
     // Unit grid (1.0 spacing, medium lines - stroke-width: 0.5, with labels)
     const unitGrid = drawGrid(1.0, true);
     elements.push(
@@ -145,7 +145,7 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
         {unitGrid.labels}
       </g>
     );
-    
+
     return elements;
   };
 

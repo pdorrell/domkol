@@ -19,12 +19,12 @@ export class PolynomialFunction {
 
   evaluate(z: Complex): Complex {
     let result: Complex = complex(1, 0);
-    
+
     for (const zero of this.zeroes) {
       const factor = subtract(z, zero);
       result = multiply(result, factor);
     }
-    
+
     return result;
   }
 
@@ -52,22 +52,22 @@ export class PolynomialFunction {
     if (this.zeroes.length === 0) {
       return '1';
     }
-    
+
     const factors = this.zeroes.map(zero => {
       if (zero[0] === 0 && zero[1] === 0) {
         return '(z)';
       }
-      
+
       const negativeZero: Complex = [-zero[0], -zero[1]];
       const formatted = formatComplexCoefficient(negativeZero);
-      
+
       if (formatted === '0.00') {
         return '(z)';
       }
-      
+
       return `(z+${formatted})`;
     });
-    
+
     return factors.join('');
   }
 

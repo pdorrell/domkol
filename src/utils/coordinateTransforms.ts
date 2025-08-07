@@ -4,7 +4,7 @@ export interface ViewportConfig {
   // Pixel dimensions of the complex plane viewport
   width: number;
   height: number;
-  
+
   // Complex plane bounds (center and scale)
   originPixelLocation: [number, number]; // [x, y] pixel location of complex origin (0,0)
   pixelsPerUnit: number; // pixels per unit in complex plane
@@ -14,8 +14,8 @@ export interface ViewportConfig {
  * Convert pixel position to complex number
  */
 export function pixelToComplex(
-  pixelX: number, 
-  pixelY: number, 
+  pixelX: number,
+  pixelY: number,
   config: ViewportConfig
 ): Complex {
   const [originX, originY] = config.originPixelLocation;
@@ -51,7 +51,7 @@ export function getViewportBounds(config: ViewportConfig): {
   const xMax = (config.width - originX) / config.pixelsPerUnit;
   const yMin = (originY - config.height) / config.pixelsPerUnit;
   const yMax = originY / config.pixelsPerUnit;
-  
+
   return { xMin, xMax, yMin, yMax };
 }
 
@@ -62,7 +62,7 @@ export function getViewportBounds(config: ViewportConfig): {
 export function createDefaultViewport(width: number, height: number): ViewportConfig {
   const domainSpan = 2.32; // Total span from -1.16 to 1.16
   const pixelsPerUnit = Math.min(width, height) / domainSpan;
-  
+
   return {
     width,
     height,
