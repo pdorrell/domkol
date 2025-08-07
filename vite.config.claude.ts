@@ -5,7 +5,7 @@ import fs from 'fs';
 
 export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
-  
+
   return {
     plugins: [
       react(),
