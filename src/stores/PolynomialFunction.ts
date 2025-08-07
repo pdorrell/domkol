@@ -9,7 +9,7 @@ export class PolynomialFunction {
     makeAutoObservable(this);
   }
 
-  updateZero(index: number, newValue: Complex, changing?: boolean): void {
+  updateZero(index: number, newValue: Complex, _changing?: boolean): void {
     if (index >= 0 && index < this.zeroes.length) {
       // Always update the zero position immediately - the domain coloring canvas
       // will decide whether to repaint based on its own repaintContinuously setting
@@ -33,7 +33,7 @@ export class PolynomialFunction {
     // Deep copy to plain JavaScript arrays to avoid MobX observable overhead
     const plainZeroes = this.zeroes.map(zero => [zero[0], zero[1]]);
     return (z: Complex): Complex => {
-      let result: Complex = [1, 0];
+      const result: Complex = [1, 0];
       for (let i = 0; i < plainZeroes.length; i++) {
         const zero = plainZeroes[i];
         // Inline complex arithmetic for performance

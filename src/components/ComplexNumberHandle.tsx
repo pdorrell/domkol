@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 import { Complex, formatComplex } from '@/utils/complex';
 import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
 import './ComplexNumberHandle.css';
@@ -10,7 +11,7 @@ interface ComplexNumberHandleProps {
   onChange: (index: number, newValue: Complex, changing: boolean) => void;
 }
 
-const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = ({
+const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
   index,
   value,
   viewport,
@@ -116,6 +117,6 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = ({
       <div className="point-circle" />
     </div>
   );
-};
+});
 
 export default ComplexNumberHandle;

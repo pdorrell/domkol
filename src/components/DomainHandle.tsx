@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 import { Complex } from '@/utils/complex';
 import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
 import './DomainHandle.css';
@@ -11,7 +12,7 @@ interface DomainHandleProps {
   className?: string;
 }
 
-const DomainHandle: React.FC<DomainHandleProps> = ({
+const DomainHandle: React.FC<DomainHandleProps> = observer(({
   index,
   value,
   viewport,
@@ -107,6 +108,6 @@ const DomainHandle: React.FC<DomainHandleProps> = ({
       onMouseDown={handleMouseDown}
     />
   );
-};
+});
 
 export default DomainHandle;

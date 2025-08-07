@@ -14,7 +14,7 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
   // Translated from original domkol drawGrid function
   const drawGrid = (spacing: number, showCoordinateLabels: boolean) => {
     const paths: string[] = [];
-    const labels: JSX.Element[] = [];
+    const labels: React.JSX.Element[] = [];
 
     const [originX, originY] = viewport.originPixelLocation;
     const pixelsPerUnit = viewport.pixelsPerUnit;
@@ -111,7 +111,7 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
   };
 
   const renderCartesianGrid = () => {
-    const elements: JSX.Element[] = [];
+    const elements: React.JSX.Element[] = [];
 
     // Axes (thickest - stroke-width: 0.6)
     const [originX, originY] = viewport.originPixelLocation;

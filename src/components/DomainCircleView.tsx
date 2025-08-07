@@ -6,7 +6,6 @@ import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { Complex } from '@/utils/complex';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
 import DomainHandle from './DomainHandle';
-import FunctionGraphView from './FunctionGraphView';
 import './DomainCircleView.css';
 
 interface DomainCircleViewProps {
@@ -19,7 +18,7 @@ interface DomainCircleViewProps {
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   domainCircle,
   functionGraphRenderer,
-  polynomialFunction,
+  polynomialFunction: _polynomialFunction,
   viewport
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates
@@ -35,12 +34,12 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   ];
 
   // Handle center position changes
-  const handleCenterChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+  const handleCenterChange = useCallback((index: number, newValue: Complex, _changing: boolean) => {
     domainCircle.setCenter(newValue);
   }, [domainCircle]);
 
   // Handle edge position changes (affects radius)
-  const handleEdgeChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+  const handleEdgeChange = useCallback((index: number, newValue: Complex, _changing: boolean) => {
     // Calculate new radius based on distance from center to new edge position
     const dx = newValue[0] - domainCircle.center[0];
     const dy = newValue[1] - domainCircle.center[1];
@@ -53,7 +52,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
 
   // Render polar grid associated with this domain circle (matching original exactly)
   const renderPolarGrid = () => {
-    const elements: JSX.Element[] = [];
+    const elements: React.JSX.Element[] = [];
 
     // Parameters exactly matching original domkol implementation
     const numRadialLinesPerQuarter = 6;
@@ -63,8 +62,8 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     // Calculate grid dimensions - polar grid extends ±0.5 units from domain circle
     const pixelsPerUnit = viewport.pixelsPerUnit;
     const domainRadius = domainCircle.radiusInUnits;
-    const outerGridRadius = (domainRadius + 0.5) * pixelsPerUnit;
-    const innerGridRadius = Math.max(0.01, domainRadius - 0.5) * pixelsPerUnit; // Minimum 0.01 to avoid zero
+    const _outerGridRadius = (domainRadius + 0.5) * pixelsPerUnit;
+    const _innerGridRadius = Math.max(0.01, domainRadius - 0.5) * pixelsPerUnit; // Minimum 0.01 to avoid zero
 
     // Find innermost and outermost grid circles to determine radial line extent
     const scaleF = functionGraphRenderer.scaleF;
