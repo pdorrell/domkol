@@ -22,6 +22,7 @@
   stroke-width: 5;
   fill: none;
   opacity: 1.0;
+  stroke-dasharray: 9, 3;
 }
 
 .real-path-under {
@@ -29,6 +30,7 @@
   stroke-width: 5;
   fill: none;
   opacity: 0.7;
+  stroke-dasharray: 9, 3;
 }
 
 .real-path-shadow {
@@ -36,6 +38,7 @@
   stroke-width: 5;
   fill: none;
   opacity: 0.15;
+  stroke-dasharray: 9, 3;
 }
 
 .real-path-shadow2 {
@@ -43,4 +46,5 @@
   stroke-width: 5;
   fill: none;
   opacity: 0.1;
+  stroke-dasharray: 9, 3;
 }
