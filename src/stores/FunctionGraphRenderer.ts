@@ -199,7 +199,7 @@ export class FunctionGraphRenderer {
     
     let currentPath = -1;
     let currentPointNum = -1;
-    const dashLength = 6;
+    const dashLength = 4;
     const dashGap = 1;
     
     for (let i = 0; i < points.length; i++) {
