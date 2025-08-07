@@ -30,11 +30,12 @@ export class PolynomialFunction {
 
   // Create a closure function like the old code for maximum performance
   getFunction() {
-    const zeroes = this.zeroes;
+    // Deep copy to plain JavaScript arrays to avoid MobX observable overhead
+    const plainZeroes = this.zeroes.map(zero => [zero[0], zero[1]]);
     return (z: Complex): Complex => {
       let result: Complex = [1, 0];
-      for (let i = 0; i < zeroes.length; i++) {
-        const zero = zeroes[i];
+      for (let i = 0; i < plainZeroes.length; i++) {
+        const zero = plainZeroes[i];
         // Inline complex arithmetic for performance
         const factorReal = z[0] - zero[0];
         const factorImag = z[1] - zero[1];
