@@ -94,20 +94,21 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       );
     }
     
-    // Draw concentric circles representing f-values from -1.0 to 1.0 in steps of 0.1
+    // Draw concentric circles representing f-values from -0.5 to 0.5 in steps of 0.05
+    // This gives 10 circles on each side of the domain circle (20 total + center)
     // Scale by functionGraphRenderer.scaleF to match function scaling
     const scaleF = functionGraphRenderer.scaleF;
     const polarGridRadii = [];
     
-    // Create 21 circles (from -1.0 to 1.0 in 0.1 increments)
-    for (let fValue = -1.0; fValue <= 1.0; fValue += 0.1) {
+    // Create 21 circles (from -0.5 to 0.5 in 0.05 increments)
+    for (let fValue = -0.5; fValue <= 0.5; fValue += 0.05) {
       // Calculate radius: domain circle radius + (f-value * scale * pixelsPerUnit)
       const scaledFValueInPixels = fValue * scaleF * pixelsPerUnit;
       const circleRadius = domainRadius + scaledFValueInPixels / pixelsPerUnit;
       
       // Only add positive radii (negative circles are not displayed)
       if (circleRadius > 0) {
-        polarGridRadii.push({ radius: circleRadius, fValue: Math.round(fValue * 10) / 10 });
+        polarGridRadii.push({ radius: circleRadius, fValue: Math.round(fValue * 20) / 20 });
       }
     }
     
@@ -115,8 +116,8 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       const gridItem = polarGridRadii[i];
       const gridCircleRadius = gridItem.radius * pixelsPerUnit;
       
-      // Integer f-values (like -1.0, 0.0, 1.0) should be thicker
-      const isIntegerFValue = Math.abs(gridItem.fValue % 1.0) < 0.001;
+      // f-values at 0.1 intervals (like -0.5, -0.4, ..., 0.0, ..., 0.4, 0.5) should be thicker
+      const isMainGridLine = Math.abs((gridItem.fValue * 10) % 1.0) < 0.001;
       
       elements.push(
         <circle
@@ -126,7 +127,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           r={gridCircleRadius}
           fill="none"
           stroke="white"
-          strokeWidth={isIntegerFValue ? "0.4" : "0.2"}
+          strokeWidth={isMainGridLine ? "0.4" : "0.2"}
           opacity={0.7}
         />
       );
