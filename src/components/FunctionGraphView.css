@@ -19,26 +19,23 @@
 /* 3D mode paths */
 .real-path-3d-over {
   stroke: blue;
-  stroke-width: 3;
+  stroke-width: 5;
   fill: none;
-  stroke-dasharray: 6, 3;
   opacity: 1.0;
 }
 
 .real-path-under {
   stroke: #555555;
-  stroke-width: 3;
+  stroke-width: 5;
   fill: none;
-  stroke-dasharray: 6, 3;
   opacity: 0.7;
 }
 
 .real-path-shadow {
   stroke: #000000;
-  stroke-width: 3;
+  stroke-width: 5;
   fill: none;
   opacity: 0.15;
-  stroke-dasharray: 6, 3;
 }
 
 .real-path-shadow2 {
@@ -46,5 +43,4 @@
   stroke-width: 5;
   fill: none;
   opacity: 0.1;
-  stroke-dasharray: 6, 3;
 }
