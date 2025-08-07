@@ -22,13 +22,18 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
     if (!dialog || !dragHandle) return;
     
     let isDragging = false;
-    let dragOffset = { x: 0, y: 0 };
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
     
     const handleMouseDown = (e: MouseEvent) => {
       isDragging = true;
-      const rect = dialog.getBoundingClientRect();
-      dragOffset.x = e.clientX - rect.left;
-      dragOffset.y = e.clientY - rect.top;
+      startX = e.clientX;
+      startY = e.clientY;
+      // Use offsetLeft/offsetTop for the current position relative to the positioned parent
+      initialLeft = dialog.offsetLeft;
+      initialTop = dialog.offsetTop;
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       e.preventDefault();
@@ -36,10 +41,10 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
     
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      const newLeft = e.clientX - dragOffset.x;
-      const newTop = e.clientY - dragOffset.y;
-      dialog.style.left = `${newLeft}px`;
-      dialog.style.top = `${newTop}px`;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      dialog.style.left = `${initialLeft + deltaX}px`;
+      dialog.style.top = `${initialTop + deltaY}px`;
     };
     
     const handleMouseUp = () => {
