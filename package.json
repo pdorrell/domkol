@@ -10,7 +10,11 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "check-code": "npm run lint && npm run typecheck",
+    "test:full": "npm run check-code && npm run test",
+    "build:full": "npm run test:full && npm run build",
+    "deploy": "node scripts/update-version.js && npm run build:full && node scripts/deploy-to-target.js"
   },
   "dependencies": {
     "mobx": "^6.12.0",
