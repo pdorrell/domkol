@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import { ComplexFunction } from '@/stores/ComplexFunction';
+import { ComplexFunction, defaultGetWriterFunction } from '@/stores/ComplexFunction';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
@@ -25,7 +25,7 @@ const DomainColoringCanvas = observer(({
   const imageDataRef = useRef<ImageData | null>(null);
 
   // Use the same closure pattern as the old code for maximum JS engine optimization
-  const writeToCanvasData = (data: Uint8ClampedArray, f: (z: Complex) => Complex, colorScale: number, viewport: ViewportConfig) => {
+  const writeToCanvasData = (data: Uint8ClampedArray, writer: (x: number, y: number, result: Complex) => void, colorScale: number, viewport: ViewportConfig) => {
     const widthInPixels = viewport.width;
     const heightInPixels = viewport.height;
 
@@ -38,14 +38,15 @@ const DomainColoringCanvas = observer(({
     const minY = (originY - heightInPixels) / pixelsPerUnit;
 
     let x = minX; // start with lowest value of re(z)
+    const result: Complex = [0, 0]; // Reuse this array for all evaluations
 
     for (let i = 0; i < widthInPixels; i++) {
       let y = minY; // start with lowest value of im(z)
 
       // Note - canvas Y coords are upside down, so we start at the bottom
       for (let j = heightInPixels - 1; j >= 0; j--) {
-        // Use the closure function like the old code - let JS engine optimize this!
-        const result = f([x, y]);
+        // Use the writer function to avoid allocations
+        writer(x, y, result);
 
         const pixelIndex = (j * widthInPixels + i) * 4;
 
@@ -91,11 +92,11 @@ const DomainColoringCanvas = observer(({
       // Cache formula to avoid MobX overhead during logging
       const formula = complexFunction.formula;
 
-      // Get the function evaluator before the loop for efficiency
-      const f = complexFunction.getFunction();
+      // Get the writer function before the loop for efficiency
+      const writer = complexFunction.getWriterFunction?.() ?? defaultGetWriterFunction(complexFunction);
 
       console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
-      writeToCanvasData(imageDataRef.current.data, f, colorScale, viewport);
+      writeToCanvasData(imageDataRef.current.data, writer, colorScale, viewport);
       context.putImageData(imageDataRef.current, 0, 0);
 
       const endTime = performance.now();

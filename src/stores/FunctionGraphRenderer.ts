@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, complex, times } from '@/utils/complex';
-import { ComplexFunction } from './ComplexFunction';
+import { ComplexFunction, defaultGetWriterFunction } from './ComplexFunction';
 import { DomainCircle } from './DomainCircle';
 import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
 
@@ -123,8 +123,9 @@ export class FunctionGraphRenderer {
 
     const scaleFPixels = this.scaleF * viewport.pixelsPerUnit;
 
-    // Get the function evaluator before the loop for efficiency
-    const f = complexFunction.getFunction();
+    // Get the writer function before the loop for efficiency
+    const writer = complexFunction.getWriterFunction?.() ?? defaultGetWriterFunction(complexFunction);
+    const fValue: Complex = [0, 0]; // Reuse this array for all evaluations
 
     for (let i = 0; i <= numSteps; i++) {
       const theta = i * angleIncrement;
@@ -134,13 +135,14 @@ export class FunctionGraphRenderer {
       // Point on domain circle
       const domainX = domainCircle.center[0] + domainCircle.radiusInUnits * Math.cos(theta);
       const domainY = domainCircle.center[1] + domainCircle.radiusInUnits * Math.sin(theta);
-      const domainPoint: Complex = [domainX, domainY];
 
       // Evaluate complex function
-      let fValue = f(domainPoint);
+      writer(domainX, domainY, fValue);
 
-      // Apply rotation to function value
-      fValue = times(this.graphRotation, fValue);
+      // Apply rotation to function value (modifies fValue in place)
+      const rotatedValue = times(this.graphRotation, fValue);
+      fValue[0] = rotatedValue[0];
+      fValue[1] = rotatedValue[1];
 
       // Map function values to visual coordinates
       const rReal = radiusPixels + fValue[0] * scaleFPixels;
