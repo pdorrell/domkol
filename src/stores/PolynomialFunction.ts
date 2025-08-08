@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, formatComplexCoefficient } from '@/utils/complex';
-import { ComplexFunction } from './ComplexFunction';
+import { ComplexFunction, defaultGetWriterFunction } from './ComplexFunction';
 
 export class PolynomialFunction implements ComplexFunction {
   zeroes: Complex[];
@@ -93,6 +93,11 @@ export class PolynomialFunction implements ComplexFunction {
 
       return [resultReal, resultImag];
     };
+  }
+
+  // Use default implementation for now
+  getWriterFunction() {
+    return defaultGetWriterFunction(this);
   }
 
   get formula(): string {

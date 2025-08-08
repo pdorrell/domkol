@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex } from '@/utils/complex';
-import { ComplexFunction } from './ComplexFunction';
+import { ComplexFunction, defaultGetWriterFunction } from './ComplexFunction';
 
 export class ExponentialFunction implements ComplexFunction {
   constructor() {
@@ -14,6 +14,11 @@ export class ExponentialFunction implements ComplexFunction {
       const sin = Math.sin(z[1]);
       return [realFactor * cos, realFactor * sin];
     };
+  }
+
+  // Use default implementation for now
+  getWriterFunction() {
+    return defaultGetWriterFunction(this);
   }
 
   get formula(): string {
