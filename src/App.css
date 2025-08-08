@@ -38,13 +38,43 @@ header h1 {
   color: #333;
 }
 
-.function-links {
+.function-nav {
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.current-function {
+.function-label {
+  font-weight: normal;
+  margin-right: 5px;
+}
+
+.function-link {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 14px;
+  text-decoration: underline;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.function-link:hover {
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.function-link.active {
   font-weight: bold;
   color: #000;
+  text-decoration: none;
+  cursor: default;
+}
+
+.function-link.active:hover {
+  background-color: transparent;
 }
 
 .main-content {

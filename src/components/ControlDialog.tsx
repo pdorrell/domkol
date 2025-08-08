@@ -1,17 +1,29 @@
 import React, { useRef, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
+import { ExponentialFunction } from '@/stores/ExponentialFunction';
+import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import './ControlDialog.css';
 
 interface ControlDialogProps {
-  polynomialFunction: PolynomialFunction;
+  polynomialFunction?: PolynomialFunction | null;
+  exponentialFunction?: ExponentialFunction | null;
+  domainCircle: DomainCircle;
   functionGraphRenderer: FunctionGraphRenderer;
   domainColoringRenderer: DomainColoringRenderer;
+  instructions: string;
 }
 
-const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, domainColoringRenderer }: ControlDialogProps) => {
+const ControlDialog = observer(({
+  polynomialFunction,
+  exponentialFunction,
+  domainCircle: _domainCircle,
+  functionGraphRenderer,
+  domainColoringRenderer,
+  instructions
+}: ControlDialogProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
 
@@ -115,7 +127,9 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
       <div className="controls">
         <div className="control-line">
           <span className="function-label">Function</span>
-          <span className="function-formula">{polynomialFunction.formula}</span>
+          <span className="function-formula">
+            {polynomialFunction?.formula || exponentialFunction?.formula || ''}
+          </span>
         </div>
 
         <div className="instructions">
@@ -123,8 +137,7 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
         </div>
 
         <div className="instructions">
-          <em>Drag the blue numbers to change the zeroes of the cubic polynomial
-          (initially they are all located on the origin).</em>
+          <em>{instructions}</em>
         </div>
 
         <div className="control-line">

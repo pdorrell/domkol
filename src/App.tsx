@@ -1,11 +1,13 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
+import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import { Complex, complex } from '@/utils/complex';
-import { createDefaultViewport } from '@/utils/coordinateTransforms';
+import { ViewportConfig } from '@/utils/coordinateTransforms';
+import { pageModels } from '@/models/DomainPageModel';
 import ControlDialog from '@/components/ControlDialog';
 import ComplexNumberHandle from '@/components/ComplexNumberHandle';
 import DomainCircleView from '@/components/DomainCircleView';
@@ -16,16 +18,22 @@ import VersionDisplay from '@/components/VersionDisplay';
 import './App.css';
 
 const App = observer(() => {
-  const [polynomialFunction] = React.useState(() =>
-    new PolynomialFunction([
-      complex(0, 0),
-      complex(0, 0),
-      complex(0, 0)
-    ])
-  );
+  // State for selected page model
+  const [selectedPageIndex, setSelectedPageIndex] = React.useState(0);
+  const currentPageModel = pageModels[selectedPageIndex];
 
-  const [domainCircle] = React.useState(() =>
-    new DomainCircle(complex(0, 0), 0.62) // Center at origin, radius 0.62 (matching original)
+  // Create function based on page model type
+  const [currentFunction, setCurrentFunction] = React.useState<PolynomialFunction | ExponentialFunction>(() => {
+    if (currentPageModel.functionType === 'exponential') {
+      return new ExponentialFunction();
+    } else {
+      return new PolynomialFunction(currentPageModel.initialZeroes);
+    }
+  });
+
+  // Domain circle with initial radius from page model
+  const [domainCircle, setDomainCircle] = React.useState(() =>
+    new DomainCircle(complex(0, 0), currentPageModel.initialCircleRadius)
   );
 
   const [functionGraphRenderer] = React.useState(() =>
@@ -36,46 +44,88 @@ const App = observer(() => {
     new DomainColoringRenderer()
   );
 
-  // Create viewport configuration for the complex plane (match CSS dimensions)
-  const viewport = React.useMemo(() => createDefaultViewport(560, 560), []);
+  // Create viewport configuration based on current page model
+  const viewport = React.useMemo<ViewportConfig>(() => ({
+    originPixelLocation: currentPageModel.originPixelLocation,
+    pixelsPerUnit: currentPageModel.pixelsPerUnit,
+    width: currentPageModel.canvasWidth,
+    height: currentPageModel.canvasHeight
+  }), [currentPageModel]);
 
   // Track changing state for domain coloring
   const [isZeroChanging, setIsZeroChanging] = React.useState(false);
 
-  // Handle changes to zero positions
-  const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
-    polynomialFunction.updateZero(index, newValue, changing);
-    setIsZeroChanging(changing);
-  }, [polynomialFunction]);
+  // Handle page model change
+  const handlePageChange = React.useCallback((index: number) => {
+    setSelectedPageIndex(index);
+    const newPageModel = pageModels[index];
 
-  // Wiggle animation effect
+    // Create new function instance based on type
+    if (newPageModel.functionType === 'exponential') {
+      setCurrentFunction(new ExponentialFunction());
+    } else {
+      setCurrentFunction(new PolynomialFunction(newPageModel.initialZeroes));
+    }
+
+    // Reset domain circle with new radius
+    setDomainCircle(new DomainCircle(complex(0, 0), newPageModel.initialCircleRadius));
+    setIsZeroChanging(false);
+  }, []);
+
+  // Handle changes to zero positions (only for polynomial functions)
+  const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
+    if (currentFunction instanceof PolynomialFunction) {
+      currentFunction.updateZero(index, newValue, changing);
+      setIsZeroChanging(changing);
+    }
+  }, [currentFunction]);
+
+  // Handle animation updates from the graph renderer
   React.useEffect(() => {
     const interval = setInterval(() => {
-      if (functionGraphRenderer.wiggling) {
-        functionGraphRenderer.wiggleOneStep();
-      }
-    }, 80); // 80ms = ~12.5 FPS, matching original domkol
+      functionGraphRenderer.wiggleOneStep();
+    }, 50);
 
     return () => clearInterval(interval);
   }, [functionGraphRenderer]);
+
+  // Determine if we should show number handles
+  const showNumberHandles = currentFunction instanceof PolynomialFunction;
 
   return (
     <div className="app">
       <VersionDisplay />
       <header>
         <h1>Domkol: Complex Function Visualisation</h1>
-        <div className="function-links">
-          Function: <span className="current-function">Cubic Polynomial</span>
-        </div>
+        <nav className="function-nav">
+          <span className="function-label">Function:</span>
+          {pageModels.map((model, index) => (
+            <button
+              key={model.functionType}
+              className={`function-link ${index === selectedPageIndex ? 'active' : ''}`}
+              onClick={() => handlePageChange(index)}
+            >
+              {model.name}
+            </button>
+          ))}
+        </nav>
       </header>
 
       <main className="main-content">
         <div className="visualization-area">
-          <div className="complex-plane" id="domkol">
+          <div
+            className="complex-plane"
+            id="domkol"
+            style={{
+              width: currentPageModel.canvasWidth,
+              height: currentPageModel.canvasHeight
+            }}
+          >
             {/* Layer 1: Domain coloring canvas */}
             {domainColoringRenderer.showDomainColoring && (
               <DomainColoringCanvas
-                polynomialFunction={polynomialFunction}
+                polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
+                exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
                 viewport={viewport}
                 colorScale={domainColoringRenderer.colorScale}
                 repaintContinuously={domainColoringRenderer.repaintContinuously}
@@ -84,7 +134,11 @@ const App = observer(() => {
             )}
 
             {/* Layer 2: Cartesian coordinates and grid */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}>
+            <svg
+              width={currentPageModel.canvasWidth}
+              height={currentPageModel.canvasHeight}
+              style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}
+            >
               <CoordinateGrid
                 viewport={viewport}
                 showPolar={false}
@@ -94,67 +148,70 @@ const App = observer(() => {
 
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {functionGraphRenderer.show3DGraph && (
-              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}>
+              <svg
+                width={currentPageModel.canvasWidth}
+                height={currentPageModel.canvasHeight}
+                style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}
+              >
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={polynomialFunction}
+                  polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
+                  exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
                   domainCircle={domainCircle}
                   viewport={viewport}
-                  renderMode="under"
+                  renderUnder={true}
                 />
               </svg>
             )}
 
-            {/* Layer 4: Domain circle with polar grid */}
+            {/* Layer 4: Domain circle and polar grid */}
             <DomainCircleView
               domainCircle={domainCircle}
               functionGraphRenderer={functionGraphRenderer}
-              polynomialFunction={polynomialFunction}
+              polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : new PolynomialFunction([])}
               viewport={viewport}
             />
 
-            {/* Layer 4.8: Shadows (only in 3D mode, above domain circle but below "over" parts) */}
+            {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
             {functionGraphRenderer.show3DGraph && (
-              <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 4.8, pointerEvents: 'none' }}>
+              <svg
+                width={currentPageModel.canvasWidth}
+                height={currentPageModel.canvasHeight}
+                style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}
+              >
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={polynomialFunction}
+                  polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
+                  exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
                   domainCircle={domainCircle}
                   viewport={viewport}
-                  renderMode="shadows"
+                  renderUnder={false}
                 />
               </svg>
             )}
 
-            {/* Layer 5: 3D graph "over" parts OR 2D graphs */}
-            <svg width={560} height={560} style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}>
-              {functionGraphRenderer.showGraphOnCircle && (
-                <FunctionGraphView
-                  functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={polynomialFunction}
-                  domainCircle={domainCircle}
+            {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}
+            {showNumberHandles && currentFunction instanceof PolynomialFunction &&
+              currentFunction.zeroes.map((zero, index) => (
+                <ComplexNumberHandle
+                  key={index}
+                  index={index}
+                  value={zero}
                   viewport={viewport}
-                  renderMode={functionGraphRenderer.show3DGraph ? "over" : "2d"}
+                  onChange={handleZeroChange}
                 />
-              )}
-            </svg>
-
-            {/* Zero handles for the polynomial */}
-            {polynomialFunction.zeroes.map((zero, index) => (
-              <ComplexNumberHandle
-                key={index}
-                index={index}
-                value={zero}
-                viewport={viewport}
-                onChange={handleZeroChange}
-              />
-            ))}
+              ))
+            }
           </div>
 
+          {/* Control dialog */}
           <ControlDialog
-            polynomialFunction={polynomialFunction}
+            polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
+            exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
+            domainCircle={domainCircle}
             functionGraphRenderer={functionGraphRenderer}
             domainColoringRenderer={domainColoringRenderer}
+            instructions={currentPageModel.instructions}
           />
         </div>
       </main>

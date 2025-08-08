@@ -2,27 +2,30 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
+import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import './FunctionGraphView.css';
 
 interface FunctionGraphViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
-  polynomialFunction: PolynomialFunction;
+  polynomialFunction?: PolynomialFunction | null;
+  exponentialFunction?: ExponentialFunction | null;
   domainCircle: DomainCircle;
   viewport: ViewportConfig;
-  renderMode?: 'under' | 'over' | '2d' | 'shadows';
+  renderUnder?: boolean;
 }
 
 const FunctionGraphView = observer(({
   functionGraphRenderer,
   polynomialFunction,
+  exponentialFunction: _exponentialFunction,
   domainCircle,
   viewport,
-  renderMode = '2d'
+  renderUnder = false
 }: FunctionGraphViewProps) => {
-  if (!functionGraphRenderer.showGraphOnCircle) {
-    return null;
+  if (!functionGraphRenderer.showGraphOnCircle || !polynomialFunction) {
+    return null; // Don't render for exponential functions or when graph is disabled
   }
 
   const paths = functionGraphRenderer.generateGraphPaths(
@@ -35,19 +38,15 @@ const FunctionGraphView = observer(({
     <g className="function-graph">
       {functionGraphRenderer.show3DGraph ? (
         <>
-          {/* 3D Mode - render based on mode */}
-          {renderMode === 'under' && (
+          {/* 3D Mode - render under or over based on renderUnder prop */}
+          {renderUnder ? (
             <>
               {/* Under path (dashed, behind domain coloring) */}
               <path
                 className="real-path-under"
                 d={paths.realPathUnder3D}
               />
-            </>
-          )}
-          {renderMode === 'shadows' && (
-            <>
-              {/* Shadow paths only */}
+              {/* Shadow paths */}
               <path
                 className="real-path-shadow2"
                 d={paths.realPathShadow2}
@@ -57,8 +56,7 @@ const FunctionGraphView = observer(({
                 d={paths.realPathShadow}
               />
             </>
-          )}
-          {renderMode === 'over' && (
+          ) : (
             <>
               {/* Over path (solid, in front of domain coloring) */}
               <path
@@ -70,19 +68,15 @@ const FunctionGraphView = observer(({
         </>
       ) : (
         <>
-          {/* 2D Mode: Only render in "2d" or "over" mode */}
-          {(renderMode === '2d' || renderMode === 'over') && (
-            <>
-              <path
-                className="real-path"
-                d={paths.real}
-              />
-              <path
-                className="imaginary-path"
-                d={paths.imaginary}
-              />
-            </>
-          )}
+          {/* 2D Mode: Always render (simple paths) */}
+          <path
+            className="real-path"
+            d={paths.real}
+          />
+          <path
+            className="imaginary-path"
+            d={paths.imaginary}
+          />
         </>
       )}
     </g>

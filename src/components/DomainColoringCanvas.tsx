@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
+import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
 import './DomainColoringCanvas.css';
 
 interface DomainColoringCanvasProps {
-  polynomialFunction: PolynomialFunction;
+  polynomialFunction?: PolynomialFunction | null;
+  exponentialFunction?: ExponentialFunction | null;
   viewport: ViewportConfig;
   colorScale: number;
   repaintContinuously: boolean;
@@ -15,6 +17,7 @@ interface DomainColoringCanvasProps {
 
 const DomainColoringCanvas = observer(({
   polynomialFunction,
+  exponentialFunction,
   viewport,
   colorScale,
   repaintContinuously,
@@ -82,19 +85,38 @@ const DomainColoringCanvas = observer(({
         imageDataRef.current = context.createImageData(viewport.width, viewport.height);
       }
 
-      // Cache formula to avoid MobX overhead during logging
-      const formula = polynomialFunction.formula;
-      console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
+      // Get function and formula based on which function type we have
+      let f: (z: Complex) => Complex;
+      let formula: string;
 
-      // Get the optimized function closure like the old code
-      const f = polynomialFunction.getFunction();
+      if (polynomialFunction) {
+        // Cache formula to avoid MobX overhead during logging
+        formula = polynomialFunction.formula;
+        // Get the optimized function closure like the old code
+        f = polynomialFunction.getFunction();
+      } else if (exponentialFunction) {
+        formula = exponentialFunction.formula;
+        f = (z: Complex) => exponentialFunction.evaluate(z);
+      } else {
+        return; // No function to evaluate
+      }
+
+      console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
       writeToCanvasData(imageDataRef.current.data, f, colorScale, viewport);
       context.putImageData(imageDataRef.current, 0, 0);
 
       const endTime = performance.now();
       console.log(`  END Domain Colouring: ${(endTime - startTime).toFixed(2)}ms`);
     }
-  }, [repaintContinuously, changing, viewport, colorScale, polynomialFunction.zeroes, polynomialFunction.formula]);
+  }, [
+    repaintContinuously,
+    changing,
+    viewport,
+    colorScale,
+    polynomialFunction?.zeroes,
+    polynomialFunction?.formula,
+    exponentialFunction?.formula
+  ]);
 
   // MobX will automatically trigger re-renders when observables change
   // Just redraw whenever any dependencies change
