@@ -133,17 +133,19 @@ const App = observer(() => {
             )}
 
             {/* Layer 2: Cartesian coordinates and grid */}
-            <svg
-              width={currentPageModel.canvasWidth}
-              height={currentPageModel.canvasHeight}
-              style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}
-            >
-              <CoordinateGrid
-                viewport={viewport}
-                showPolar={false}
-                showCartesian={true}
-              />
-            </svg>
+            {domainColoringRenderer.showDomainGrid && (
+              <svg
+                width={currentPageModel.canvasWidth}
+                height={currentPageModel.canvasHeight}
+                style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}
+              >
+                <CoordinateGrid
+                  viewport={viewport}
+                  showPolar={false}
+                  showCartesian={true}
+                />
+              </svg>
+            )}
 
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {functionGraphRenderer.show3DGraph && (
