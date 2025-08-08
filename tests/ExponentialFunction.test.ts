@@ -9,52 +9,6 @@ describe('ExponentialFunction', () => {
     });
   });
 
-  describe('getFunction', () => {
-    it('should evaluate exp(0) = 1', () => {
-      const exp = new ExponentialFunction();
-      const f = exp.getFunction();
-
-      const result = f([0, 0]);
-      expect(result[0]).toBeCloseTo(1);
-      expect(result[1]).toBeCloseTo(0);
-    });
-
-    it('should evaluate exp(1) = e', () => {
-      const exp = new ExponentialFunction();
-      const f = exp.getFunction();
-
-      const result = f([1, 0]);
-      expect(result[0]).toBeCloseTo(Math.E);
-      expect(result[1]).toBeCloseTo(0);
-    });
-
-    it('should evaluate exp(i*pi) = -1', () => {
-      const exp = new ExponentialFunction();
-      const f = exp.getFunction();
-
-      const result = f([0, Math.PI]);
-      expect(result[0]).toBeCloseTo(-1);
-      expect(result[1]).toBeCloseTo(0);
-    });
-
-    it('should evaluate exp(i*pi/2) = i', () => {
-      const exp = new ExponentialFunction();
-      const f = exp.getFunction();
-
-      const result = f([0, Math.PI / 2]);
-      expect(result[0]).toBeCloseTo(0);
-      expect(result[1]).toBeCloseTo(1);
-    });
-
-    it('should evaluate exp(1 + i*pi/2) = e*i', () => {
-      const exp = new ExponentialFunction();
-      const f = exp.getFunction();
-
-      const result = f([1, Math.PI / 2]);
-      expect(result[0]).toBeCloseTo(0);
-      expect(result[1]).toBeCloseTo(Math.E);
-    });
-  });
 
   describe('getWriterFunction', () => {
     it('should write exp(0) = 1', () => {

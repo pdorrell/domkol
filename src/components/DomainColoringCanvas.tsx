@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import { ComplexFunction, defaultGetWriterFunction } from '@/stores/ComplexFunction';
+import { ComplexFunction } from '@/stores/ComplexFunction';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
@@ -93,7 +93,7 @@ const DomainColoringCanvas = observer(({
       const formula = complexFunction.formula;
 
       // Get the writer function before the loop for efficiency
-      const writer = complexFunction.getWriterFunction?.() ?? defaultGetWriterFunction(complexFunction);
+      const writer = complexFunction.getWriterFunction();
 
       console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
       writeToCanvasData(imageDataRef.current.data, writer, colorScale, viewport);

@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, complex, times } from '@/utils/complex';
-import { ComplexFunction, defaultGetWriterFunction } from './ComplexFunction';
+import { ComplexFunction } from './ComplexFunction';
 import { DomainCircle } from './DomainCircle';
 import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
 
@@ -124,7 +124,7 @@ export class FunctionGraphRenderer {
     const scaleFPixels = this.scaleF * viewport.pixelsPerUnit;
 
     // Get the writer function before the loop for efficiency
-    const writer = complexFunction.getWriterFunction?.() ?? defaultGetWriterFunction(complexFunction);
+    const writer = complexFunction.getWriterFunction();
     const fValue: Complex = [0, 0]; // Reuse this array for all evaluations
 
     for (let i = 0; i <= numSteps; i++) {

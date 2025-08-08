@@ -7,14 +7,6 @@ export class ExponentialFunction implements ComplexFunction {
     makeAutoObservable(this);
   }
 
-  getFunction() {
-    return (z: Complex): Complex => {
-      const realFactor = Math.exp(z[0]);
-      const cos = Math.cos(z[1]);
-      const sin = Math.sin(z[1]);
-      return [realFactor * cos, realFactor * sin];
-    };
-  }
 
   // Optimized allocation-free implementation
   getWriterFunction() {
