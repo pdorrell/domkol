@@ -62,12 +62,19 @@
 .checkbox-container input[type="checkbox"] {
   margin-right: 8px;
   cursor: pointer;
+  /* Ensure checkboxes remain interactive on touch devices */
+  touch-action: auto;
 }
 
 input[type="range"] {
   width: 140px;
   margin: 0 8px;
   flex: 1;
+  /* Ensure sliders remain interactive on touch devices */
+  touch-action: auto;
+  -webkit-touch-callout: default;
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 .control-line label {

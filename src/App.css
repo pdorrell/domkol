@@ -1,6 +1,29 @@
+/* Global body styles to prevent scrolling */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  /* Prevent pull-to-refresh and elastic scrolling on iOS */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .app {
   font-family: Arial, sans-serif;
   color: #333;
+  /* Prevent pull-to-refresh and overscroll on iOS */
+  overscroll-behavior: none;
+  min-height: 100vh;
 }
 
 header {
@@ -31,6 +54,11 @@ header h1 {
 .visualization-area {
   position: relative;
   min-height: 600px;
+  /* Prevent scrolling/dragging on the visualization area */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .complex-plane {
@@ -39,4 +67,6 @@ header h1 {
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   position: relative;
+  /* Prevent any touch scrolling within the complex plane */
+  touch-action: none;
 }
