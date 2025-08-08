@@ -27,38 +27,55 @@ const ControlDialog = observer(({ polynomialFunction, functionGraphRenderer, dom
     let initialLeft = 0;
     let initialTop = 0;
 
-    const handleMouseDown = (e: MouseEvent) => {
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
       isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
+      e.preventDefault(); // Prevent scrolling
+
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+      startX = clientX;
+      startY = clientY;
       // Use offsetLeft/offsetTop for the current position relative to the positioned parent
       initialLeft = dialog.offsetLeft;
       initialTop = dialog.offsetTop;
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      e.preventDefault();
+      document.addEventListener('mousemove', handlePointerMove);
+      document.addEventListener('mouseup', handlePointerUp);
+      document.addEventListener('touchmove', handlePointerMove, { passive: false });
+      document.addEventListener('touchend', handlePointerUp);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
       if (!isDragging) return;
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
+      e.preventDefault(); // Prevent scrolling
+
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+      const deltaX = clientX - startX;
+      const deltaY = clientY - startY;
       dialog.style.left = `${initialLeft + deltaX}px`;
       dialog.style.top = `${initialTop + deltaY}px`;
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       isDragging = false;
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handlePointerMove);
+      document.removeEventListener('mouseup', handlePointerUp);
+      document.removeEventListener('touchmove', handlePointerMove);
+      document.removeEventListener('touchend', handlePointerUp);
     };
 
-    dragHandle.addEventListener('mousedown', handleMouseDown);
+    dragHandle.addEventListener('mousedown', handlePointerDown);
+    dragHandle.addEventListener('touchstart', handlePointerDown, { passive: false });
 
     return () => {
-      dragHandle.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      dragHandle.removeEventListener('mousedown', handlePointerDown);
+      dragHandle.removeEventListener('touchstart', handlePointerDown);
+      document.removeEventListener('mousemove', handlePointerMove);
+      document.removeEventListener('mouseup', handlePointerUp);
+      document.removeEventListener('touchmove', handlePointerMove);
+      document.removeEventListener('touchend', handlePointerUp);
     };
   }, []);
 

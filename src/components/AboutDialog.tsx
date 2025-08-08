@@ -25,37 +25,51 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     // Only start dragging if clicking on the title bar
     if ((e.target as HTMLElement).classList.contains('about-dialog-header')) {
+      e.preventDefault(); // Prevent scrolling
       setIsDragging(true);
+
+      const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+
       setDragStart({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y
+        x: clientX - position.x,
+        y: clientY - position.y
       });
     }
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handlePointerMove = (e: MouseEvent | TouchEvent) => {
     if (isDragging) {
+      e.preventDefault(); // Prevent scrolling
+
+      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
+
       setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        x: clientX - dragStart.x,
+        y: clientY - dragStart.y
       });
     }
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     setIsDragging(false);
   };
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handlePointerMove);
+      document.addEventListener('mouseup', handlePointerUp);
+      document.addEventListener('touchmove', handlePointerMove, { passive: false });
+      document.addEventListener('touchend', handlePointerUp);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handlePointerMove);
+        document.removeEventListener('mouseup', handlePointerUp);
+        document.removeEventListener('touchmove', handlePointerMove);
+        document.removeEventListener('touchend', handlePointerUp);
       };
     }
   }, [isDragging, dragStart]);
@@ -72,7 +86,8 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
           left: `${position.x}px`,
           top: `${position.y}px`
         }}
-        onMouseDown={handleMouseDown}
+        onMouseDown={handlePointerDown}
+        onTouchStart={handlePointerDown}
       >
         <div className="about-dialog-header">
           <h2>About New Domkol</h2>
