@@ -22,3 +22,25 @@
 .domain-handle.edge-handle {
   background-color: #000000;
 }
+
+/* Increase touch area on touch-capable devices */
+@media (pointer: coarse) {
+  .domain-handle {
+    /* Create larger touch target area using pseudo-element */
+    position: relative;
+  }
+  
+  .domain-handle::before {
+    content: '';
+    position: absolute;
+    /* Expand touch area by 12px on all sides (from 16px to 40px total) */
+    left: -12px;
+    top: -12px;
+    right: -12px;
+    bottom: -12px;
+    /* Visual debugging - uncomment to see touch area */
+    /* background: rgba(255, 0, 0, 0.2); */
+    border-radius: 50%;
+    z-index: -1;
+  }
+}

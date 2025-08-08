@@ -19,6 +19,21 @@
   border: 1px solid #aaa;
 }
 
+/* Increase touch area on touch-capable devices */
+@media (pointer: coarse) {
+  .drag-handle {
+    /* Make drag handle taller on touch devices */
+    height: 32px;
+    /* Add visual affordance for dragging */
+    background-image: 
+      linear-gradient(90deg, #ddd 0%, #ddd 20%, transparent 20%, transparent 80%, #ddd 80%),
+      linear-gradient(90deg, #ddd 0%, #ddd 20%, transparent 20%, transparent 80%, #ddd 80%);
+    background-size: 12px 2px;
+    background-position: center 40%, center 60%;
+    background-repeat: repeat-x;
+  }
+}
+
 .controls {
 }
 
