@@ -18,8 +18,8 @@ import VersionDisplay from '@/components/VersionDisplay';
 import './App.css';
 
 const App = observer(() => {
-  // State for selected page model
-  const [selectedPageIndex, setSelectedPageIndex] = React.useState(0);
+  // State for selected page model (default to quintic polynomial)
+  const [selectedPageIndex, setSelectedPageIndex] = React.useState(1);
   const currentPageModel = pageModels[selectedPageIndex];
 
   // Create function based on page model type
