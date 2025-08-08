@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { Complex, complex, subtract, multiply, formatComplexCoefficient } from '@/utils/complex';
+import { Complex, formatComplexCoefficient } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
 
 export class PolynomialFunction implements ComplexFunction {
@@ -16,17 +16,6 @@ export class PolynomialFunction implements ComplexFunction {
       // will decide whether to repaint based on its own repaintContinuously setting
       this.zeroes[index] = newValue;
     }
-  }
-
-  evaluate(z: Complex): Complex {
-    let result: Complex = complex(1, 0);
-
-    for (const zero of this.zeroes) {
-      const factor = subtract(z, zero);
-      result = multiply(result, factor);
-    }
-
-    return result;
   }
 
   // Create a closure function like the old code for maximum performance

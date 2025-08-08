@@ -123,6 +123,9 @@ export class FunctionGraphRenderer {
 
     const scaleFPixels = this.scaleF * viewport.pixelsPerUnit;
 
+    // Get the function evaluator before the loop for efficiency
+    const f = complexFunction.getFunction();
+
     for (let i = 0; i <= numSteps; i++) {
       const theta = i * angleIncrement;
       const sinTheta = Math.sin(theta);
@@ -134,7 +137,7 @@ export class FunctionGraphRenderer {
       const domainPoint: Complex = [domainX, domainY];
 
       // Evaluate complex function
-      let fValue = complexFunction.evaluate(domainPoint);
+      let fValue = f(domainPoint);
 
       // Apply rotation to function value
       fValue = times(this.graphRotation, fValue);

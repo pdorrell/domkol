@@ -91,10 +91,8 @@ const DomainColoringCanvas = observer(({
       // Cache formula to avoid MobX overhead during logging
       const formula = complexFunction.formula;
 
-      // Get the function evaluator - use optimized version for polynomials
-      const f: (z: Complex) => Complex = complexFunction instanceof PolynomialFunction
-        ? complexFunction.getFunction()
-        : (z: Complex) => complexFunction.evaluate(z);
+      // Get the function evaluator before the loop for efficiency
+      const f = complexFunction.getFunction();
 
       console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
       writeToCanvasData(imageDataRef.current.data, f, colorScale, viewport);

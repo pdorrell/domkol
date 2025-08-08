@@ -5,9 +5,10 @@ import { Complex } from '@/utils/complex';
  */
 export interface ComplexFunction {
   /**
-   * Evaluate the function at a given complex number
+   * Get a function that evaluates this complex function.
+   * Returns a closure for efficient evaluation in loops.
    */
-  evaluate(z: Complex): Complex;
+  getFunction(): (z: Complex) => Complex;
 
   /**
    * Get the string representation/formula of this function
