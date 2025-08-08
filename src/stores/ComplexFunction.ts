@@ -8,7 +8,7 @@ export interface ComplexFunction {
    * Evaluate the function at a given complex number
    */
   evaluate(z: Complex): Complex;
-  
+
   /**
    * Get the string representation/formula of this function
    */

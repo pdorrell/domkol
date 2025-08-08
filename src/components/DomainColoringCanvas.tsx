@@ -90,9 +90,9 @@ const DomainColoringCanvas = observer(({
 
       // Cache formula to avoid MobX overhead during logging
       const formula = complexFunction.formula;
-      
+
       // Get the function evaluator - use optimized version for polynomials
-      const f: (z: Complex) => Complex = complexFunction instanceof PolynomialFunction 
+      const f: (z: Complex) => Complex = complexFunction instanceof PolynomialFunction
         ? complexFunction.getFunction()
         : (z: Complex) => complexFunction.evaluate(z);
 
