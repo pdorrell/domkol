@@ -51,30 +51,30 @@ header h1 {
 }
 
 .function-link {
-  background: none;
-  border: none;
+  background: #e8e8e8;
+  border: 1px solid #ccc;
   color: #0066cc;
   cursor: pointer;
-  padding: 2px 6px;
+  padding: 4px 8px;
   font-size: 14px;
-  text-decoration: underline;
+  font-weight: bold;
+  text-decoration: none;
   border-radius: 3px;
   transition: background-color 0.2s;
 }
 
 .function-link:hover {
-  background-color: rgba(0, 102, 204, 0.1);
+  background-color: white;
 }
 
 .function-link.active {
-  font-weight: bold;
   color: #000;
-  text-decoration: none;
+  background-color: white;
   cursor: default;
 }
 
 .function-link.active:hover {
-  background-color: transparent;
+  background-color: white;
 }
 
 .main-content {
