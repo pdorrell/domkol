@@ -1,14 +1,13 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
+import { ComplexFunction } from '@/stores/ComplexFunction';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
 import './DomainColoringCanvas.css';
 
 interface DomainColoringCanvasProps {
-  polynomialFunction?: PolynomialFunction | null;
-  exponentialFunction?: ExponentialFunction | null;
+  complexFunction?: ComplexFunction | null;
   viewport: ViewportConfig;
   colorScale: number;
   repaintContinuously: boolean;
@@ -16,8 +15,7 @@ interface DomainColoringCanvasProps {
 }
 
 const DomainColoringCanvas = observer(({
-  polynomialFunction,
-  exponentialFunction,
+  complexFunction,
   viewport,
   colorScale,
   repaintContinuously,
@@ -85,21 +83,18 @@ const DomainColoringCanvas = observer(({
         imageDataRef.current = context.createImageData(viewport.width, viewport.height);
       }
 
-      // Get function and formula based on which function type we have
-      let f: (z: Complex) => Complex;
-      let formula: string;
-
-      if (polynomialFunction) {
-        // Cache formula to avoid MobX overhead during logging
-        formula = polynomialFunction.formula;
-        // Get the optimized function closure like the old code
-        f = polynomialFunction.getFunction();
-      } else if (exponentialFunction) {
-        formula = exponentialFunction.formula;
-        f = (z: Complex) => exponentialFunction.evaluate(z);
-      } else {
+      // Get function and formula
+      if (!complexFunction) {
         return; // No function to evaluate
       }
+
+      // Cache formula to avoid MobX overhead during logging
+      const formula = complexFunction.formula;
+      
+      // Get the function evaluator - use optimized version for polynomials
+      const f: (z: Complex) => Complex = complexFunction instanceof PolynomialFunction 
+        ? complexFunction.getFunction()
+        : (z: Complex) => complexFunction.evaluate(z);
 
       console.log(`Domain Colouring: START f=${formula} cs=${colorScale}`);
       writeToCanvasData(imageDataRef.current.data, f, colorScale, viewport);
@@ -113,9 +108,9 @@ const DomainColoringCanvas = observer(({
     changing,
     viewport,
     colorScale,
-    polynomialFunction?.zeroes,
-    polynomialFunction?.formula,
-    exponentialFunction?.formula
+    complexFunction?.formula,
+    // Include zeroes for polynomial functions specifically
+    ...(complexFunction instanceof PolynomialFunction ? [complexFunction.zeroes] : [])
   ]);
 
   // MobX will automatically trigger re-renders when observables change

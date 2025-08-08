@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, complex, times } from '@/utils/complex';
-import { PolynomialFunction } from './PolynomialFunction';
+import { ComplexFunction } from './ComplexFunction';
 import { DomainCircle } from './DomainCircle';
 import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
 
@@ -100,7 +100,7 @@ export class FunctionGraphRenderer {
 
   // Calculate function values around the domain circle
   functionGraphPointArrays(
-    polynomialFunction: PolynomialFunction,
+    complexFunction: ComplexFunction,
     domainCircle: DomainCircle,
     viewport: ViewportConfig
   ): { real: GraphPoint[]; imaginary: GraphPoint[]; real3D: GraphPoint[] } {
@@ -133,8 +133,8 @@ export class FunctionGraphRenderer {
       const domainY = domainCircle.center[1] + domainCircle.radiusInUnits * Math.sin(theta);
       const domainPoint: Complex = [domainX, domainY];
 
-      // Evaluate polynomial function
-      let fValue = polynomialFunction.evaluate(domainPoint);
+      // Evaluate complex function
+      let fValue = complexFunction.evaluate(domainPoint);
 
       // Apply rotation to function value
       fValue = times(this.graphRotation, fValue);
@@ -281,11 +281,11 @@ export class FunctionGraphRenderer {
 
   // Generate all graph paths for rendering
   generateGraphPaths(
-    polynomialFunction: PolynomialFunction,
+    complexFunction: ComplexFunction,
     domainCircle: DomainCircle,
     viewport: ViewportConfig
   ): FunctionGraphPaths {
-    const pointArrays = this.functionGraphPointArrays(polynomialFunction, domainCircle, viewport);
+    const pointArrays = this.functionGraphPointArrays(complexFunction, domainCircle, viewport);
 
     if (this.show3DGraph) {
       const paths3D = this.createOverUnderAndShadowPointPaths(pointArrays.real3D);

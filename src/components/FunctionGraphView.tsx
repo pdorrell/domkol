@@ -1,16 +1,14 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
-import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { ExponentialFunction } from '@/stores/ExponentialFunction';
+import { ComplexFunction } from '@/stores/ComplexFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import './FunctionGraphView.css';
 
 interface FunctionGraphViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
-  polynomialFunction?: PolynomialFunction | null;
-  exponentialFunction?: ExponentialFunction | null;
+  complexFunction?: ComplexFunction | null;
   domainCircle: DomainCircle;
   viewport: ViewportConfig;
   renderUnder?: boolean;
@@ -18,18 +16,17 @@ interface FunctionGraphViewProps {
 
 const FunctionGraphView = observer(({
   functionGraphRenderer,
-  polynomialFunction,
-  exponentialFunction: _exponentialFunction,
+  complexFunction,
   domainCircle,
   viewport,
   renderUnder = false
 }: FunctionGraphViewProps) => {
-  if (!functionGraphRenderer.showGraphOnCircle || !polynomialFunction) {
-    return null; // Don't render for exponential functions or when graph is disabled
+  if (!functionGraphRenderer.showGraphOnCircle || !complexFunction) {
+    return null; // Don't render when graph is disabled or no function provided
   }
 
   const paths = functionGraphRenderer.generateGraphPaths(
-    polynomialFunction,
+    complexFunction,
     domainCircle,
     viewport
   );

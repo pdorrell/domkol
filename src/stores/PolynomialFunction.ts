@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, complex, subtract, multiply, formatComplexCoefficient } from '@/utils/complex';
+import { ComplexFunction } from './ComplexFunction';
 
-export class PolynomialFunction {
+export class PolynomialFunction implements ComplexFunction {
   zeroes: Complex[];
 
   constructor(zeroes: Complex[]) {

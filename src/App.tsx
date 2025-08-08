@@ -124,8 +124,7 @@ const App = observer(() => {
             {/* Layer 1: Domain coloring canvas */}
             {domainColoringRenderer.showDomainColoring && (
               <DomainColoringCanvas
-                polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
-                exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
+                complexFunction={currentFunction}
                 viewport={viewport}
                 colorScale={domainColoringRenderer.colorScale}
                 repaintContinuously={domainColoringRenderer.repaintContinuously}
@@ -155,8 +154,7 @@ const App = observer(() => {
               >
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
-                  exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
+                  complexFunction={currentFunction}
                   domainCircle={domainCircle}
                   viewport={viewport}
                   renderUnder={true}
@@ -181,8 +179,7 @@ const App = observer(() => {
               >
                 <FunctionGraphView
                   functionGraphRenderer={functionGraphRenderer}
-                  polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
-                  exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
+                  complexFunction={currentFunction}
                   domainCircle={domainCircle}
                   viewport={viewport}
                   renderUnder={false}
@@ -206,8 +203,7 @@ const App = observer(() => {
 
           {/* Control dialog */}
           <ControlDialog
-            polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : null}
-            exponentialFunction={currentFunction instanceof ExponentialFunction ? currentFunction : null}
+            complexFunction={currentFunction}
             domainCircle={domainCircle}
             functionGraphRenderer={functionGraphRenderer}
             domainColoringRenderer={domainColoringRenderer}

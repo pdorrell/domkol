@@ -1,15 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { ExponentialFunction } from '@/stores/ExponentialFunction';
+import { ComplexFunction } from '@/stores/ComplexFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import './ControlDialog.css';
 
 interface ControlDialogProps {
-  polynomialFunction?: PolynomialFunction | null;
-  exponentialFunction?: ExponentialFunction | null;
+  complexFunction?: ComplexFunction | null;
   domainCircle: DomainCircle;
   functionGraphRenderer: FunctionGraphRenderer;
   domainColoringRenderer: DomainColoringRenderer;
@@ -17,8 +15,7 @@ interface ControlDialogProps {
 }
 
 const ControlDialog = observer(({
-  polynomialFunction,
-  exponentialFunction,
+  complexFunction,
   domainCircle: _domainCircle,
   functionGraphRenderer,
   domainColoringRenderer,
@@ -128,7 +125,7 @@ const ControlDialog = observer(({
         <div className="control-line">
           <span className="function-label">Function</span>
           <span className="function-formula">
-            {polynomialFunction?.formula || exponentialFunction?.formula || ''}
+            {complexFunction?.formula || ''}
           </span>
         </div>
 

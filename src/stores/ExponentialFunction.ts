@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex } from '@/utils/complex';
+import { ComplexFunction } from './ComplexFunction';
 
-export class ExponentialFunction {
+export class ExponentialFunction implements ComplexFunction {
   constructor() {
     makeAutoObservable(this);
   }
