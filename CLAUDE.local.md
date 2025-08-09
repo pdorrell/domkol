@@ -1,0 +1,1 @@
+- always commit after completing a change
