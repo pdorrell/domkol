@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 export class DomainColoringRenderer {
   showDomainColoring: boolean = true;
@@ -7,7 +7,11 @@ export class DomainColoringRenderer {
   showDomainGrid: boolean = true; // Show coordinate grid on domain
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservables(this, {
+      observable: 'showDomainColoring colorScale repaintContinuously showDomainGrid',
+      computed: 'colorScaleSliderValue',
+      action: 'setShowDomainColoring setRepaintContinuously setShowDomainGrid setColorScaleFromSlider setColorScale'
+    });
   }
 
   setShowDomainColoring(show: boolean): void {

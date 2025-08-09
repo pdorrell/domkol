@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 /**
  * Manages drag state for draggable UI elements
@@ -8,7 +8,10 @@ export class DragState {
   dragOffset: [number, number] = [0, 0];
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservables(this, {
+      observable: 'isDragging dragOffset',
+      action: 'startDrag endDrag updateOffset'
+    });
   }
 
   startDrag(offsetX: number, offsetY: number): void {

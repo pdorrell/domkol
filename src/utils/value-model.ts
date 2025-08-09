@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 /**
  * Generic model for a value that can be updated through UI components
@@ -10,9 +10,12 @@ export class ValueModel<T> {
   constructor(initialValue: T, skipMobx = false) {
     this.value = initialValue;
 
-    // Only call makeAutoObservable if this is not a subclass
+    // Only setup observables if this is not a subclass
     if (!skipMobx) {
-      makeAutoObservable(this);
+      makeObservables(this, {
+        observable: 'value',
+        action: 'set update'
+      });
     }
   }
 

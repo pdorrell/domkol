@@ -1,6 +1,6 @@
-import { makeAutoObservable } from 'mobx';
 import { Complex, complex } from '@/utils/complex';
 import { DraggableValueModel } from '@/utils/draggable-value-model';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 export class DomainCircle {
   centerModel: DraggableValueModel;
@@ -10,7 +10,12 @@ export class DomainCircle {
     this.centerModel = new DraggableValueModel([...center]);
     // Position the radius handle at the initial radius distance from center (at angle 0)
     this.radiusHandleModel = new DraggableValueModel([center[0] + radiusInUnits, center[1]]);
-    makeAutoObservable(this);
+
+    makeObservables(this, {
+      observable: 'centerModel radiusHandleModel',
+      computed: 'center radiusInUnits',
+      action: 'setCenter setRadius'
+    });
   }
 
   get center(): Complex {

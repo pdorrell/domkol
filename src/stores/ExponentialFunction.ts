@@ -1,10 +1,12 @@
-import { makeAutoObservable } from 'mobx';
 import { Complex } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 export class ExponentialFunction implements ComplexFunction {
   constructor() {
-    makeAutoObservable(this);
+    makeObservables(this, {
+      computed: 'formula params'
+    });
   }
 
 

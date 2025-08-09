@@ -1,14 +1,19 @@
-import { makeAutoObservable } from 'mobx';
 import { Complex, formatComplexCoefficient } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
 import { DraggableValueModel } from '@/utils/draggable-value-model';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 export class PolynomialFunction implements ComplexFunction {
   zeroModels: DraggableValueModel[];
 
   constructor(zeroes: Complex[]) {
     this.zeroModels = zeroes.map(zero => new DraggableValueModel([...zero]));
-    makeAutoObservable(this);
+
+    makeObservables(this, {
+      observable: 'zeroModels',
+      computed: 'zeroes formula degree params',
+      action: 'updateZero'
+    });
   }
 
   get zeroes(): Complex[] {

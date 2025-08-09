@@ -1,4 +1,3 @@
-import { makeAutoObservable } from 'mobx';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
@@ -7,6 +6,7 @@ import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import { Complex, complex } from '@/utils/complex';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { ValueModel } from '@/utils/value-model';
+import { makeObservables } from '@/utils/mobx-helpers';
 import { pageModels } from './DomainPageModel';
 
 export class Domkol {
@@ -28,7 +28,11 @@ export class Domkol {
     this.domainColoringRenderer = new DomainColoringRenderer();
     this.showAbout = new ValueModel(false);
 
-    makeAutoObservable(this);
+    makeObservables(this, {
+      observable: 'selectedPageIndex currentFunction domainCircle functionGraphRenderer domainColoringRenderer isZeroChanging showAbout',
+      computed: 'currentPageModel viewport showNumberHandles',
+      action: 'handlePageChange handleZeroChange'
+    });
   }
 
   get currentPageModel() {

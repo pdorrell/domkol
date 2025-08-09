@@ -1,8 +1,8 @@
-import { makeAutoObservable } from 'mobx';
 import { Complex, complex, times } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
 import { DomainCircle } from './DomainCircle';
 import { ViewportConfig, getViewportBounds } from '@/utils/coordinateTransforms';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 export interface GraphPoint {
   x: number;
@@ -42,8 +42,12 @@ export class FunctionGraphRenderer {
   private circumferenceIncrementInPixels: number = 2; // Resolution of graph sampling
 
   constructor() {
-    makeAutoObservable(this);
     this.initializeWiggleAngles();
+
+    makeObservables(this, {
+      observable: 'showGraphOnCircle show3DGraph scaleF graphRotation wiggling wiggleAngle graphRotationSliderValue scaleFSliderValue wiggleAngles wiggleIndex circumferenceIncrementInPixels',
+      action: 'setShowGraphOnCircle setShow3DGraph setScaleF setGraphRotation setWiggling setGraphRotationFromSlider setScaleFFromSlider wiggleOneStep'
+    });
   }
 
   setShowGraphOnCircle(show: boolean): void {
