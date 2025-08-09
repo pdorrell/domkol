@@ -17,14 +17,6 @@ interface DomkolViewProps {
 }
 
 const DomkolView = observer(({ domkol }: DomkolViewProps) => {
-  // Handle animation updates from the graph renderer
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      domkol.functionGraphRenderer.wiggleOneStep();
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [domkol.functionGraphRenderer]);
 
   return (
     <div className="app">

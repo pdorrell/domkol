@@ -18,6 +18,8 @@ export class Domkol {
   isZeroChanging: boolean = false;
   showAbout: ValueModel<boolean>;
 
+  private wiggleTimer: number | null = null;
+
   constructor() {
     // Initialize based on default page model (cubic polynomial)
     const initialPageModel = pageModels[0];
@@ -31,8 +33,11 @@ export class Domkol {
     makeObservables(this, {
       observable: 'selectedPageIndex currentFunction domainCircle functionGraphRenderer domainColoringRenderer isZeroChanging showAbout',
       computed: 'currentPageModel viewport showNumberHandles',
-      action: 'handlePageChange handleZeroChange'
+      action: 'handlePageChange handleZeroChange startWiggleTimer stopWiggleTimer'
     });
+
+    // Start the wiggle animation timer
+    this.startWiggleTimer();
   }
 
   get currentPageModel() {
@@ -73,6 +78,28 @@ export class Domkol {
       this.currentFunction.updateZero(index, newValue, changing);
       this.isZeroChanging = changing;
     }
+  }
+
+  startWiggleTimer(): void {
+    if (this.wiggleTimer !== null) {
+      this.stopWiggleTimer();
+    }
+
+    this.wiggleTimer = window.setInterval(() => {
+      this.functionGraphRenderer.wiggleOneStep();
+    }, 50);
+  }
+
+  stopWiggleTimer(): void {
+    if (this.wiggleTimer !== null) {
+      window.clearInterval(this.wiggleTimer);
+      this.wiggleTimer = null;
+    }
+  }
+
+  // Clean up timer when the instance is destroyed
+  destroy(): void {
+    this.stopWiggleTimer();
   }
 
 }
