@@ -1,4 +1,4 @@
-import { makeAutoObservable, computed } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
@@ -18,10 +18,10 @@ export class Domkol {
 
   constructor() {
     makeAutoObservable(this);
-    
+
     // Initialize based on default page model (cubic polynomial)
     const initialPageModel = pageModels[0];
-    
+
     this.currentFunction = new PolynomialFunction(initialPageModel.initialZeroes);
     this.domainCircle = new DomainCircle(complex(0, 0), initialPageModel.initialCircleRadius);
     this.functionGraphRenderer = new FunctionGraphRenderer();

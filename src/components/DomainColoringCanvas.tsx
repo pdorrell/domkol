@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ComplexFunction } from '@/stores/ComplexFunction';
-import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
 import './DomainColoringCanvas.css';
