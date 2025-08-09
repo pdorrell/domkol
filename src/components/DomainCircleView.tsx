@@ -5,7 +5,7 @@ import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { Complex } from '@/utils/complex';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
-import DomainHandle from './DomainHandle';
+import { DomainHandle } from './DomainHandle';
 import './DomainCircleView.css';
 
 interface DomainCircleViewProps {
@@ -229,4 +229,4 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   );
 });
 
-export default DomainCircleView;
+export { DomainCircleView };

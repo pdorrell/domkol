@@ -80,4 +80,4 @@ const FunctionGraphView = observer(({
   );
 });
 
-export default FunctionGraphView;
+export { FunctionGraphView };

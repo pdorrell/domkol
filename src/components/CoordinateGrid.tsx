@@ -170,4 +170,4 @@ const CoordinateGrid = observer(({ viewport, showPolar = true, showCartesian = t
   );
 });
 
-export default CoordinateGrid;
+export { CoordinateGrid };

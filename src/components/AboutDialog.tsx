@@ -127,4 +127,4 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default AboutDialog;
+export { AboutDialog };

@@ -240,4 +240,4 @@ const ControlDialog = observer(({
   );
 });
 
-export default ControlDialog;
+export { ControlDialog };

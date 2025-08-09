@@ -138,4 +138,4 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
   );
 });
 
-export default ComplexNumberHandle;
+export { ComplexNumberHandle };

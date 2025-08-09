@@ -128,4 +128,4 @@ const DomainColoringCanvas = observer(({
   );
 });
 
-export default DomainColoringCanvas;
+export { DomainColoringCanvas };

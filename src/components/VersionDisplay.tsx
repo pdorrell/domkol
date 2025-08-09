@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AboutDialog from './AboutDialog';
+import { AboutDialog } from './AboutDialog';
 import './VersionDisplay.css';
 
 // No need for observer as this component doesn't use MobX state
@@ -29,4 +29,4 @@ const VersionDisplay: React.FC = () => {
   );
 };
 
-export default VersionDisplay;
+export { VersionDisplay };

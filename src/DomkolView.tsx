@@ -8,13 +8,13 @@ import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import { Complex, complex } from '@/utils/complex';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { pageModels } from '@/models/DomainPageModel';
-import ControlDialog from '@/components/ControlDialog';
-import ComplexNumberHandle from '@/components/ComplexNumberHandle';
-import DomainCircleView from '@/components/DomainCircleView';
-import CoordinateGrid from '@/components/CoordinateGrid';
-import DomainColoringCanvas from '@/components/DomainColoringCanvas';
-import FunctionGraphView from '@/components/FunctionGraphView';
-import VersionDisplay from '@/components/VersionDisplay';
+import { ControlDialog } from '@/components/ControlDialog';
+import { ComplexNumberHandle } from '@/components/ComplexNumberHandle';
+import { DomainCircleView } from '@/components/DomainCircleView';
+import { CoordinateGrid } from '@/components/CoordinateGrid';
+import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
+import { FunctionGraphView } from '@/components/FunctionGraphView';
+import { VersionDisplay } from '@/components/VersionDisplay';
 import './DomkolView.css';
 
 const DomkolView = observer(() => {
@@ -217,4 +217,4 @@ const DomkolView = observer(() => {
   );
 });
 
-export default DomkolView;
+export { DomkolView };

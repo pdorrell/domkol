@@ -129,4 +129,4 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
   );
 });
 
-export default DomainHandle;
+export { DomainHandle };
