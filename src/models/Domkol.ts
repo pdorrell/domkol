@@ -6,6 +6,7 @@ import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
 import { Complex, complex } from '@/utils/complex';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
+import { ValueModel } from '@/utils/value-model';
 import { pageModels } from './DomainPageModel';
 
 export class Domkol {
@@ -15,10 +16,9 @@ export class Domkol {
   functionGraphRenderer: FunctionGraphRenderer;
   domainColoringRenderer: DomainColoringRenderer;
   isZeroChanging: boolean = false;
+  showAbout: ValueModel<boolean>;
 
   constructor() {
-    makeAutoObservable(this);
-
     // Initialize based on default page model (cubic polynomial)
     const initialPageModel = pageModels[0];
 
@@ -26,6 +26,9 @@ export class Domkol {
     this.domainCircle = new DomainCircle(complex(0, 0), initialPageModel.initialCircleRadius);
     this.functionGraphRenderer = new FunctionGraphRenderer();
     this.domainColoringRenderer = new DomainColoringRenderer();
+    this.showAbout = new ValueModel(false);
+
+    makeAutoObservable(this);
   }
 
   get currentPageModel() {

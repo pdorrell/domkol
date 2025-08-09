@@ -28,7 +28,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
   return (
     <div className="app">
-      <VersionDisplay />
+      <VersionDisplay showAbout={domkol.showAbout} />
       <header>
         <h1>Domkol: Complex Function Visualisation</h1>
         <nav className="function-nav">

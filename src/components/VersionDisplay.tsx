@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { AboutDialog } from './AboutDialog';
+import { ValueModel } from '@/utils/value-model';
 import './VersionDisplay.css';
 
-// No need for observer as this component doesn't use MobX state
-// eslint-disable-next-line mobx/missing-observer
-const VersionDisplay: React.FC = () => {
-  const [showAbout, setShowAbout] = useState(false);
+interface VersionDisplayProps {
+  showAbout: ValueModel<boolean>;
+}
+
+const VersionDisplay: React.FC<VersionDisplayProps> = observer(({ showAbout }) => {
   // Version is already set in vite.config.ts with the + suffix for dev mode
   const version = `v${(process.env.APP_VERSION || '-')}`;
 
@@ -15,18 +18,18 @@ const VersionDisplay: React.FC = () => {
         <span className="version-text">{version}</span>
         <button
           className="info-button"
-          onClick={() => setShowAbout(true)}
+          onClick={() => showAbout.set(true)}
           title="About New Domkol"
         >
           ℹ️
         </button>
       </div>
       <AboutDialog
-        isOpen={showAbout}
-        onClose={() => setShowAbout(false)}
+        isOpen={showAbout.value}
+        onClose={() => showAbout.set(false)}
       />
     </>
   );
-};
+});
 
 export { VersionDisplay };
