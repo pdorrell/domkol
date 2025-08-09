@@ -2,27 +2,24 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Complex, formatComplex } from '@/utils/complex';
 import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
+import { ValueModel } from '@/utils/value-model';
 import './ComplexNumberHandle.css';
 
 interface ComplexNumberHandleProps {
-  index: number;
-  value: Complex;
+  value: ValueModel<Complex>;
   viewport: ViewportConfig;
-  onChange: (index: number, newValue: Complex, changing: boolean) => void;
 }
 
 const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
-  index,
   value,
-  viewport,
-  onChange
+  viewport
 }) => {
   const handleRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState<[number, number]>([0, 0]);
 
   // Convert complex number to pixel position for display
-  const [pixelX, pixelY] = complexToPixel(value, viewport);
+  const [pixelX, pixelY] = complexToPixel(value.value, viewport);
 
   // Handle pointer down to start dragging (mouse or touch)
   const handlePointerDown = useCallback((event: React.MouseEvent | React.TouchEvent) => {
@@ -64,9 +61,9 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
-    // Call onChange with changing=true
-    onChange(index, newValue, true);
-  }, [isDragging, dragOffset, viewport, index, onChange]);
+    // Update ValueModel with changing=true
+    value.update(newValue, true);
+  }, [isDragging, dragOffset, viewport, value]);
 
   // Handle pointer up to end dragging (mouse or touch)
   const handlePointerUp = useCallback((event: MouseEvent | TouchEvent) => {
@@ -91,10 +88,10 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
-    // Call onChange with changing=false to indicate drag is complete
-    onChange(index, newValue, false);
+    // Update ValueModel with changing=false to indicate drag is complete
+    value.update(newValue, false);
     setIsDragging(false);
-  }, [isDragging, dragOffset, viewport, index, onChange]);
+  }, [isDragging, dragOffset, viewport, value]);
 
   // Set up global pointer event listeners during drag
   useEffect(() => {
@@ -114,7 +111,7 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
   }, [isDragging, handlePointerMove, handlePointerUp]);
 
   // Format the complex number for display
-  const formattedValue = formatComplex(value, 2);
+  const formattedValue = formatComplex(value.value, 2);
 
   return (
     <div

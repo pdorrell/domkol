@@ -2,19 +2,18 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Complex } from '@/utils/complex';
 import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
+import { ValueModel } from '@/utils/value-model';
 import './DomainHandle.css';
 
 interface DomainHandleProps {
-  value: Complex;
+  value: ValueModel<Complex>;
   viewport: ViewportConfig;
-  onChange: (newValue: Complex, changing: boolean) => void;
   className?: string;
 }
 
 const DomainHandle: React.FC<DomainHandleProps> = observer(({
   value,
   viewport,
-  onChange,
   className = 'center-handle'
 }) => {
   const handleRef = useRef<HTMLDivElement>(null);
@@ -22,7 +21,7 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
   const [dragOffset, setDragOffset] = useState<[number, number]>([0, 0]);
 
   // Convert complex number to pixel position for display
-  const [pixelX, pixelY] = complexToPixel(value, viewport);
+  const [pixelX, pixelY] = complexToPixel(value.value, viewport);
 
   // Handle pointer down to start dragging (mouse or touch)
   const handlePointerDown = useCallback((event: React.MouseEvent | React.TouchEvent) => {
@@ -61,9 +60,9 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
-    // Call onChange with changing=true
-    onChange(newValue, true);
-  }, [isDragging, dragOffset, viewport, onChange]);
+    // Update ValueModel with changing=true
+    value.update(newValue, true);
+  }, [isDragging, dragOffset, viewport, value]);
 
   // Handle pointer up to end dragging (mouse or touch)
   const handlePointerUp = useCallback((event: MouseEvent | TouchEvent) => {
@@ -88,10 +87,10 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
-    // Call onChange with changing=false to indicate drag is complete
-    onChange(newValue, false);
+    // Update ValueModel with changing=false to indicate drag is complete
+    value.update(newValue, false);
     setIsDragging(false);
-  }, [isDragging, dragOffset, viewport, onChange]);
+  }, [isDragging, dragOffset, viewport, value]);
 
   // Set up global pointer event listeners during drag
   useEffect(() => {

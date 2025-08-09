@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { Complex } from '@/utils/complex';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
 import { DomainHandle } from './DomainHandle';
 import './DomainCircleView.css';
@@ -13,17 +12,13 @@ interface DomainCircleViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
   polynomialFunction: PolynomialFunction;
   viewport: ViewportConfig;
-  onCenterChange?: (newValue: Complex, changing: boolean) => void;
-  onRadiusHandleChange?: (newValue: Complex, changing: boolean) => void;
 }
 
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   domainCircle,
   functionGraphRenderer,
   polynomialFunction: _polynomialFunction,
-  viewport,
-  onCenterChange,
-  onRadiusHandleChange
+  viewport
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates
   const [centerPixelX, centerPixelY] = complexToPixel(domainCircle.center, viewport);
@@ -31,23 +26,6 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   // Convert radius from complex units to pixels
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
 
-  // Handle center position changes
-  const handleCenterChange = useCallback((newValue: Complex, changing: boolean) => {
-    if (onCenterChange) {
-      onCenterChange(newValue, changing);
-    } else {
-      domainCircle.centerModel.update(newValue, changing);
-    }
-  }, [domainCircle, onCenterChange]);
-
-  // Handle radius handle position changes
-  const handleRadiusHandleChange = useCallback((newValue: Complex, changing: boolean) => {
-    if (onRadiusHandleChange) {
-      onRadiusHandleChange(newValue, changing);
-    } else {
-      domainCircle.radiusHandleModel.update(newValue, changing);
-    }
-  }, [domainCircle, onRadiusHandleChange]);
 
   // Render polar grid associated with this domain circle (matching original exactly)
   const renderPolarGrid = () => {
@@ -209,17 +187,15 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
 
       {/* Draggable center handle */}
       <DomainHandle
-        value={domainCircle.centerModel.value}
+        value={domainCircle.centerModel}
         viewport={viewport}
-        onChange={handleCenterChange}
         className="center-handle"
       />
 
       {/* Draggable radius handle */}
       <DomainHandle
-        value={domainCircle.radiusHandleModel.value}
+        value={domainCircle.radiusHandleModel}
         viewport={viewport}
-        onChange={handleRadiusHandleChange}
         className="edge-handle"
       />
     </div>
