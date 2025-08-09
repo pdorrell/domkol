@@ -13,6 +13,7 @@ export function makeObservables<T extends object>(
     computed?: string;
   }
 ): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const annotations: Record<string, any> = {};
 
   // Parse observable properties
