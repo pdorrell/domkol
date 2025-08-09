@@ -7,10 +7,13 @@ export class ValueModel<T> {
 
   value: T;
 
-  constructor(initialValue: T) {
+  constructor(initialValue: T, skipMobx = false) {
     this.value = initialValue;
 
-    makeAutoObservable(this);
+    // Only call makeAutoObservable if this is not a subclass
+    if (!skipMobx) {
+      makeAutoObservable(this);
+    }
   }
 
   /**
