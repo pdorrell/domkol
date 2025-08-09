@@ -5,15 +5,13 @@ import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordina
 import './DomainHandle.css';
 
 interface DomainHandleProps {
-  index: number;
   value: Complex;
   viewport: ViewportConfig;
-  onChange: (index: number, newValue: Complex, changing: boolean) => void;
+  onChange: (newValue: Complex, changing: boolean) => void;
   className?: string;
 }
 
 const DomainHandle: React.FC<DomainHandleProps> = observer(({
-  index,
   value,
   viewport,
   onChange,
@@ -64,8 +62,8 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
     // Call onChange with changing=true
-    onChange(index, newValue, true);
-  }, [isDragging, dragOffset, viewport, index, onChange]);
+    onChange(newValue, true);
+  }, [isDragging, dragOffset, viewport, onChange]);
 
   // Handle pointer up to end dragging (mouse or touch)
   const handlePointerUp = useCallback((event: MouseEvent | TouchEvent) => {
@@ -91,9 +89,9 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
     // Call onChange with changing=false to indicate drag is complete
-    onChange(index, newValue, false);
+    onChange(newValue, false);
     setIsDragging(false);
-  }, [isDragging, dragOffset, viewport, index, onChange]);
+  }, [isDragging, dragOffset, viewport, onChange]);
 
   // Set up global pointer event listeners during drag
   useEffect(() => {

@@ -13,8 +13,8 @@ interface DomainCircleViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
   polynomialFunction: PolynomialFunction;
   viewport: ViewportConfig;
-  onCenterChange?: (index: number, newValue: Complex, changing: boolean) => void;
-  onRadiusHandleChange?: (index: number, newValue: Complex, changing: boolean) => void;
+  onCenterChange?: (newValue: Complex, changing: boolean) => void;
+  onRadiusHandleChange?: (newValue: Complex, changing: boolean) => void;
 }
 
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
@@ -32,18 +32,18 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
 
   // Handle center position changes
-  const handleCenterChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+  const handleCenterChange = useCallback((newValue: Complex, changing: boolean) => {
     if (onCenterChange) {
-      onCenterChange(index, newValue, changing);
+      onCenterChange(newValue, changing);
     } else {
       domainCircle.centerModel.update(newValue, changing);
     }
   }, [domainCircle, onCenterChange]);
 
   // Handle radius handle position changes
-  const handleRadiusHandleChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+  const handleRadiusHandleChange = useCallback((newValue: Complex, changing: boolean) => {
     if (onRadiusHandleChange) {
-      onRadiusHandleChange(index, newValue, changing);
+      onRadiusHandleChange(newValue, changing);
     } else {
       domainCircle.radiusHandleModel.update(newValue, changing);
     }
@@ -209,7 +209,6 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
 
       {/* Draggable center handle */}
       <DomainHandle
-        index={0}
         value={domainCircle.centerModel.value}
         viewport={viewport}
         onChange={handleCenterChange}
@@ -218,7 +217,6 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
 
       {/* Draggable radius handle */}
       <DomainHandle
-        index={1}
         value={domainCircle.radiusHandleModel.value}
         viewport={viewport}
         onChange={handleRadiusHandleChange}
