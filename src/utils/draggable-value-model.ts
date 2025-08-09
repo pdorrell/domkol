@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservable, observable } from 'mobx';
 import { Complex } from '@/utils/complex';
 import { ValueModel } from '@/utils/value-model';
 import { DragState } from '@/utils/drag-state';
@@ -12,7 +12,11 @@ export class DraggableValueModel extends ValueModel<Complex> {
   constructor(initialValue: Complex) {
     super(initialValue);
     this.dragState = new DragState();
-    makeAutoObservable(this);
+    
+    // Use makeObservable for subclasses instead of makeAutoObservable
+    makeObservable(this, {
+      dragState: observable
+    });
   }
 
   /**
