@@ -15,7 +15,7 @@ import CoordinateGrid from '@/components/CoordinateGrid';
 import DomainColoringCanvas from '@/components/DomainColoringCanvas';
 import FunctionGraphView from '@/components/FunctionGraphView';
 import VersionDisplay from '@/components/VersionDisplay';
-import './App.css';
+import './DomkolView.css';
 
 const DomkolView = observer(() => {
   // State for selected page model (default to cubic polynomial)
