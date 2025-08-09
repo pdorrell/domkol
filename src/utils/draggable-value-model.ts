@@ -1,7 +1,7 @@
-import { makeObservable, observable, action } from 'mobx';
 import { Complex } from '@/utils/complex';
 import { ValueModel } from '@/utils/value-model';
 import { DragState } from '@/utils/drag-state';
+import { makeObservables } from '@/utils/mobx-helpers';
 
 /**
  * Extends ValueModel<Complex> with drag state management for draggable UI elements
@@ -14,14 +14,10 @@ export class DraggableValueModel extends ValueModel<Complex> {
     super(initialValue, true);
     this.dragState = new DragState();
 
-    // Use makeObservable for the entire object including inherited properties
-    makeObservable(this, {
-      value: observable,
-      dragState: observable,
-      set: action,
-      update: action,
-      startDrag: action,
-      endDrag: action
+    // Use helper for cleaner syntax
+    makeObservables(this, {
+      observable: 'value dragState',
+      action: 'set update startDrag endDrag'
     });
   }
 
