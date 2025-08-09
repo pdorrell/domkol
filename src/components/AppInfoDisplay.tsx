@@ -14,7 +14,7 @@ const AppInfoDisplay: React.FC<AppInfoDisplayProps> = observer(({ showAbout }) =
 
   return (
     <>
-      <div className="version-display">
+      <div className="app-info-display">
         <span className="version-text">{version}</span>
         <button
           className="info-button"
