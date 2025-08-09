@@ -1,15 +1,15 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, complex } from '@/utils/complex';
-import { ValueModel } from '@/utils/value-model';
+import { DraggableValueModel } from '@/utils/draggable-value-model';
 
 export class DomainCircle {
-  centerModel: ValueModel<Complex>;
-  radiusHandleModel: ValueModel<Complex>;
+  centerModel: DraggableValueModel;
+  radiusHandleModel: DraggableValueModel;
 
   constructor(center: Complex = complex(0, 0), radiusInUnits: number = 1) {
-    this.centerModel = new ValueModel([...center]);
+    this.centerModel = new DraggableValueModel([...center]);
     // Position the radius handle at the initial radius distance from center (at angle 0)
-    this.radiusHandleModel = new ValueModel([center[0] + radiusInUnits, center[1]]);
+    this.radiusHandleModel = new DraggableValueModel([center[0] + radiusInUnits, center[1]]);
     makeAutoObservable(this);
   }
 

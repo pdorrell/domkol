@@ -1,13 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 import { Complex, formatComplexCoefficient } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
-import { ValueModel } from '@/utils/value-model';
+import { DraggableValueModel } from '@/utils/draggable-value-model';
 
 export class PolynomialFunction implements ComplexFunction {
-  zeroModels: ValueModel<Complex>[];
+  zeroModels: DraggableValueModel[];
 
   constructor(zeroes: Complex[]) {
-    this.zeroModels = zeroes.map(zero => new ValueModel([...zero]));
+    this.zeroModels = zeroes.map(zero => new DraggableValueModel([...zero]));
     makeAutoObservable(this);
   }
 

@@ -1,12 +1,11 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Complex } from '@/utils/complex';
 import { ViewportConfig, pixelToComplex, complexToPixel } from '@/utils/coordinateTransforms';
-import { ValueModel } from '@/utils/value-model';
+import { DraggableValueModel } from '@/utils/draggable-value-model';
 import './DomainHandle.css';
 
 interface DomainHandleProps {
-  value: ValueModel<Complex>;
+  value: DraggableValueModel;
   viewport: ViewportConfig;
   className?: string;
 }
@@ -17,8 +16,7 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
   className = 'center-handle'
 }) => {
   const handleRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState<[number, number]>([0, 0]);
+  const { dragState } = value;
 
   // Convert complex number to pixel position for display
   const [pixelX, pixelY] = complexToPixel(value.value, viewport);
@@ -26,7 +24,6 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
   // Handle pointer down to start dragging (mouse or touch)
   const handlePointerDown = useCallback((event: React.MouseEvent | React.TouchEvent) => {
     event.preventDefault();
-    setIsDragging(true);
 
     const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
     const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
@@ -36,13 +33,13 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     if (rect) {
       const offsetX = clientX - (rect.left + rect.width / 2);
       const offsetY = clientY - (rect.top + rect.height / 2);
-      setDragOffset([offsetX, offsetY]);
+      value.startDrag(offsetX, offsetY);
     }
-  }, []);
+  }, [value]);
 
   // Handle pointer move during drag (mouse or touch)
   const handlePointerMove = useCallback((event: MouseEvent | TouchEvent) => {
-    if (!isDragging) return;
+    if (!dragState.isDragging) return;
     event.preventDefault(); // Prevent scrolling
 
     const container = handleRef.current?.parentElement;
@@ -54,19 +51,19 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     const containerRect = container.getBoundingClientRect();
 
     // Convert pointer position to container-relative coordinates
-    const containerX = clientX - containerRect.left - dragOffset[0];
-    const containerY = clientY - containerRect.top - dragOffset[1];
+    const containerX = clientX - containerRect.left - dragState.dragOffset[0];
+    const containerY = clientY - containerRect.top - dragState.dragOffset[1];
 
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
     // Update ValueModel with changing=true
     value.update(newValue, true);
-  }, [isDragging, dragOffset, viewport, value]);
+  }, [dragState.isDragging, dragState.dragOffset, viewport, value]);
 
   // Handle pointer up to end dragging (mouse or touch)
   const handlePointerUp = useCallback((event: MouseEvent | TouchEvent) => {
-    if (!isDragging) return;
+    if (!dragState.isDragging) return;
 
     const container = handleRef.current?.parentElement;
     if (!container) return;
@@ -81,20 +78,19 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
     const containerRect = container.getBoundingClientRect();
 
     // Convert final pointer position to container-relative coordinates
-    const containerX = clientX - containerRect.left - dragOffset[0];
-    const containerY = clientY - containerRect.top - dragOffset[1];
+    const containerX = clientX - containerRect.left - dragState.dragOffset[0];
+    const containerY = clientY - containerRect.top - dragState.dragOffset[1];
 
     // Convert to complex number
     const newValue = pixelToComplex(containerX, containerY, viewport);
 
     // Update ValueModel with changing=false to indicate drag is complete
     value.update(newValue, false);
-    setIsDragging(false);
-  }, [isDragging, dragOffset, viewport, value]);
+  }, [dragState.isDragging, dragState.dragOffset, viewport, value]);
 
   // Set up global pointer event listeners during drag
   useEffect(() => {
-    if (isDragging) {
+    if (dragState.isDragging) {
       document.addEventListener('mousemove', handlePointerMove);
       document.addEventListener('mouseup', handlePointerUp);
       document.addEventListener('touchmove', handlePointerMove, { passive: false });
@@ -107,7 +103,7 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
         document.removeEventListener('touchend', handlePointerUp);
       };
     }
-  }, [isDragging, handlePointerMove, handlePointerUp]);
+  }, [dragState.isDragging, handlePointerMove, handlePointerUp]);
 
   return (
     <div
