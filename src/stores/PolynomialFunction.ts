@@ -1,20 +1,25 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, computed } from 'mobx';
 import { Complex, formatComplexCoefficient } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
+import { ValueModel } from '@/utils/value-model';
 
 export class PolynomialFunction implements ComplexFunction {
-  zeroes: Complex[];
+  zeroModels: ValueModel<Complex>[];
 
   constructor(zeroes: Complex[]) {
-    this.zeroes = [...zeroes];
+    this.zeroModels = zeroes.map(zero => new ValueModel([...zero]));
     makeAutoObservable(this);
   }
 
-  updateZero(index: number, newValue: Complex, _changing?: boolean): void {
-    if (index >= 0 && index < this.zeroes.length) {
+  get zeroes(): Complex[] {
+    return this.zeroModels.map(model => model.value);
+  }
+
+  updateZero(index: number, newValue: Complex, changing?: boolean): void {
+    if (index >= 0 && index < this.zeroModels.length) {
       // Always update the zero position immediately - the domain coloring canvas
       // will decide whether to repaint based on its own repaintContinuously setting
-      this.zeroes[index] = newValue;
+      this.zeroModels[index].update([...newValue], changing ?? false);
     }
   }
 
@@ -118,7 +123,7 @@ export class PolynomialFunction implements ComplexFunction {
   }
 
   get degree(): number {
-    return this.zeroes.length;
+    return this.zeroModels.length;
   }
 
   get params(): Complex[] {

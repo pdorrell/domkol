@@ -13,13 +13,17 @@ interface DomainCircleViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
   polynomialFunction: PolynomialFunction;
   viewport: ViewportConfig;
+  onCenterChange?: (index: number, newValue: Complex, changing: boolean) => void;
+  onRadiusHandleChange?: (index: number, newValue: Complex, changing: boolean) => void;
 }
 
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   domainCircle,
   functionGraphRenderer,
   polynomialFunction: _polynomialFunction,
-  viewport
+  viewport,
+  onCenterChange,
+  onRadiusHandleChange
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates
   const [centerPixelX, centerPixelY] = complexToPixel(domainCircle.center, viewport);
@@ -27,28 +31,23 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   // Convert radius from complex units to pixels
   const radiusPixels = domainCircle.radiusInUnits * viewport.pixelsPerUnit;
 
-  // Calculate edge handle position (point on circle circumference at angle 0)
-  const edgeComplex: Complex = [
-    domainCircle.center[0] + domainCircle.radiusInUnits,
-    domainCircle.center[1]
-  ];
-
   // Handle center position changes
-  const handleCenterChange = useCallback((index: number, newValue: Complex, _changing: boolean) => {
-    domainCircle.setCenter(newValue);
-  }, [domainCircle]);
-
-  // Handle edge position changes (affects radius)
-  const handleEdgeChange = useCallback((index: number, newValue: Complex, _changing: boolean) => {
-    // Calculate new radius based on distance from center to new edge position
-    const dx = newValue[0] - domainCircle.center[0];
-    const dy = newValue[1] - domainCircle.center[1];
-    const newRadius = Math.sqrt(dx * dx + dy * dy);
-
-    if (newRadius > 0.01) { // Minimum radius threshold
-      domainCircle.setRadius(newRadius);
+  const handleCenterChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+    if (onCenterChange) {
+      onCenterChange(index, newValue, changing);
+    } else {
+      domainCircle.centerModel.update(newValue, changing);
     }
-  }, [domainCircle]);
+  }, [domainCircle, onCenterChange]);
+
+  // Handle radius handle position changes
+  const handleRadiusHandleChange = useCallback((index: number, newValue: Complex, changing: boolean) => {
+    if (onRadiusHandleChange) {
+      onRadiusHandleChange(index, newValue, changing);
+    } else {
+      domainCircle.radiusHandleModel.update(newValue, changing);
+    }
+  }, [domainCircle, onRadiusHandleChange]);
 
   // Render polar grid associated with this domain circle (matching original exactly)
   const renderPolarGrid = () => {
@@ -211,18 +210,18 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
       {/* Draggable center handle */}
       <DomainHandle
         index={0}
-        value={domainCircle.center}
+        value={domainCircle.centerModel.value}
         viewport={viewport}
         onChange={handleCenterChange}
         className="center-handle"
       />
 
-      {/* Draggable edge handle for radius control */}
+      {/* Draggable radius handle */}
       <DomainHandle
         index={1}
-        value={edgeComplex}
+        value={domainCircle.radiusHandleModel.value}
         viewport={viewport}
-        onChange={handleEdgeChange}
+        onChange={handleRadiusHandleChange}
         className="edge-handle"
       />
     </div>

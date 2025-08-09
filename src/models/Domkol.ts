@@ -67,4 +67,12 @@ export class Domkol {
       this.isZeroChanging = changing;
     }
   }
+
+  handleCenterChange = (index: number, newValue: Complex, changing: boolean): void => {
+    this.domainCircle.centerModel.update(newValue, changing);
+  }
+
+  handleRadiusHandleChange = (index: number, newValue: Complex, changing: boolean): void => {
+    this.domainCircle.radiusHandleModel.update(newValue, changing);
+  }
 }

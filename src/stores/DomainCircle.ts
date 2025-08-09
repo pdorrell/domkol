@@ -1,23 +1,37 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, computed } from 'mobx';
 import { Complex, complex } from '@/utils/complex';
+import { ValueModel } from '@/utils/value-model';
 
 export class DomainCircle {
-  center: Complex; // Center position of the circle in complex coordinates
-  radiusInUnits: number; // Radius of the circle in complex plane units
+  centerModel: ValueModel<Complex>;
+  radiusHandleModel: ValueModel<Complex>;
 
   constructor(center: Complex = complex(0, 0), radiusInUnits: number = 1) {
-    this.center = [...center];
-    this.radiusInUnits = radiusInUnits;
+    this.centerModel = new ValueModel([...center]);
+    // Position the radius handle at the initial radius distance from center (at angle 0)
+    this.radiusHandleModel = new ValueModel([center[0] + radiusInUnits, center[1]]);
     makeAutoObservable(this);
   }
 
+  get center(): Complex {
+    return this.centerModel.value;
+  }
+
+  get radiusInUnits(): number {
+    const dx = this.radiusHandleModel.value[0] - this.centerModel.value[0];
+    const dy = this.radiusHandleModel.value[1] - this.centerModel.value[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   setCenter(newCenter: Complex): void {
-    this.center = [...newCenter];
+    this.centerModel.set([...newCenter]);
   }
 
   setRadius(newRadius: number): void {
     if (newRadius > 0) {
-      this.radiusInUnits = newRadius;
+      // Update radius handle position to maintain the new radius
+      const currentCenter = this.centerModel.value;
+      this.radiusHandleModel.set([currentCenter[0] + newRadius, currentCenter[1]]);
     }
   }
 

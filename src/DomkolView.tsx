@@ -104,6 +104,8 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
               functionGraphRenderer={domkol.functionGraphRenderer}
               polynomialFunction={domkol.currentFunction instanceof PolynomialFunction ? domkol.currentFunction : new PolynomialFunction([])}
               viewport={domkol.viewport}
+              onCenterChange={domkol.handleCenterChange}
+              onRadiusHandleChange={domkol.handleRadiusHandleChange}
             />
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
@@ -125,11 +127,11 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}
             {domkol.showNumberHandles && domkol.currentFunction instanceof PolynomialFunction &&
-              domkol.currentFunction.params.map((param, index) => (
+              domkol.currentFunction.zeroModels.map((zeroModel, index) => (
                 <ComplexNumberHandle
                   key={index}
                   index={index}
-                  value={param}
+                  value={zeroModel.value}
                   viewport={domkol.viewport}
                   onChange={domkol.handleZeroChange}
                 />
