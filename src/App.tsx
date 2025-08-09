@@ -17,7 +17,7 @@ import FunctionGraphView from '@/components/FunctionGraphView';
 import VersionDisplay from '@/components/VersionDisplay';
 import './App.css';
 
-const App = observer(() => {
+const DomkolView = observer(() => {
   // State for selected page model (default to cubic polynomial)
   const [selectedPageIndex, setSelectedPageIndex] = React.useState(0);
   const currentPageModel = pageModels[selectedPageIndex];
@@ -217,4 +217,4 @@ const App = observer(() => {
   );
 });
 
-export default App;
+export default DomkolView;
