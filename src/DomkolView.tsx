@@ -1,12 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
-import { ExponentialFunction } from '@/stores/ExponentialFunction';
-import { DomainCircle } from '@/stores/DomainCircle';
-import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
-import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
-import { Complex, complex } from '@/utils/complex';
-import { ViewportConfig } from '@/utils/coordinateTransforms';
+import { Domkol } from '@/models/Domkol';
 import { pageModels } from '@/models/DomainPageModel';
 import { ControlDialog } from '@/components/ControlDialog';
 import { ComplexNumberHandle } from '@/components/ComplexNumberHandle';
@@ -17,80 +12,19 @@ import { FunctionGraphView } from '@/components/FunctionGraphView';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import './DomkolView.css';
 
-const DomkolView = observer(() => {
-  // State for selected page model (default to cubic polynomial)
-  const [selectedPageIndex, setSelectedPageIndex] = React.useState(0);
-  const currentPageModel = pageModels[selectedPageIndex];
+interface DomkolViewProps {
+  domkol: Domkol;
+}
 
-  // Create function based on page model type
-  const [currentFunction, setCurrentFunction] = React.useState<PolynomialFunction | ExponentialFunction>(() => {
-    if (currentPageModel.functionType === 'exponential') {
-      return new ExponentialFunction();
-    } else {
-      return new PolynomialFunction(currentPageModel.initialZeroes);
-    }
-  });
-
-  // Domain circle with initial radius from page model
-  const [domainCircle, setDomainCircle] = React.useState(() =>
-    new DomainCircle(complex(0, 0), currentPageModel.initialCircleRadius)
-  );
-
-  const [functionGraphRenderer] = React.useState(() =>
-    new FunctionGraphRenderer()
-  );
-
-  const [domainColoringRenderer] = React.useState(() =>
-    new DomainColoringRenderer()
-  );
-
-  // Create viewport configuration based on current page model
-  const viewport = React.useMemo<ViewportConfig>(() => ({
-    originPixelLocation: currentPageModel.originPixelLocation,
-    pixelsPerUnit: currentPageModel.pixelsPerUnit,
-    width: currentPageModel.canvasWidth,
-    height: currentPageModel.canvasHeight
-  }), [currentPageModel]);
-
-  // Track changing state for domain coloring
-  const [isZeroChanging, setIsZeroChanging] = React.useState(false);
-
-  // Handle page model change
-  const handlePageChange = React.useCallback((index: number) => {
-    setSelectedPageIndex(index);
-    const newPageModel = pageModels[index];
-
-    // Create new function instance based on type
-    if (newPageModel.functionType === 'exponential') {
-      setCurrentFunction(new ExponentialFunction());
-    } else {
-      setCurrentFunction(new PolynomialFunction(newPageModel.initialZeroes));
-    }
-
-    // Reset domain circle with new radius
-    setDomainCircle(new DomainCircle(complex(0, 0), newPageModel.initialCircleRadius));
-    setIsZeroChanging(false);
-  }, []);
-
-  // Handle changes to zero positions (only for polynomial functions)
-  const handleZeroChange = React.useCallback((index: number, newValue: Complex, changing: boolean) => {
-    if (currentFunction instanceof PolynomialFunction) {
-      currentFunction.updateZero(index, newValue, changing);
-      setIsZeroChanging(changing);
-    }
-  }, [currentFunction]);
-
+const DomkolView = observer(({ domkol }: DomkolViewProps) => {
   // Handle animation updates from the graph renderer
   React.useEffect(() => {
     const interval = setInterval(() => {
-      functionGraphRenderer.wiggleOneStep();
+      domkol.functionGraphRenderer.wiggleOneStep();
     }, 50);
 
     return () => clearInterval(interval);
-  }, [functionGraphRenderer]);
-
-  // Determine if we should show number handles
-  const showNumberHandles = currentFunction instanceof PolynomialFunction;
+  }, [domkol.functionGraphRenderer]);
 
   return (
     <div className="app">
@@ -102,8 +36,8 @@ const DomkolView = observer(() => {
           {pageModels.map((model, index) => (
             <button
               key={model.functionType}
-              className={`function-link ${index === selectedPageIndex ? 'active' : ''}`}
-              onClick={() => handlePageChange(index)}
+              className={`function-link ${index === domkol.selectedPageIndex ? 'active' : ''}`}
+              onClick={() => domkol.handlePageChange(index)}
             >
               {model.name}
             </button>
@@ -117,30 +51,30 @@ const DomkolView = observer(() => {
             className="complex-plane"
             id="domkol"
             style={{
-              width: currentPageModel.canvasWidth,
-              height: currentPageModel.canvasHeight
+              width: domkol.currentPageModel.canvasWidth,
+              height: domkol.currentPageModel.canvasHeight
             }}
           >
             {/* Layer 1: Domain coloring canvas */}
-            {domainColoringRenderer.showDomainColoring && (
+            {domkol.domainColoringRenderer.showDomainColoring && (
               <DomainColoringCanvas
-                complexFunction={currentFunction}
-                viewport={viewport}
-                colorScale={domainColoringRenderer.colorScale}
-                repaintContinuously={domainColoringRenderer.repaintContinuously}
-                changing={isZeroChanging}
+                complexFunction={domkol.currentFunction}
+                viewport={domkol.viewport}
+                colorScale={domkol.domainColoringRenderer.colorScale}
+                repaintContinuously={domkol.domainColoringRenderer.repaintContinuously}
+                changing={domkol.isZeroChanging}
               />
             )}
 
             {/* Layer 2: Cartesian coordinates and grid */}
-            {domainColoringRenderer.showDomainGrid && (
+            {domkol.domainColoringRenderer.showDomainGrid && (
               <svg
-                width={currentPageModel.canvasWidth}
-                height={currentPageModel.canvasHeight}
+                width={domkol.currentPageModel.canvasWidth}
+                height={domkol.currentPageModel.canvasHeight}
                 style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}
               >
                 <CoordinateGrid
-                  viewport={viewport}
+                  viewport={domkol.viewport}
                   showPolar={false}
                   showCartesian={true}
                 />
@@ -148,17 +82,17 @@ const DomkolView = observer(() => {
             )}
 
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
-            {functionGraphRenderer.show3DGraph && (
+            {domkol.functionGraphRenderer.show3DGraph && (
               <svg
-                width={currentPageModel.canvasWidth}
-                height={currentPageModel.canvasHeight}
+                width={domkol.currentPageModel.canvasWidth}
+                height={domkol.currentPageModel.canvasHeight}
                 style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}
               >
                 <FunctionGraphView
-                  functionGraphRenderer={functionGraphRenderer}
-                  complexFunction={currentFunction}
-                  domainCircle={domainCircle}
-                  viewport={viewport}
+                  functionGraphRenderer={domkol.functionGraphRenderer}
+                  complexFunction={domkol.currentFunction}
+                  domainCircle={domkol.domainCircle}
+                  viewport={domkol.viewport}
                   renderUnder={true}
                 />
               </svg>
@@ -166,38 +100,38 @@ const DomkolView = observer(() => {
 
             {/* Layer 4: Domain circle and polar grid */}
             <DomainCircleView
-              domainCircle={domainCircle}
-              functionGraphRenderer={functionGraphRenderer}
-              polynomialFunction={currentFunction instanceof PolynomialFunction ? currentFunction : new PolynomialFunction([])}
-              viewport={viewport}
+              domainCircle={domkol.domainCircle}
+              functionGraphRenderer={domkol.functionGraphRenderer}
+              polynomialFunction={domkol.currentFunction instanceof PolynomialFunction ? domkol.currentFunction : new PolynomialFunction([])}
+              viewport={domkol.viewport}
             />
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
-            {functionGraphRenderer.show3DGraph && (
+            {domkol.functionGraphRenderer.show3DGraph && (
               <svg
-                width={currentPageModel.canvasWidth}
-                height={currentPageModel.canvasHeight}
+                width={domkol.currentPageModel.canvasWidth}
+                height={domkol.currentPageModel.canvasHeight}
                 style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}
               >
                 <FunctionGraphView
-                  functionGraphRenderer={functionGraphRenderer}
-                  complexFunction={currentFunction}
-                  domainCircle={domainCircle}
-                  viewport={viewport}
+                  functionGraphRenderer={domkol.functionGraphRenderer}
+                  complexFunction={domkol.currentFunction}
+                  domainCircle={domkol.domainCircle}
+                  viewport={domkol.viewport}
                   renderUnder={false}
                 />
               </svg>
             )}
 
             {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}
-            {showNumberHandles && currentFunction instanceof PolynomialFunction &&
-              currentFunction.zeroes.map((zero, index) => (
+            {domkol.showNumberHandles && domkol.currentFunction instanceof PolynomialFunction &&
+              domkol.currentFunction.zeroes.map((zero, index) => (
                 <ComplexNumberHandle
                   key={index}
                   index={index}
                   value={zero}
-                  viewport={viewport}
-                  onChange={handleZeroChange}
+                  viewport={domkol.viewport}
+                  onChange={domkol.handleZeroChange}
                 />
               ))
             }
@@ -205,11 +139,11 @@ const DomkolView = observer(() => {
 
           {/* Control dialog */}
           <ControlDialog
-            complexFunction={currentFunction}
-            domainCircle={domainCircle}
-            functionGraphRenderer={functionGraphRenderer}
-            domainColoringRenderer={domainColoringRenderer}
-            instructions={currentPageModel.instructions}
+            complexFunction={domkol.currentFunction}
+            domainCircle={domkol.domainCircle}
+            functionGraphRenderer={domkol.functionGraphRenderer}
+            domainColoringRenderer={domkol.domainColoringRenderer}
+            instructions={domkol.currentPageModel.instructions}
           />
         </div>
       </main>
