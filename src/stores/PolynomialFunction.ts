@@ -120,4 +120,8 @@ export class PolynomialFunction implements ComplexFunction {
   get degree(): number {
     return this.zeroes.length;
   }
+
+  get params(): Complex[] {
+    return this.zeroes;
+  }
 }

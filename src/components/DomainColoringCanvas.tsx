@@ -108,8 +108,8 @@ const DomainColoringCanvas = observer(({
     viewport,
     colorScale,
     complexFunction?.formula,
-    // Include zeroes for polynomial functions specifically, or undefined for other functions
-    complexFunction instanceof PolynomialFunction ? complexFunction.zeroes : undefined
+    // Include params for all functions (zeroes for polynomials, empty array for exponentials)
+    complexFunction?.params
   ]);
 
   // MobX will automatically trigger re-renders when observables change

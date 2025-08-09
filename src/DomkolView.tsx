@@ -125,11 +125,11 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}
             {domkol.showNumberHandles && domkol.currentFunction instanceof PolynomialFunction &&
-              domkol.currentFunction.zeroes.map((zero, index) => (
+              domkol.currentFunction.params.map((param, index) => (
                 <ComplexNumberHandle
                   key={index}
                   index={index}
-                  value={zero}
+                  value={param}
                   viewport={domkol.viewport}
                   onChange={domkol.handleZeroChange}
                 />

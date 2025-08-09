@@ -15,4 +15,11 @@ export interface ComplexFunction {
    * Get the string representation/formula of this function
    */
   readonly formula: string;
+
+  /**
+   * Get the parameters that control this function.
+   * For polynomials, this is the list of zeroes.
+   * For exponential functions, this is an empty list.
+   */
+  readonly params: Complex[];
 }

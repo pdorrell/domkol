@@ -22,4 +22,8 @@ export class ExponentialFunction implements ComplexFunction {
   get formula(): string {
     return 'exp(z)';
   }
+
+  get params(): Complex[] {
+    return [];
+  }
 }
