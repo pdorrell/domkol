@@ -9,7 +9,7 @@ import { DomainCircleView } from '@/components/DomainCircleView';
 import { CoordinateGrid } from '@/components/CoordinateGrid';
 import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
 import { FunctionGraphView } from '@/components/FunctionGraphView';
-import { VersionDisplay } from '@/components/VersionDisplay';
+import { AppInfoDisplay } from '@/components/AppInfoDisplay';
 import './DomkolView.css';
 
 interface DomkolViewProps {
@@ -20,7 +20,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
   return (
     <div className="app">
-      <VersionDisplay showAbout={domkol.showAbout} />
+      <AppInfoDisplay showAbout={domkol.showAbout} />
       <header>
         <h1>Domkol: Complex Function Visualisation</h1>
         <nav className="function-nav">

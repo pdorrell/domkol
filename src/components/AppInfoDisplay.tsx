@@ -2,13 +2,13 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { AboutDialog } from './AboutDialog';
 import { ValueModel } from '@/utils/value-model';
-import './VersionDisplay.css';
+import './AppInfoDisplay.css';
 
-interface VersionDisplayProps {
+interface AppInfoDisplayProps {
   showAbout: ValueModel<boolean>;
 }
 
-const VersionDisplay: React.FC<VersionDisplayProps> = observer(({ showAbout }) => {
+const AppInfoDisplay: React.FC<AppInfoDisplayProps> = observer(({ showAbout }) => {
   // Version is already set in vite.config.ts with the + suffix for dev mode
   const version = `v${(process.env.APP_VERSION || '-')}`;
 
@@ -32,4 +32,4 @@ const VersionDisplay: React.FC<VersionDisplayProps> = observer(({ showAbout }) =
   );
 });
 
-export { VersionDisplay };
+export { AppInfoDisplay };
