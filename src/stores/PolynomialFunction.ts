@@ -1,4 +1,4 @@
-import { makeAutoObservable, computed } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { Complex, formatComplexCoefficient } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
 import { ValueModel } from '@/utils/value-model';

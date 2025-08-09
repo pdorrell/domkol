@@ -1,4 +1,4 @@
-import { makeAutoObservable, computed } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { Complex, complex } from '@/utils/complex';
 import { ValueModel } from '@/utils/value-model';
 

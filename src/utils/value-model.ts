@@ -23,7 +23,7 @@ export class ValueModel<T> {
   /**
    * Update value with changing state (for drag handles)
    */
-  update(newValue: T, changing: boolean): void {
+  update(newValue: T, _changing: boolean): void {
     this.value = newValue;
     // The changing parameter is available for subclasses to override
     // if they need to track drag state
