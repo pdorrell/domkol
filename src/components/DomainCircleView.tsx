@@ -4,9 +4,6 @@ import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
-import { PixelDimensions } from '@/types/dimensions';
-import { DomainHandle } from './DomainHandle';
-import { LayerWrapper } from './LayerWrapper';
 import './DomainCircleView.scss';
 
 interface DomainCircleViewProps {
@@ -142,49 +139,24 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     return elements;
   };
 
-  const dimensions: PixelDimensions = {
-    width: viewport.width,
-    height: viewport.height
-  };
-
   return (
-    <div className="domain-circle-view">
-      {/* SVG for polar grid - using LayerWrapper */}
-      <LayerWrapper dimensions={dimensions} zIndex={4}>
-        {/* Polar grid associated with domain circle */}
-        <g className="polar-grid">
-          {renderPolarGrid()}
-        </g>
-      </LayerWrapper>
+    <>
+      {/* Polar grid associated with domain circle */}
+      <g className="polar-grid">
+        {renderPolarGrid()}
+      </g>
 
-      {/* SVG for domain circle outline - separate layer */}
-      <LayerWrapper dimensions={dimensions} zIndex={4}>
-        {/* Domain circle outline */}
-        <circle
-          cx={centerPixelX}
-          cy={centerPixelY}
-          r={radiusPixels}
-          fill="none"
-          stroke="white"
-          strokeWidth="5"
-          opacity="1.0"
-        />
-      </LayerWrapper>
-
-      {/* Draggable center handle */}
-      <DomainHandle
-        value={domainCircle.centerModel}
-        viewport={viewport}
-        className="center-handle"
+      {/* Domain circle outline */}
+      <circle
+        cx={centerPixelX}
+        cy={centerPixelY}
+        r={radiusPixels}
+        fill="none"
+        stroke="white"
+        strokeWidth="5"
+        opacity="1.0"
       />
-
-      {/* Draggable radius handle */}
-      <DomainHandle
-        value={domainCircle.radiusHandleModel}
-        viewport={viewport}
-        className="edge-handle"
-      />
-    </div>
+    </>
   );
 });
 

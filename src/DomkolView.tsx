@@ -6,6 +6,7 @@ import { pageModels } from '@/models/DomainPageModel';
 import { ControlDialog } from '@/components/ControlDialog';
 import { ComplexNumberHandle } from '@/components/ComplexNumberHandle';
 import { DomainCircleView } from '@/components/DomainCircleView';
+import { DomainHandle } from '@/components/DomainHandle';
 import { CoordinateGrid } from '@/components/CoordinateGrid';
 import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
 import { FunctionGraphView } from '@/components/FunctionGraphView';
@@ -84,11 +85,25 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
             )}
 
             {/* Layer 4: Domain circle and polar grid */}
-            <DomainCircleView
-              domainCircle={domkol.domainCircle}
-              functionGraphRenderer={domkol.functionGraphRenderer}
-              polynomialFunction={domkol.currentFunction instanceof PolynomialFunction ? domkol.currentFunction : new PolynomialFunction([])}
+            <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={4}>
+              <DomainCircleView
+                domainCircle={domkol.domainCircle}
+                functionGraphRenderer={domkol.functionGraphRenderer}
+                polynomialFunction={domkol.currentFunction instanceof PolynomialFunction ? domkol.currentFunction : new PolynomialFunction([])}
+                viewport={domkol.viewport}
+              />
+            </LayerWrapper>
+
+            {/* Domain circle handles */}
+            <DomainHandle
+              value={domkol.domainCircle.centerModel}
               viewport={domkol.viewport}
+              className="center-handle"
+            />
+            <DomainHandle
+              value={domkol.domainCircle.radiusHandleModel}
+              viewport={domkol.viewport}
+              className="edge-handle"
             />
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
