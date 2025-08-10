@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ComplexFunction } from '@/stores/ComplexFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
-import { useDraggable } from '@/hooks/useDraggable';
+import { useDraggableDialog } from '@/hooks/useDraggableDialog';
 import './ControlDialog.scss';
 
 interface ControlDialogProps {
@@ -25,36 +25,17 @@ const ControlDialog = observer(({
   // Calculate initial position based on original CSS values
   // CSS had: top: calc(5% + 20px) and left: calc(540px - 31em * 0.25)
   // Assuming 1em = 16px, 31em = 496px, so 31em * 0.25 = 124px
-  const [initialPosition, setInitialPosition] = useState({
+  const initialPosition = {
     x: 540 - 124, // 416px
     y: window.innerHeight * 0.05 + 20
-  });
+  };
   const dragHandleRef = useRef<HTMLDivElement>(null);
 
-  const { elementRef: dialogRef, currentValue: position, handlePointerDown } = useDraggable<{x: number, y: number}>({
-    initialValue: initialPosition,
+  const { dialogRef, position, handlePointerDown } = useDraggableDialog({
+    initialPosition,
     shouldStartDrag: (event) => {
       // Only start dragging if clicking on the drag handle
       return (event.target as HTMLElement).classList.contains('drag-handle');
-    },
-    onDragEnd: (finalPosition) => {
-      // Update the initial position so it doesn't jump back
-      setInitialPosition(finalPosition);
-    },
-    calculateDragOffset: (event, rect, currentPosition) => {
-      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
-
-      return {
-        offsetX: clientX - currentPosition.x,
-        offsetY: clientY - currentPosition.y
-      };
-    },
-    calculateNewPosition: (clientX, clientY, dragOffset) => {
-      return {
-        x: clientX - dragOffset.offsetX,
-        y: clientY - dragOffset.offsetY
-      };
     }
   });
 

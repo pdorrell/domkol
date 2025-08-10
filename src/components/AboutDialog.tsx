@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useDraggable } from '@/hooks/useDraggable';
+import React, { useEffect } from 'react';
+import { useDraggableDialog } from '@/hooks/useDraggableDialog';
 import './AboutDialog.scss';
 
 interface AboutDialogProps {
@@ -10,45 +10,23 @@ interface AboutDialogProps {
 // No need for observer as this component doesn't use MobX state
 // eslint-disable-next-line mobx/missing-observer
 const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
-  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
-
-  const { elementRef, currentValue: position, handlePointerDown } = useDraggable<{x: number, y: number}>({
-    initialValue: initialPosition,
+  const { dialogRef, position, handlePointerDown, setPosition } = useDraggableDialog({
     shouldStartDrag: (event) => {
       // Only start dragging if clicking on the title bar
       return (event.target as HTMLElement).classList.contains('about-dialog-header');
-    },
-    onDragEnd: (finalPosition) => {
-      // Update the initial position so it doesn't jump back
-      setInitialPosition(finalPosition);
-    },
-    calculateDragOffset: (event, rect, currentPosition) => {
-      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
-
-      return {
-        offsetX: clientX - currentPosition.x,
-        offsetY: clientY - currentPosition.y
-      };
-    },
-    calculateNewPosition: (clientX, clientY, dragOffset) => {
-      return {
-        x: clientX - dragOffset.offsetX,
-        y: clientY - dragOffset.offsetY
-      };
     }
   });
 
   useEffect(() => {
-    if (isOpen && elementRef.current) {
+    if (isOpen && dialogRef.current) {
       // Center the dialog on first open
-      const rect = elementRef.current.getBoundingClientRect();
-      setInitialPosition({
+      const rect = dialogRef.current.getBoundingClientRect();
+      setPosition({
         x: (window.innerWidth - rect.width) / 2,
         y: (window.innerHeight - rect.height) / 2
       });
     }
-  }, [isOpen, elementRef]);
+  }, [isOpen, dialogRef, setPosition]);
 
   if (!isOpen) return null;
 
@@ -57,7 +35,7 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
       <div className="about-dialog-overlay" onClick={onClose} />
       <div
         className="about-dialog"
-        ref={elementRef as React.RefObject<HTMLDivElement>}
+        ref={dialogRef as React.RefObject<HTMLDivElement>}
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`
