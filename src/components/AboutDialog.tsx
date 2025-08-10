@@ -28,6 +28,22 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen, dialogRef, setPosition]);
 
+  // Handle Escape key to close dialog
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
