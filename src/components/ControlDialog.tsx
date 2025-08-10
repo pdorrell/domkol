@@ -13,6 +13,7 @@ interface ControlDialogProps {
   functionGraphRenderer: FunctionGraphRenderer;
   domainColoringRenderer: DomainColoringRenderer;
   instructions: string;
+  zIndex?: number;
 }
 
 const ControlDialog = observer(({
@@ -20,7 +21,8 @@ const ControlDialog = observer(({
   domainCircle: _domainCircle,
   functionGraphRenderer,
   domainColoringRenderer,
-  instructions
+  instructions,
+  zIndex = 1000
 }: ControlDialogProps) => {
   // Calculate initial position based on original CSS values
   // CSS had: top: calc(5% + 20px) and left: calc(540px - 31em * 0.25)
@@ -75,7 +77,8 @@ const ControlDialog = observer(({
       className="control-dialog"
       style={{
         left: `${position.x}px`,
-        top: `${position.y}px`
+        top: `${position.y}px`,
+        zIndex
       }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}

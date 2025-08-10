@@ -11,6 +11,7 @@ interface DomainColoringCanvasProps {
   colorScale: number;
   repaintContinuously: boolean;
   changing?: boolean;
+  zIndex?: number;
 }
 
 const DomainColoringCanvas = observer(({
@@ -18,7 +19,8 @@ const DomainColoringCanvas = observer(({
   viewport,
   colorScale,
   repaintContinuously,
-  changing = false
+  changing = false,
+  zIndex = 1
 }: DomainColoringCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageDataRef = useRef<ImageData | null>(null);
@@ -123,6 +125,7 @@ const DomainColoringCanvas = observer(({
       width={viewport.width}
       height={viewport.height}
       className="domain-coloring-canvas"
+      style={{ zIndex }}
     />
   );
 });

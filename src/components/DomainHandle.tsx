@@ -9,12 +9,14 @@ interface DomainHandleProps {
   value: DraggableValueModel;
   viewport: ViewportConfig;
   className?: string;
+  zIndex?: number;
 }
 
 const DomainHandle: React.FC<DomainHandleProps> = observer(({
   value,
   viewport,
-  className = 'center-handle'
+  className = 'center-handle',
+  zIndex = 900
 }) => {
   const { handleRef, pixelX, pixelY, handlePointerDown } = useDraggableHandle({
     value,
@@ -37,7 +39,7 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
         left: pixelX - 8,
         top: pixelY - 8,
         cursor: 'move',
-        zIndex: 900
+        zIndex
       }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}

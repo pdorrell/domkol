@@ -9,11 +9,13 @@ import './ComplexNumberHandle.scss';
 interface ComplexNumberHandleProps {
   value: DraggableValueModel;
   viewport: ViewportConfig;
+  zIndex?: number;
 }
 
 const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
   value,
-  viewport
+  viewport,
+  zIndex = 1000
 }) => {
   const { handleRef, pixelX, pixelY, handlePointerDown } = useDraggableHandle({
     value,
@@ -40,7 +42,7 @@ const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
         left: pixelX + 2,
         top: pixelY - 23,
         cursor: 'move',
-        zIndex: 1000
+        zIndex
       }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}

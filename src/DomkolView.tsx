@@ -57,6 +57,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                 colorScale={domkol.domainColoringRenderer.colorScale}
                 repaintContinuously={domkol.domainColoringRenderer.repaintContinuously}
                 changing={domkol.isZeroChanging}
+                zIndex={1}
               />
             )}
 
@@ -99,11 +100,13 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
               value={domkol.domainCircle.centerModel}
               viewport={domkol.viewport}
               className="center-handle"
+              zIndex={6}
             />
             <DomainHandle
               value={domkol.domainCircle.radiusHandleModel}
               viewport={domkol.viewport}
               className="edge-handle"
+              zIndex={6}
             />
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
@@ -126,6 +129,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                   key={index}
                   value={zeroModel}
                   viewport={domkol.viewport}
+                  zIndex={7}
                 />
               ))
             }
@@ -138,6 +142,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
             functionGraphRenderer={domkol.functionGraphRenderer}
             domainColoringRenderer={domkol.domainColoringRenderer}
             instructions={domkol.currentPageModel.instructions}
+            zIndex={1000}
           />
         </div>
       </main>
