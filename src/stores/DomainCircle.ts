@@ -1,5 +1,7 @@
 import { Complex, complex } from '@/utils/complex';
 import { DraggableValueModel } from '@/utils/draggable-value-model';
+import { ValueModel } from '@/utils/value-model';
+import { CentreAndRadiusHandleValueModel } from '@/utils/centre-and-radius-handle-value-model';
 import { makeObservables } from '@/utils/mobx-helpers';
 
 export class DomainCircle {
@@ -7,9 +9,16 @@ export class DomainCircle {
   radiusHandleModel: DraggableValueModel;
 
   constructor(center: Complex = complex(0, 0), radiusInUnits: number = 1) {
-    this.centerModel = new DraggableValueModel([...center]);
-    // Position the radius handle at the initial radius distance from center (at angle 0)
-    this.radiusHandleModel = new DraggableValueModel([center[0] + radiusInUnits, center[1]]);
+    // Create underlying value models
+    const centerValueModel = new ValueModel<Complex>([...center]);
+    const radiusHandleValueModel = new ValueModel<Complex>([center[0] + radiusInUnits, center[1]]);
+
+    // Create a special model that couples center and radius handle movement
+    const centreAndRadiusModel = new CentreAndRadiusHandleValueModel(centerValueModel, radiusHandleValueModel);
+
+    // Wrap with draggable behavior
+    this.centerModel = new DraggableValueModel(centreAndRadiusModel);
+    this.radiusHandleModel = new DraggableValueModel(radiusHandleValueModel);
 
     makeObservables(this, {
       observable: 'centerModel radiusHandleModel',

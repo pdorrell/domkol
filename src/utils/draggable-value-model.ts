@@ -1,23 +1,33 @@
 import { Complex } from '@/utils/complex';
-import { ValueModel } from '@/utils/value-model';
+import { ValueModelInterface } from '@/utils/value-model';
 import { DragState } from '@/utils/drag-state';
 import { makeObservables } from '@/utils/mobx-helpers';
 
 /**
- * Extends ValueModel<Complex> with drag state management for draggable UI elements
+ * Wraps a ValueModelInterface<Complex> with drag state management for draggable UI elements
  */
-export class DraggableValueModel extends ValueModel<Complex> {
+export class DraggableValueModel implements ValueModelInterface<Complex> {
+  private valueModel: ValueModelInterface<Complex>;
   dragState: DragState;
 
-  constructor(initialValue: Complex) {
-    super(initialValue);
+  constructor(valueModel: ValueModelInterface<Complex>) {
+    this.valueModel = valueModel;
     this.dragState = new DragState();
 
-    // Make only the additional attributes observable
+    // Make only the drag-specific attributes observable
     makeObservables(this, {
       observable: 'dragState',
       action: 'startDrag endDrag'
     });
+  }
+
+  // Delegate value operations to wrapped model
+  get value(): Complex {
+    return this.valueModel.value;
+  }
+
+  set(newValue: Complex): void {
+    this.valueModel.set(newValue);
   }
 
   /**
@@ -36,10 +46,15 @@ export class DraggableValueModel extends ValueModel<Complex> {
 
   /**
    * Update value with changing state (for drag handles)
-   * Overrides parent to integrate with drag state
    */
   update(newValue: Complex, changing: boolean): void {
-    this.value = newValue;
+    // Use update if available, otherwise fallback to set
+    if ('update' in this.valueModel && typeof this.valueModel.update === 'function') {
+      this.valueModel.update(newValue, changing);
+    } else {
+      this.valueModel.set(newValue);
+    }
+
     if (!changing && this.dragState.isDragging) {
       this.endDrag();
     }
