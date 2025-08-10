@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { ComplexFunction } from '@/stores/ComplexFunction';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { Complex } from '@/utils/complex';
-import './DomainColoringCanvas.css';
+import './DomainColoringCanvas.scss';
 
 interface DomainColoringCanvasProps {
   complexFunction?: ComplexFunction | null;

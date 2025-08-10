@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './AboutDialog.css';
+import './AboutDialog.scss';
 
 interface AboutDialogProps {
   isOpen: boolean;

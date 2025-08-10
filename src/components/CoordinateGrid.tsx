@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { formatComplex, Complex } from '@/utils/complex';
-import './CoordinateGrid.css';
+import './CoordinateGrid.scss';
 
 interface CoordinateGridProps {
   viewport: ViewportConfig;

@@ -1,0 +1,52 @@
+.number-handle {
+  padding: 0;
+  margin: 0;
+  user-select: none;
+  position: relative;
+  z-index: 1000 !important;
+  pointer-events: auto;
+
+  .number-text {
+    color: blue;
+    padding: 0.1em;
+    margin: 0;
+    line-height: 100%;
+    background-color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+    font-size: 12px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: normal;
+  }
+
+  .point-circle {
+    background: rgba(0, 0, 255, 0.5);
+    padding: 0;
+    margin: 0;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    position: absolute;
+    left: -4px;
+    top: 21px;
+  }
+
+  /* Increase touch area on touch-capable devices */
+  @media (pointer: coarse) {
+    /* Create larger touch target area using pseudo-element */
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      /* Center the expanded touch area around the point circle */
+      left: -20px; /* -4px (circle left) - 16px (extra touch area) */
+      top: 5px;    /* 21px (circle top) - 16px (extra touch area) */
+      width: 36px; /* 4px (circle) + 32px (16px padding each side) */
+      height: 36px;
+      /* Visual debugging - uncomment to see touch area */
+      /* background: rgba(255, 0, 0, 0.2); */
+      border-radius: 50%;
+      z-index: -1;
+    }
+  }
+}

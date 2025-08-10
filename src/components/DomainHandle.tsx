@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { DraggableValueModel } from '@/utils/draggable-value-model';
 import { useDraggableHandle } from '@/hooks/useDraggableHandle';
-import './DomainHandle.css';
+import './DomainHandle.scss';
 
 interface DomainHandleProps {
   value: DraggableValueModel;

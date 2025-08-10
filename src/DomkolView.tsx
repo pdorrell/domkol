@@ -10,7 +10,7 @@ import { CoordinateGrid } from '@/components/CoordinateGrid';
 import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
 import { FunctionGraphView } from '@/components/FunctionGraphView';
 import { AppInfoDisplay } from '@/components/AppInfoDisplay';
-import './DomkolView.css';
+import './DomkolView.scss';
 
 interface DomkolViewProps {
   domkol: Domkol;

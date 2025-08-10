@@ -4,7 +4,7 @@ import { formatComplex } from '@/utils/complex';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { DraggableValueModel } from '@/utils/draggable-value-model';
 import { useDraggableHandle } from '@/hooks/useDraggableHandle';
-import './ComplexNumberHandle.css';
+import './ComplexNumberHandle.scss';
 
 interface ComplexNumberHandleProps {
   value: DraggableValueModel;

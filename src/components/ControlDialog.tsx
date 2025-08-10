@@ -4,7 +4,7 @@ import { ComplexFunction } from '@/stores/ComplexFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
-import './ControlDialog.css';
+import './ControlDialog.scss';
 
 interface ControlDialogProps {
   complexFunction?: ComplexFunction | null;

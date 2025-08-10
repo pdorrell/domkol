@@ -5,7 +5,7 @@ import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
 import { DomainHandle } from './DomainHandle';
-import './DomainCircleView.css';
+import './DomainCircleView.scss';
 
 interface DomainCircleViewProps {
   domainCircle: DomainCircle;

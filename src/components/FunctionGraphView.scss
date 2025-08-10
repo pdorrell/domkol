@@ -1,0 +1,46 @@
+.function-graph {
+  pointer-events: none;
+
+  .real-path {
+    stroke: blue;
+    stroke-width: 2;
+    fill: none;
+    opacity: 1.0;
+  }
+
+  .imaginary-path {
+    stroke: #000000;
+    stroke-width: 2;
+    fill: none;
+    opacity: 1.0;
+  }
+
+  /* 3D mode paths */
+  .real-path-3d-over {
+    stroke: blue;
+    stroke-width: 5;
+    fill: none;
+    opacity: 1.0;
+  }
+
+  .real-path-under {
+    stroke: #555555;
+    stroke-width: 5;
+    fill: none;
+    opacity: 0.7;
+  }
+
+  .real-path-shadow {
+    stroke: #000000;
+    stroke-width: 5;
+    fill: none;
+    opacity: 0.2;
+  }
+
+  .real-path-shadow2 {
+    stroke: #000000;
+    stroke-width: 5;
+    fill: none;
+    opacity: 0.15;
+  }
+}

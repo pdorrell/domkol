@@ -4,7 +4,7 @@ import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { ComplexFunction } from '@/stores/ComplexFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
-import './FunctionGraphView.css';
+import './FunctionGraphView.scss';
 
 interface FunctionGraphViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
