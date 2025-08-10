@@ -3,7 +3,13 @@ import { makeObservables } from '@/utils/mobx-helpers';
 /**
  * Generic model for a value that can be updated through UI components
  */
-export class ValueModel<T> {
+
+export interface ValueModelInterface<T> {
+  value: T;
+  set(newValue: T): void;
+}
+
+export class ValueModel<T> implements ValueModelInterface<T> {
 
   value: T;
 
