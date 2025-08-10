@@ -18,6 +18,10 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
       // Only start dragging if clicking on the title bar
       return (event.target as HTMLElement).classList.contains('about-dialog-header');
     },
+    onDragEnd: (finalPosition) => {
+      // Update the initial position so it doesn't jump back
+      setInitialPosition(finalPosition);
+    },
     calculateDragOffset: (event, rect, currentPosition) => {
       const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
       const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
