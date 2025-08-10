@@ -10,6 +10,7 @@ import { CoordinateGrid } from '@/components/CoordinateGrid';
 import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
 import { FunctionGraphView } from '@/components/FunctionGraphView';
 import { AppInfoDisplay } from '@/components/AppInfoDisplay';
+import { LayerWrapper } from '@/components/LayerWrapper';
 import './DomkolView.scss';
 
 interface DomkolViewProps {
@@ -60,26 +61,18 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 2: Cartesian coordinates and grid */}
             {domkol.domainColoringRenderer.showDomainGrid && (
-              <svg
-                width={domkol.currentPageModel.canvasWidth}
-                height={domkol.currentPageModel.canvasHeight}
-                style={{ position: 'absolute', top: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}
-              >
+              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={2}>
                 <CoordinateGrid
                   viewport={domkol.viewport}
                   showPolar={false}
                   showCartesian={true}
                 />
-              </svg>
+              </LayerWrapper>
             )}
 
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {domkol.functionGraphRenderer.show3DGraph && (
-              <svg
-                width={domkol.currentPageModel.canvasWidth}
-                height={domkol.currentPageModel.canvasHeight}
-                style={{ position: 'absolute', top: 0, left: 0, zIndex: 3, pointerEvents: 'none' }}
-              >
+              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={3}>
                 <FunctionGraphView
                   functionGraphRenderer={domkol.functionGraphRenderer}
                   complexFunction={domkol.currentFunction}
@@ -87,7 +80,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                   viewport={domkol.viewport}
                   renderUnder={true}
                 />
-              </svg>
+              </LayerWrapper>
             )}
 
             {/* Layer 4: Domain circle and polar grid */}
@@ -100,11 +93,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
             {domkol.functionGraphRenderer.show3DGraph && (
-              <svg
-                width={domkol.currentPageModel.canvasWidth}
-                height={domkol.currentPageModel.canvasHeight}
-                style={{ position: 'absolute', top: 0, left: 0, zIndex: 5, pointerEvents: 'none' }}
-              >
+              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={5}>
                 <FunctionGraphView
                   functionGraphRenderer={domkol.functionGraphRenderer}
                   complexFunction={domkol.currentFunction}
@@ -112,7 +101,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                   viewport={domkol.viewport}
                   renderUnder={false}
                 />
-              </svg>
+              </LayerWrapper>
             )}
 
             {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}

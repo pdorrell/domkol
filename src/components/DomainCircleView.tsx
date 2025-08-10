@@ -4,7 +4,9 @@ import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
+import { PixelDimensions } from '@/types/dimensions';
 import { DomainHandle } from './DomainHandle';
+import { LayerWrapper } from './LayerWrapper';
 import './DomainCircleView.scss';
 
 interface DomainCircleViewProps {
@@ -140,39 +142,23 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
     return elements;
   };
 
+  const dimensions: PixelDimensions = {
+    width: viewport.width,
+    height: viewport.height
+  };
+
   return (
     <div className="domain-circle-view">
-      {/* SVG for polar grid */}
-      <svg
-        className="domain-circle-svg"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: 4
-        }}
-      >
+      {/* SVG for polar grid - using LayerWrapper */}
+      <LayerWrapper dimensions={dimensions} zIndex={4}>
         {/* Polar grid associated with domain circle */}
         <g className="polar-grid">
           {renderPolarGrid()}
         </g>
-      </svg>
+      </LayerWrapper>
 
       {/* SVG for domain circle outline - separate layer */}
-      <svg
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: 4
-        }}
-      >
+      <LayerWrapper dimensions={dimensions} zIndex={4}>
         {/* Domain circle outline */}
         <circle
           cx={centerPixelX}
@@ -183,7 +169,7 @@ const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
           strokeWidth="5"
           opacity="1.0"
         />
-      </svg>
+      </LayerWrapper>
 
       {/* Draggable center handle */}
       <DomainHandle

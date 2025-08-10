@@ -1,4 +1,5 @@
 import { Complex, complex } from '@/utils/complex';
+import { PixelDimensions } from '@/types/dimensions';
 
 export type FunctionType = 'cubic' | 'quintic' | 'identity' | 'exponential';
 
@@ -40,6 +41,13 @@ export class DomainPageModel {
 
   get canvasHeight(): number {
     return this.pixelsDimension[1];
+  }
+
+  get canvasDimensions(): PixelDimensions {
+    return {
+      width: this.pixelsDimension[0],
+      height: this.pixelsDimension[1]
+    };
   }
 }
 
