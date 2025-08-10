@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { AboutDialog } from './AboutDialog';
 import { ValueModel } from '@/utils/value-model';
-import './AppInfoDisplay.css';
+import './AppInfoDisplay.scss';
 
 interface AppInfoDisplayProps {
   showAbout: ValueModel<boolean>;
