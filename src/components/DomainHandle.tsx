@@ -19,14 +19,12 @@ const DomainHandle: React.FC<DomainHandleProps> = observer(({
   const { handleRef, pixelX, pixelY, handlePointerDown } = useDraggableHandle({
     value,
     viewport,
-    calculateDragOffset: (event, rect) => {
-      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
-
-      // Calculate offset from pointer position to handle center
-      const offsetX = clientX - (rect.left + rect.width / 2);
-      const offsetY = clientY - (rect.top + rect.height / 2);
-      return { offsetX, offsetY };
+    getCurrentPoint: (_event, rect) => {
+      // The current point is the center of the handle element
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
     }
   });
 

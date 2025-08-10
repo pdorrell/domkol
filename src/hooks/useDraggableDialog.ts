@@ -19,14 +19,9 @@ export function useDraggableDialog({
       // Update the position state so it doesn't jump back
       setPosition(finalPosition);
     },
-    calculateDragOffset: (event, _rect, currentPosition) => {
-      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
-
-      return {
-        offsetX: clientX - currentPosition.x,
-        offsetY: clientY - currentPosition.y
-      };
+    getCurrentPoint: (_event, _rect, currentPosition) => {
+      // For dialogs, the current point is simply the current position
+      return currentPosition;
     },
     calculateNewPosition: (clientX, clientY, dragOffset) => {
       return {

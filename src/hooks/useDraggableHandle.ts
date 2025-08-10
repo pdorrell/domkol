@@ -4,23 +4,23 @@ import { DraggableValueModel } from '@/utils/draggable-value-model';
 import { Complex } from '@/utils/complex';
 import { useDraggable } from './useDraggable';
 
-export interface DragOffsetCalculator {
+export interface GetCurrentPointCalculator {
   (
     event: React.MouseEvent | React.TouchEvent,
     handleRect: DOMRect
-  ): { offsetX: number; offsetY: number };
+  ): { x: number; y: number };
 }
 
 export interface UseDraggableHandleOptions {
   value: DraggableValueModel;
   viewport: ViewportConfig;
-  calculateDragOffset: DragOffsetCalculator;
+  getCurrentPoint: GetCurrentPointCalculator;
 }
 
 export function useDraggableHandle({
   value,
   viewport,
-  calculateDragOffset
+  getCurrentPoint
 }: UseDraggableHandleOptions) {
   // Convert complex number to pixel position for display
   const [pixelX, pixelY] = complexToPixel(value.value, viewport);
@@ -39,8 +39,8 @@ export function useDraggableHandle({
       value.update(complexValue, false);
       value.dragState.endDrag();
     },
-    calculateDragOffset: (event, rect, _currentValue) => {
-      return calculateDragOffset(event, rect);
+    getCurrentPoint: (event, rect, _currentValue) => {
+      return getCurrentPoint(event, rect);
     },
     calculateNewPosition: (clientX, clientY, dragOffset, currentValue, elementRef) => {
       const container = elementRef.current?.parentElement;

@@ -1,11 +1,11 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 
-export interface DragOffsetCalculator<T> {
+export interface GetCurrentPointCalculator<T> {
   (
     event: React.MouseEvent | React.TouchEvent,
     elementRect: DOMRect,
     currentValue: T
-  ): { offsetX: number; offsetY: number };
+  ): { x: number; y: number };
 }
 
 export interface DragPositionCalculator<T> {
@@ -23,7 +23,7 @@ export interface UseDraggableOptions<T> {
   onDragStart?: (value: T) => void;
   onDragMove?: (value: T, isDragging: boolean) => void;
   onDragEnd?: (value: T) => void;
-  calculateDragOffset: DragOffsetCalculator<T>;
+  getCurrentPoint: GetCurrentPointCalculator<T>;
   calculateNewPosition: DragPositionCalculator<T>;
   shouldStartDrag?: (event: React.MouseEvent | React.TouchEvent) => boolean;
 }
@@ -33,7 +33,7 @@ export function useDraggable<T>({
   onDragStart,
   onDragMove,
   onDragEnd,
-  calculateDragOffset,
+  getCurrentPoint,
   calculateNewPosition,
   shouldStartDrag = () => true
 }: UseDraggableOptions<T>) {
@@ -59,12 +59,22 @@ export function useDraggable<T>({
 
     const rect = elementRef.current?.getBoundingClientRect();
     if (rect) {
-      const { offsetX, offsetY } = calculateDragOffset(event, rect, currentValue);
+      // Extract client position from event
+      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+
+      // Get the current point to calculate offset from
+      const currentPoint = getCurrentPoint(event, rect, currentValue);
+
+      // Calculate drag offset
+      const offsetX = clientX - currentPoint.x;
+      const offsetY = clientY - currentPoint.y;
+
       setDragOffset({ offsetX, offsetY });
       setIsDragging(true);
       onDragStart?.(currentValue);
     }
-  }, [currentValue, calculateDragOffset, shouldStartDrag, onDragStart]);
+  }, [currentValue, getCurrentPoint, shouldStartDrag, onDragStart]);
 
   // Handle pointer move during drag (mouse or touch)
   const handlePointerMove = useCallback((event: MouseEvent | TouchEvent) => {
