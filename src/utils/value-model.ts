@@ -13,16 +13,13 @@ export class ValueModel<T> implements ValueModelInterface<T> {
 
   value: T;
 
-  constructor(initialValue: T, skipMobx = false) {
+  constructor(initialValue: T) {
     this.value = initialValue;
 
-    // Only setup observables if this is not a subclass
-    if (!skipMobx) {
-      makeObservables(this, {
-        observable: 'value',
-        action: 'set update'
-      });
-    }
+    makeObservables(this, {
+      observable: 'value',
+      action: 'set update'
+    });
   }
 
   /**

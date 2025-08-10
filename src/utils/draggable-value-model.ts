@@ -10,14 +10,13 @@ export class DraggableValueModel extends ValueModel<Complex> {
   dragState: DragState;
 
   constructor(initialValue: Complex) {
-    // Pass skipMobx=true to prevent parent from calling makeAutoObservable
-    super(initialValue, true);
+    super(initialValue);
     this.dragState = new DragState();
 
-    // Use helper for cleaner syntax
+    // Make only the additional attributes observable
     makeObservables(this, {
-      observable: 'value dragState',
-      action: 'set update startDrag endDrag'
+      observable: 'dragState',
+      action: 'startDrag endDrag'
     });
   }
 
