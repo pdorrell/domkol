@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDraggable } from '@/hooks/useDraggable';
 import './AboutDialog.scss';
 
 interface AboutDialogProps {
@@ -9,70 +10,41 @@ interface AboutDialogProps {
 // No need for observer as this component doesn't use MobX state
 // eslint-disable-next-line mobx/missing-observer
 const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
+
+  const { elementRef, currentValue: position, handlePointerDown } = useDraggable<{x: number, y: number}>({
+    initialValue: initialPosition,
+    shouldStartDrag: (event) => {
+      // Only start dragging if clicking on the title bar
+      return (event.target as HTMLElement).classList.contains('about-dialog-header');
+    },
+    calculateDragOffset: (event, rect, currentPosition) => {
+      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+
+      return {
+        offsetX: clientX - currentPosition.x,
+        offsetY: clientY - currentPosition.y
+      };
+    },
+    calculateNewPosition: (clientX, clientY, dragOffset) => {
+      return {
+        x: clientX - dragOffset.offsetX,
+        y: clientY - dragOffset.offsetY
+      };
+    }
+  });
 
   useEffect(() => {
-    if (isOpen && dialogRef.current) {
+    if (isOpen && elementRef.current) {
       // Center the dialog on first open
-      const rect = dialogRef.current.getBoundingClientRect();
-      setPosition({
+      const rect = elementRef.current.getBoundingClientRect();
+      setInitialPosition({
         x: (window.innerWidth - rect.width) / 2,
         y: (window.innerHeight - rect.height) / 2
       });
     }
-  }, [isOpen]);
-
-  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
-    // Only start dragging if clicking on the title bar
-    if ((e.target as HTMLElement).classList.contains('about-dialog-header')) {
-      e.preventDefault(); // Prevent scrolling
-      setIsDragging(true);
-
-      const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-
-      setDragStart({
-        x: clientX - position.x,
-        y: clientY - position.y
-      });
-    }
-  };
-
-  const handlePointerMove = (e: MouseEvent | TouchEvent) => {
-    if (isDragging) {
-      e.preventDefault(); // Prevent scrolling
-
-      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
-
-      setPosition({
-        x: clientX - dragStart.x,
-        y: clientY - dragStart.y
-      });
-    }
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handlePointerMove);
-      document.addEventListener('mouseup', handlePointerUp);
-      document.addEventListener('touchmove', handlePointerMove, { passive: false });
-      document.addEventListener('touchend', handlePointerUp);
-      return () => {
-        document.removeEventListener('mousemove', handlePointerMove);
-        document.removeEventListener('mouseup', handlePointerUp);
-        document.removeEventListener('touchmove', handlePointerMove);
-        document.removeEventListener('touchend', handlePointerUp);
-      };
-    }
-  }, [isDragging, dragStart]);
+  }, [isOpen, elementRef]);
 
   if (!isOpen) return null;
 
@@ -81,7 +53,7 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
       <div className="about-dialog-overlay" onClick={onClose} />
       <div
         className="about-dialog"
-        ref={dialogRef}
+        ref={elementRef as React.RefObject<HTMLDivElement>}
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`
