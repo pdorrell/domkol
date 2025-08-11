@@ -8,10 +8,10 @@ import './FunctionGraphView.scss';
 
 interface FunctionGraphViewProps {
   functionGraphRenderer: FunctionGraphRenderer;
-  complexFunction?: ComplexFunction | null;
+  complexFunction: ComplexFunction;
   domainCircle: DomainCircle;
   viewport: ViewportConfig;
-  renderUnder?: boolean;
+  renderUnder: boolean;
 }
 
 const FunctionGraphView = observer(({
@@ -19,9 +19,9 @@ const FunctionGraphView = observer(({
   complexFunction,
   domainCircle,
   viewport,
-  renderUnder = false
+  renderUnder
 }: FunctionGraphViewProps) => {
-  if (!functionGraphRenderer.showGraphOnCircle || !complexFunction) {
+  if (!functionGraphRenderer.showGraphOnCircle) {
     return null; // Don't render when graph is disabled or no function provided
   }
 
