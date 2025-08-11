@@ -33,7 +33,7 @@ export class Domkol {
     makeObservables(this, {
       observable: 'selectedPageIndex currentFunction domainCircle functionGraphRenderer domainColoringRenderer isZeroChanging showAbout',
       computed: 'currentPageModel viewport showNumberHandles',
-      action: 'handlePageChange handleZeroChange startWiggleTimer stopWiggleTimer'
+      action: 'handlePageChange startWiggleTimer stopWiggleTimer'
     });
 
     // Start the wiggle animation timer
@@ -73,12 +73,6 @@ export class Domkol {
     this.isZeroChanging = false;
   }
 
-  handleZeroChange = (index: number, newValue: Complex, changing: boolean): void => {
-    if (this.currentFunction instanceof PolynomialFunction) {
-      this.currentFunction.updateZero(index, newValue, changing);
-      this.isZeroChanging = changing;
-    }
-  }
 
   startWiggleTimer(): void {
     if (this.wiggleTimer !== null) {
