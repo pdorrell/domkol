@@ -6,12 +6,12 @@ import { Complex } from '@/utils/complex';
 import './DomainColoringCanvas.scss';
 
 interface DomainColoringCanvasProps {
-  complexFunction?: ComplexFunction | null;
+  complexFunction: ComplexFunction;
   viewport: ViewportConfig;
   colorScale: number;
   repaintContinuously: boolean;
-  changing?: boolean;
-  zIndex?: number;
+  changing: boolean;
+  zIndex: number;
 }
 
 const DomainColoringCanvas = observer(({
@@ -108,9 +108,9 @@ const DomainColoringCanvas = observer(({
     changing,
     viewport,
     colorScale,
-    complexFunction?.formula,
+    complexFunction.formula,
     // Include params for all functions (zeroes for polynomials, empty array for exponentials)
-    complexFunction?.params
+    complexFunction.params
   ]);
 
   // MobX will automatically trigger re-renders when observables change
