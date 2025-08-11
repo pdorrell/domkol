@@ -3,7 +3,7 @@ import { ExponentialFunction } from '@/stores/ExponentialFunction';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
 import { DomainColoringRenderer } from '@/stores/DomainColoringRenderer';
-import { Complex, complex } from '@/utils/complex';
+import { complex } from '@/utils/complex';
 import { ViewportConfig } from '@/utils/coordinateTransforms';
 import { ValueModel } from '@/utils/value-model';
 import { makeObservables } from '@/utils/mobx-helpers';
