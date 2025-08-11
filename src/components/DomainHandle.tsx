@@ -8,15 +8,15 @@ import './DomainHandle.scss';
 interface DomainHandleProps {
   value: DraggableValueModel;
   viewport: ViewportConfig;
-  className?: string;
-  zIndex?: number;
+  className: string;
+  zIndex: number;
 }
 
 const DomainHandle: React.FC<DomainHandleProps> = observer(({
   value,
   viewport,
-  className = 'center-handle',
-  zIndex = 900
+  className,
+  zIndex
 }) => {
   const { handleRef, pixelX, pixelY, handlePointerDown } = useDraggableHandle({
     value,
