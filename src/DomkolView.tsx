@@ -1,6 +1,5 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { Domkol } from '@/models/Domkol';
 import { pageModels } from '@/models/DomainPageModel';
 import { ControlDialog } from '@/components/ControlDialog';
@@ -90,7 +89,6 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
               <DomainCircleView
                 domainCircle={domkol.domainCircle}
                 functionGraphRenderer={domkol.functionGraphRenderer}
-                polynomialFunction={domkol.currentFunction instanceof PolynomialFunction ? domkol.currentFunction : new PolynomialFunction([])}
                 viewport={domkol.viewport}
               />
             </LayerWrapper>
@@ -122,12 +120,12 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
               </LayerWrapper>
             )}
 
-            {/* Layer 6: Handles for controlling zero positions (only for polynomials) */}
-            {domkol.showNumberHandles && domkol.currentFunction instanceof PolynomialFunction &&
-              domkol.currentFunction.zeroModels.map((zeroModel, index) => (
+            {/* Layer 6: Handles for controlling parameter positions */}
+            {domkol.showNumberHandles &&
+              domkol.currentFunction.paramModels.map((paramModel, index) => (
                 <ComplexNumberHandle
                   key={index}
-                  value={zeroModel}
+                  value={paramModel}
                   viewport={domkol.viewport}
                   zIndex={7}
                 />

@@ -1,10 +1,14 @@
 import { Complex } from '@/utils/complex';
 import { ComplexFunction } from './ComplexFunction';
+import { DraggableValueModel } from '@/utils/draggable-value-model';
 import { makeObservables } from '@/utils/mobx-helpers';
 
 export class ExponentialFunction implements ComplexFunction {
+  paramModels: DraggableValueModel[] = [];
+
   constructor() {
     makeObservables(this, {
+      observable: 'paramModels',
       computed: 'formula params'
     });
   }

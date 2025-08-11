@@ -54,7 +54,7 @@ export class Domkol {
   }
 
   get showNumberHandles(): boolean {
-    return this.currentFunction instanceof PolynomialFunction;
+    return this.currentFunction.paramModels.length > 0;
   }
 
   handlePageChange(index: number): void {

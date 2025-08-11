@@ -5,20 +5,20 @@ import { ValueModel } from '@/utils/value-model';
 import { makeObservables } from '@/utils/mobx-helpers';
 
 export class PolynomialFunction implements ComplexFunction {
-  zeroModels: DraggableValueModel[];
+  paramModels: DraggableValueModel[];
 
   constructor(zeroes: Complex[]) {
-    this.zeroModels = zeroes.map(zero => new DraggableValueModel(new ValueModel<Complex>([...zero])));
+    this.paramModels = zeroes.map(zero => new DraggableValueModel(new ValueModel<Complex>([...zero])));
 
     makeObservables(this, {
-      observable: 'zeroModels',
+      observable: 'paramModels',
       computed: 'zeroes formula degree params',
       action: ''
     });
   }
 
   get zeroes(): Complex[] {
-    return this.zeroModels.map(model => model.value);
+    return this.paramModels.map(model => model.value);
   }
 
 
@@ -121,7 +121,7 @@ export class PolynomialFunction implements ComplexFunction {
   }
 
   get degree(): number {
-    return this.zeroModels.length;
+    return this.paramModels.length;
   }
 
   get params(): Complex[] {

@@ -2,21 +2,18 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { DomainCircle } from '@/stores/DomainCircle';
 import { FunctionGraphRenderer } from '@/stores/FunctionGraphRenderer';
-import { PolynomialFunction } from '@/stores/PolynomialFunction';
 import { ViewportConfig, complexToPixel } from '@/utils/coordinateTransforms';
 import './DomainCircleView.scss';
 
 interface DomainCircleViewProps {
   domainCircle: DomainCircle;
   functionGraphRenderer: FunctionGraphRenderer;
-  polynomialFunction: PolynomialFunction;
   viewport: ViewportConfig;
 }
 
 const DomainCircleView: React.FC<DomainCircleViewProps> = observer(({
   domainCircle,
   functionGraphRenderer,
-  polynomialFunction: _polynomialFunction,
   viewport
 }) => {
   // Convert circle center from complex coordinates to pixel coordinates

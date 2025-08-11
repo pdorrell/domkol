@@ -1,4 +1,5 @@
 import { Complex } from '@/utils/complex';
+import { DraggableValueModel } from '@/utils/draggable-value-model';
 
 /**
  * Base interface for complex functions that can be visualized
@@ -22,4 +23,11 @@ export interface ComplexFunction {
    * For exponential functions, this is an empty list.
    */
   readonly params: Complex[];
+
+  /**
+   * Draggable parameter models for interactive manipulation.
+   * For polynomials, these are the zero positions.
+   * For exponential functions, this is an empty array.
+   */
+  readonly paramModels: DraggableValueModel[];
 }
