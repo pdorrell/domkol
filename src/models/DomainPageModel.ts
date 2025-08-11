@@ -10,7 +10,7 @@ export interface DomainPageConfig {
   originPixelLocation: [number, number];
   pixelsDimension: [number, number];
   initialCircleRadius: number; // in units, not pixels
-  initialZeroes?: Complex[];
+  initialZeroes: Complex[];
   instructions: string;
 }
 

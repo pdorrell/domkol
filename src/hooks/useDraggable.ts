@@ -22,7 +22,7 @@ export interface UseDraggableOptions<T> {
   initialValue: T;
   onDragStart?: (value: T) => void;
   onDragMove?: (value: T, isDragging: boolean) => void;
-  onDragEnd?: (value: T) => void;
+  onDragEnd: (value: T) => void;
   getCurrentPoint: GetCurrentPointCalculator<T>;
   calculateNewPosition: DragPositionCalculator<T>;
   shouldStartDrag?: (event: React.MouseEvent | React.TouchEvent) => boolean;
@@ -103,7 +103,7 @@ export function useDraggable<T>({
     const finalValue = calculateNewPosition(clientX, clientY, dragOffset, currentValue, elementRef);
     setCurrentValue(finalValue);
     setIsDragging(false);
-    onDragEnd?.(finalValue);
+    onDragEnd(finalValue);
   }, [isDragging, dragOffset, currentValue, calculateNewPosition, onDragEnd]);
 
   // Set up global pointer event listeners during drag

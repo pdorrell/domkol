@@ -9,13 +9,13 @@ import './ComplexNumberHandle.scss';
 interface ComplexNumberHandleProps {
   value: DraggableValueModel;
   viewport: ViewportConfig;
-  zIndex?: number;
+  zIndex: number;
 }
 
 const ComplexNumberHandle: React.FC<ComplexNumberHandleProps> = observer(({
   value,
   viewport,
-  zIndex = 1000
+  zIndex
 }) => {
   const { handleRef, pixelX, pixelY, handlePointerDown } = useDraggableHandle({
     value,

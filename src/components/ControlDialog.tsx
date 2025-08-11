@@ -8,12 +8,12 @@ import { useDraggableDialog } from '@/hooks/useDraggableDialog';
 import './ControlDialog.scss';
 
 interface ControlDialogProps {
-  complexFunction?: ComplexFunction | null;
+  complexFunction: ComplexFunction;
   domainCircle: DomainCircle;
   functionGraphRenderer: FunctionGraphRenderer;
   domainColoringRenderer: DomainColoringRenderer;
   instructions: string;
-  zIndex?: number;
+  zIndex: number;
 }
 
 const ControlDialog = observer(({
@@ -22,7 +22,7 @@ const ControlDialog = observer(({
   functionGraphRenderer,
   domainColoringRenderer,
   instructions,
-  zIndex = 1000
+  zIndex
 }: ControlDialogProps) => {
   // Calculate initial position based on original CSS values
   // CSS had: top: calc(5% + 20px) and left: calc(540px - 31em * 0.25)
