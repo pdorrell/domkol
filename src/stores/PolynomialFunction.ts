@@ -13,20 +13,12 @@ export class PolynomialFunction implements ComplexFunction {
     makeObservables(this, {
       observable: 'zeroModels',
       computed: 'zeroes formula degree params',
-      action: 'updateZero'
+      action: ''
     });
   }
 
   get zeroes(): Complex[] {
     return this.zeroModels.map(model => model.value);
-  }
-
-  updateZero(index: number, newValue: Complex, changing?: boolean): void {
-    if (index >= 0 && index < this.zeroModels.length) {
-      // Always update the zero position immediately - the domain coloring canvas
-      // will decide whether to repaint based on its own repaintContinuously setting
-      this.zeroModels[index].update([...newValue], changing ?? false);
-    }
   }
 
 
