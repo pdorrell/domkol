@@ -1,35 +1,34 @@
-import React from 'react';
-import { observer } from 'mobx-react-lite';
-import { Domkol } from '@/models/Domkol';
-import { pageModels } from '@/models/DomainPageModel';
-import { ControlDialog } from '@/components/ControlDialog';
-import { ComplexNumberHandle } from '@/components/ComplexNumberHandle';
-import { DomainCircleView } from '@/components/DomainCircleView';
-import { DomainHandle } from '@/components/DomainHandle';
-import { CoordinateGrid } from '@/components/CoordinateGrid';
-import { DomainColoringCanvas } from '@/components/DomainColoringCanvas';
-import { FunctionGraphView } from '@/components/FunctionGraphView';
-import { AppInfoDisplay } from '@/components/AppInfoDisplay';
-import { LayerWrapper } from '@/components/LayerWrapper';
-import './DomkolView.scss';
+import React from "react";
+import { observer } from "mobx-react-lite";
+import { Domkol } from "@/models/Domkol";
+import { pageModels } from "@/models/DomainPageModel";
+import { ControlDialog } from "@/components/ControlDialog";
+import { ComplexNumberHandle } from "@/components/ComplexNumberHandle";
+import { DomainCircleView } from "@/components/DomainCircleView";
+import { DomainHandle } from "@/components/DomainHandle";
+import { CoordinateGrid } from "@/components/CoordinateGrid";
+import { DomainColoringCanvas } from "@/components/DomainColoringCanvas";
+import { FunctionGraphView } from "@/components/FunctionGraphView";
+import { AppInfoDisplay } from "@/components/AppInfoDisplay";
+import { LayerWrapper } from "@/components/LayerWrapper";
+import "./DomkolView.scss";
 
 interface DomkolViewProps {
   domkol: Domkol;
 }
 
 const DomkolView = observer(({ domkol }: DomkolViewProps) => {
-
   return (
     <div className="app">
       <AppInfoDisplay showAbout={domkol.showAbout} />
       <header>
-        <h1>Domkol: Complex Function Visualisation</h1>
+        <h1>Domkol: Complex Function Visualization</h1>
         <nav className="function-nav">
           <span className="function-label">Function:</span>
           {pageModels.map((model, index) => (
             <button
               key={model.functionType}
-              className={`function-link ${index === domkol.selectedPageIndex ? 'active' : ''}`}
+              className={`function-link ${index === domkol.selectedPageIndex ? "active" : ""}`}
               onClick={() => domkol.handlePageChange(index)}
             >
               {model.name}
@@ -45,7 +44,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
             id="domkol"
             style={{
               width: domkol.currentPageModel.canvasWidth,
-              height: domkol.currentPageModel.canvasHeight
+              height: domkol.currentPageModel.canvasHeight,
             }}
           >
             {/* Layer 1: Domain coloring canvas */}
@@ -54,7 +53,9 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                 complexFunction={domkol.currentFunction}
                 viewport={domkol.viewport}
                 colorScale={domkol.domainColoringRenderer.colorScale}
-                repaintContinuously={domkol.domainColoringRenderer.repaintContinuously}
+                repaintContinuously={
+                  domkol.domainColoringRenderer.repaintContinuously
+                }
                 changing={domkol.isZeroChanging}
                 zIndex={1}
               />
@@ -62,7 +63,10 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 2: Cartesian coordinates and grid */}
             {domkol.domainColoringRenderer.showDomainGrid && (
-              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={2}>
+              <LayerWrapper
+                dimensions={domkol.currentPageModel.canvasDimensions}
+                zIndex={2}
+              >
                 <CoordinateGrid
                   viewport={domkol.viewport}
                   showPolar={false}
@@ -73,7 +77,10 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 3: 3D graph "under" parts (only in 3D mode) */}
             {domkol.functionGraphRenderer.show3DGraph && (
-              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={3}>
+              <LayerWrapper
+                dimensions={domkol.currentPageModel.canvasDimensions}
+                zIndex={3}
+              >
                 <FunctionGraphView
                   functionGraphRenderer={domkol.functionGraphRenderer}
                   complexFunction={domkol.currentFunction}
@@ -85,7 +92,10 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
             )}
 
             {/* Layer 4: Domain circle and polar grid */}
-            <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={4}>
+            <LayerWrapper
+              dimensions={domkol.currentPageModel.canvasDimensions}
+              zIndex={4}
+            >
               <DomainCircleView
                 domainCircle={domkol.domainCircle}
                 functionGraphRenderer={domkol.functionGraphRenderer}
@@ -109,7 +119,10 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
 
             {/* Layer 5: 3D graph "over" parts (only in 3D mode) */}
             {domkol.functionGraphRenderer.show3DGraph && (
-              <LayerWrapper dimensions={domkol.currentPageModel.canvasDimensions} zIndex={5}>
+              <LayerWrapper
+                dimensions={domkol.currentPageModel.canvasDimensions}
+                zIndex={5}
+              >
                 <FunctionGraphView
                   functionGraphRenderer={domkol.functionGraphRenderer}
                   complexFunction={domkol.currentFunction}
@@ -129,8 +142,7 @@ const DomkolView = observer(({ domkol }: DomkolViewProps) => {
                   viewport={domkol.viewport}
                   zIndex={7}
                 />
-              ))
-            }
+              ))}
           </div>
 
           {/* Control dialog */}

@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" >
-
-<!-- 
+<!doctype html>
+<html lang="en">
+    <!--
     This file is part of Domkol.
 
     Domkol is free software: you can redistribute it and/or modify
@@ -18,76 +17,109 @@
     along with Domkol.  If not, see <http://www.gnu.org/licenses/>.
  -->
 
-<head><meta charset="utf-8">
-<title>Domkol: HTML5 Complex Function Visualisation using Canvas and SVG (quintic polynomial)</title>
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            Domkol: HTML5 Complex Function Visualization using Canvas and SVG
+            (quintic polynomial)
+        </title>
 
-<link rel="stylesheet" href="lib/jquery-ui-1.10.2.css" />
-<script language="javascript" type="text/javascript" src="lib/jquery-1.10.2.js"></script>
-<script language="javascript" type="text/javascript" src="lib/jquery-ui-1.10.2.js"></script>
-<script language="javascript" type="text/javascript" src="domkol.js"></script>
-<script language="javascript" type="text/javascript" src="quintic-polynomial.js"></script>
-<link rel="stylesheet" href="domkol.css" />
+        <link rel="stylesheet" href="lib/jquery-ui-1.10.2.css" />
+        <script
+            language="javascript"
+            type="text/javascript"
+            src="lib/jquery-1.10.2.js"
+        ></script>
+        <script
+            language="javascript"
+            type="text/javascript"
+            src="lib/jquery-ui-1.10.2.js"
+        ></script>
+        <script
+            language="javascript"
+            type="text/javascript"
+            src="domkol.js"
+        ></script>
+        <script
+            language="javascript"
+            type="text/javascript"
+            src="quintic-polynomial.js"
+        ></script>
+        <link rel="stylesheet" href="domkol.css" />
 
-<style type="text/css">
-<!--
-.formula {
-  line-height: 1.2em;
-  height: 3em;
-  width: 70em;
-  font-size: 0.8em;
-}
-.formula-label {
-  width: 4.5em;
-}
-.scale-slider {
-  width: 18em;
-}
--->
-</style>
+        <style type="text/css">
+            <!--
+            .formula {
+              line-height: 1.2em;
+              height: 3em;
+              width: 70em;
+              font-size: 0.8em;
+            }
+            .formula-label {
+              width: 4.5em;
+            }
+            .scale-slider {
+              width: 18em;
+            }
+            -->
+        </style>
 
+        <!-- site.css.link.html -->
+    </head>
 
-<!-- site.css.link.html -->
+    <body>
+        <!-- heading.wrapper.start.html -->
+        <h1 class="main"><a href="main.html">Domkol:</a> Quintic Polynomial</h1>
+        <!-- heading.wrapper.end.html -->
 
-</head>
+        <div class="function-links">
+            Function:
+            <a href="main.html">Cubic Polynomial</a>
+            <span class="non-link">Quintic Polynomial</span>
+            <a href="exponentialFunction.html">Exponential</a>
+            <a href="identity.html">Identity Function</a>
+        </div>
 
-<body>
+        <div class="wideItem">
+            <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
+            <div style="position: relative; height: 700px">
+                <!-- The complex plane view will be inserted into this div -->
+                <div
+                    id="domkol"
+                    style="position: absolute; top: 0; left: 0"
+                ></div>
 
-<!-- heading.wrapper.start.html -->
-<h1 class="main"><a href="main.html">Domkol:</a> Quintic Polynomial</h1>
-<!-- heading.wrapper.end.html -->
+                <!-- The control dialog will be inserted into this div -->
+                <div
+                    id="control-dialog"
+                    style="
+                        position: absolute;
+                        top: 15px;
+                        left: 635px;
+                        z-index: 6;
+                        width: 37em;
+                    "
+                ></div>
+            </div>
+        </div>
 
-<div class="function-links">
-  Function:
-  <a href="main.html">Cubic Polynomial</a>
-  <span class="non-link">Quintic Polynomial</span>
-  <a href="exponentialFunction.html">Exponential</a>
-  <a href="identity.html">Identity Function</a>
-</div>
+        <div class="article">
+            <h2>Explanation</h2>
+            <p>
+                This example is similar to the
+                <a href="main.html">cubic polynomial example</a>, expect it is
+                <i>quintic</i>, i.e. the polynomial has five zeroes, so the 3D
+                graph winds five times around the white circle if all the zeroes
+                are inside the circle.
+            </p>
+            <p>
+                Compared to the cubic polynomial example, the canvas element is
+                larger and there are more pixels per complex unit.
+            </p>
 
-<div class="wideItem">
-  <!-- This div holds the complex plane view and the control dialog, and pre-allocates enough height to hold them -->
-  <div style="position:relative;height:700px;">
+            <!-- extra -->
 
-    <!-- The complex plane view will be inserted into this div -->
-    <div id="domkol" style="position:absolute;top:0;left:0;"></div>
-    
-    <!-- The control dialog will be inserted into this div -->
-    <div id="control-dialog" style="position:absolute;top:15px;left:635px;z-index:6;width:37em"></div>
-  </div>
-
-</div>
-
-<div class="article">
-<h2>Explanation</h2>
-<p>This example is similar to the <a href="main.html">cubic polynomial example</a>, expect it is <i>quintic</i>,
-i.e. the polynomial has five zeroes, so the 3D graph winds five times around the white circle if all the zeroes
-are inside the circle.</p>
-<p>Compared to the cubic polynomial example, the canvas element is larger and there are more pixels per complex unit.</p>
-
-<!-- extra -->
-
-<div class="updated">Last updated: 21 May 2013</div>
-</div>
-
-</body>
+            <div class="updated">Last updated: 21 May 2013</div>
+        </div>
+    </body>
 </html>
